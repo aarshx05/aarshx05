@@ -14,7 +14,7 @@
  
  🌱 I’m currently learning **ML , React Native , React.js**
 
-💬 Ask me about **Android Dev, Cryptography, Firebase... or anything else**
+💬 Ask me about **Android Dev, CyberSecuirty, Backend... or anything else**
 
 
  </div>
@@ -36,8 +36,8 @@
 <h2 align="center">⚒️ Languages-Frameworks-Tools ⚒️</h2>
 <br/>
 <div align="center">
-    <img src="https://skillicons.dev/icons?i=react,bootstrap,mui,html,css,vscode,github,figma,tailwind,git,r" />
-    <img src="https://skillicons.dev/icons?i=nodejs,python,javascript,typescript,express,firebase,mongodb,c,java,nextjs,mysql,flask" /><br>
+    <img src="https://skillicons.dev/icons?i=bootstrap,mui,html,css,vscode,github,figma,tailwind,git" />
+    <img src="https://skillicons.dev/icons?i=python,javascript,firebase,c,java,mysql,android" /><br>
 </div>
 
 <br/>
