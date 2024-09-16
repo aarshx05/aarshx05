@@ -26,7 +26,7 @@
   <a href="https://www.linkedin.com/in/aarsh-chaurasia-03b46a270/" target="_blank">
     <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" target="_blank" />
   </a>
-  <a href="https://github.com/aarshx05" target="_blank">
+  <a href="https://aarshx05.github.io/Portfolio/" target="_blank">
      <img src="https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=todoist&logoColor=white" target="_blank" /> 
   </a>
 </div>
@@ -42,17 +42,6 @@
 </div>
 
 <br/>
-<hr/>
-
-<div align="center">
-  <h2>🐍 My Contributions 🐍</h2>
-  <br>
-  <img alt="snake eating my contributions" src="https://raw.githubusercontent.com/aarshx05/aarshx05/output/github-contribution-grid-snake.svg" />
-  
-  <br/><br/><br/>
-</div>
-
-<hr/>
 
 <h2 align="center">⚡ Stats ⚡</h2>
 <br>
