@@ -52,7 +52,7 @@
 </div>
 
 <hr/>
-
+[![Anurag's GitHub stats](https://github-readme-stats.vercel.app/api?username=aarshx05)](https://github.com/aarshx05/github-readme-stats)
 <h2 align="center">⚡ Stats ⚡</h2>
 <br>
 <div align=center>
