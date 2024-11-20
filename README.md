@@ -14,7 +14,7 @@
  
  🌱 I’m currently learning **ML , React Native , React.js**
 
-💬 Ask me about **Android Dev, CyberSecuirty, Backend... or anything else**
+💬 Ask me about **Android Dev, CyberSecurity, Backend... or anything else**
 
 
  </div>
