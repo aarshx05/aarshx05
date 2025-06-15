@@ -8,17 +8,17 @@
 
 <p align="center">
   Passionate about building secure systems with real-world impact.<br>
-  Contributing to the cybersecurity space through research, offensive security, and secure software development.
+  Actively contributing to the cybersecurity ecosystem through offensive research, red teaming, and threat intelligence.
 </p>
 
 ---
 
 <div align="center">
   
-🔐 Currently working on **closed-source security projects** at Okynus Tech  
-🧠 Practicing **Penetration Testing, Threat Intelligence, Vulnerability Assessment**  
-📚 Continuously learning and exploring **Security Automation, OSINT, and Red Teaming**  
-💬 Feel free to connect or ask me about **Android Dev, Web Exploitation, Secure Coding, or Infra Hardening**
+🔐 Working on **closed-source security projects** at Okynus Tech  
+🧠 Skilled in **Penetration Testing, Threat Hunting, Vulnerability Assessment, and Blue Team Practices**  
+⚙️ Exploring and implementing **Security Automation, OSINT, Malware Analysis, and Infrastructure Hardening**  
+💬 Reach out to discuss **Exploitation Techniques, Secure Architectures, or Incident Response**
 
 </div>
 
@@ -38,12 +38,19 @@
 
 ---
 
-<h2 align="center">🛠️ Languages • Frameworks • Tools</h2>
+<h2 align="center">🛡️ Tools & Technologies in My Arsenal</h2>
 
 <div align="center">
-  <img src="https://skillicons.dev/icons?i=python,cpp,java,kotlin,javascript,cs,dotnet" /><br>
-  <img src="https://skillicons.dev/icons?i=mysql,firebase,git,github,linux,vscode,androidstudio,tailwind" /><br>
-  <img src="https://skillicons.dev/icons?i=aws,gcp,kali,powershell,ubuntu,visualstudio" />
+
+<!-- Languages & Scripting -->
+<img src="https://skillicons.dev/icons?i=python,bash,cpp,cs" />  
+<!-- Security OS & Infra -->
+<img src="https://skillicons.dev/icons?i=kali,linux,ubuntu,powershell,git" />  
+<!-- Cloud & DevSecOps -->
+<img src="https://skillicons.dev/icons?i=aws,gcp,docker" />  
+<!-- Infra / IDE -->
+<img src="https://skillicons.dev/icons?i=vscode,visualstudio,github" />  
+
 </div>
 
 ---
@@ -59,4 +66,4 @@
 ---
 
 <br/>
-<p align="center"><i>Let's secure the future, one system at a time.</i></p>
+<p align="center"><i>On a mission to secure the digital frontier — one system at a time.</i></p>
