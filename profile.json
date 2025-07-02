@@ -1,0 +1,19 @@
+{
+  "name": "Aarsh Chaurasia",
+  "title": "Cybersecurity Practitioner | Security Contributor | Building, Okynus Tech",
+  "tagline": "Passionate about building secure systems with real-world impact.",
+  "about": {
+    "education": "Cybersecurity-focused engineering student at National Forensic Sciences University, currently pursuing an integrated B.Tech-M.Tech in Computer Science with Cyber Security",
+    "startup": "Founder of Okynus Tech — focused on building industry first encryption and Digital Rights Management systems. Incubated under C3iHub (IIT Kanpur) and SSIP 2.0 (Govt. of Gujarat).",
+    "experience": "Gained hands-on security experience at SecureDApp by auditing and pentesting for client's and building automated vulnerability detection tools for Web3 platforms. At Login2Xplore, improved system performance and security for core data infrastructure. Contributed to fraud detection and secure analytics at CM Office Gujarat.",
+    "work": "Built practical tools including PhishSOC (AI-powered anti-phishing suite), a behavioral authentication system using keystroke dynamics, a container vulnerability scanner with reporting and alerts, and StudySync — a productivity Android app. Focused on secure development, applied forensics, and intelligent threat defense.",
+    "research": "Currently researching mobile forensics techniques using AI and cloud computing. Working on behavioral authentication using keystroke dynamics. Exploring complex resource allocation in modern wireless networks with a focus on security implications.",
+    "quote": "Cybersecurity isn't just about reacting — it's about building ahead of the threat."
+  },
+  "contact": {
+    "email": "aarsh.chaurasia.201007@gmail.com",
+    "linkedin": "https://www.linkedin.com/in/aarsh-chaurasia-03b46a270/",
+    "github": "https://github.com/aarshx05",
+    "instagram": "https://www.instagram.com/_.aarsh_/"
+  }
+}
