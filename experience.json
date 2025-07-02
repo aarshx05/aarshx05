@@ -1,0 +1,92 @@
+{
+  "roles": [
+    {
+      "id": 1,
+      "company": "Okynus Tech",
+      "title": "Founder",
+      "period": "Feb 2024 - Present",
+      "description": "Founded a cybersecurity-focused startup building industry first encryption and DRM solutions. Incubated under C3iHub (IIT Kanpur) and SSIP 2.0 (Govt. of Gujarat).",
+      "achievements": [
+        "Developed a novel video encryption algorithm with enhanced speed and security",
+        "Winner of Best Innovation Prize - Hack-IITK Startup Track 2024",
+        "Runner-up at UptoSkills Startup-a-thon (150+ universities)",
+        "Secured government incubation and early-stage funding"
+      ]
+    },
+   
+    {
+      "id": 2,
+      "company": "SecureDApp",
+      "title": "Security Engineer Intern",
+      "period": "May 2025 - Present",
+      "description": "Working on Web3 infrastructure, blockchain security, and secure protocol design with a focus on real-world threat modeling.",
+      "achievements": [
+        "Contributed to network security layers in decentralized protocols",
+        "Conducted smart contract vulnerability research and analysis",
+        "Conducted Audits And Pentesting for Clients"
+      ]
+    },
+    {
+      "id": 3,
+      "company": "Login2Xplore",
+      "title": "Backend Security & Development Intern",
+      "period": "Sep 2024 - Apr 2025",
+      "description": "Redesigned backend architecture with enhanced security and fault tolerance for scalable data systems.",
+      "achievements": [
+        "Engineered secure handling for petabyte-scale structured/unstructured datasets",
+        "Implemented clean architecture, access controls, and internal platform optimizations",
+        "Collaborated with cross-functional teams on security-first solutions"
+      ]
+    },
+    {
+      "id": 4,
+      "company": "CM Office Gujarat",
+      "title": "Data Security Analyst Intern",
+      "period": "Nov 2024 - Dec 2024",
+      "description": "Assisted with security audits and anomaly detection using real data from state-level government systems.",
+      "achievements": [
+        "Identified data patterns leading to fraud detection improvements",
+        "Participated in drafting reports on digital infrastructure vulnerabilities",
+        "Contributed to refining data privacy and anomaly protocols"
+      ]
+    },
+    {
+      "id": 5,
+      "company": "Florida International University",
+      "title": "Summer Research Intern",
+      "period": "Jun 2024 - Sep 2024",
+      "description": "Conducted applied cybersecurity research on mobile device forensics using cloud and AI techniques.",
+      "achievements": [
+        "Co-authored a research paper on encryption and mobile forensics",
+        "Worked on dynamic analysis methods using AI and cloud services",
+        "Explored cross-platform forensic toolchains for encrypted data"
+      ]
+    },
+    {
+      "id": 6,
+      "company": "Stealth Startup (Now Acquired)",
+      "title": "CTO",
+      "period": "Feb 2022 - Apr 2025",
+      "description": "Technical co-founder at a digital marketing platform focused on SEO innovation and performance optimization.",
+      "achievements": [
+        "Led the development of a custom SEO optimization tool",
+        "Drove user acquisition and campaign performance through data-driven strategies",
+        "Scaled and positioned the company for acquisition"
+      ]
+    },
+     {
+      "id": 7,
+      "company": "Google Developer Student Clubs (GDSC)",
+      "title": "Lead",
+      "period": "Jun 2023 - Jun 2024",
+      "description": "Led the university’s GDSC chapter, driving tech adoption and community engagement through events and workshops.",
+      "achievements": [
+        "Grew active member base by over 200%",
+        "Organized major hackathons and multiple workshops",
+        "Directed a team of over 10 members, maintaining operational efficiency and meeting all project deadlines.",
+        "Built partnerships with 5+ industry organizations",
+        "Oversaw campaigns on cybersecurity, cloud, and Android development"
+      ]
+    }
+  ]
+}
