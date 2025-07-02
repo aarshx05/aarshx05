@@ -1,0 +1,33 @@
+{
+  "commands": {
+    "help": "Displays a list of available commands",
+    "whoami": "Displays information about Aarsh Chaurasia",
+    "projects": "Lists all projects",
+    "project <name>": "Shows details about a specific project",
+    "skills": "Lists technical skills",
+    "contact": "Shows contact information",
+    "achievements": "Lists achievements",
+    "experience": "Shows professional experience",
+    "research": "Lists research papers",
+    "clear": "Clears the terminal",
+    "social": "Shows social media links",
+    "startup": "Shows information about Okynus Tech",
+    "resume": "Download my resume"
+  },
+  "skills": [
+    "AI/Machine Learning",
+    "Mobile Forensics",
+    "VAPT",
+    "Network Security",
+    "Cloud Security",
+    "SOC & SIEM Implementation",
+    "Cryptography",
+    "Android Development",
+    "Web3/Blockchain Security",
+    "Python",
+    "React",
+    "Flask",
+    "AWS",
+    "Docker"
+  ]
+}
