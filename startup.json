@@ -1,0 +1,73 @@
+{
+  "company": {
+    "name": "Okynus Tech",
+    "tagline": "Protecting digital IP with AI-first DRM solutions",
+    "mission": "At Okynus Tech, we're reimagining content protection for the digital age. Our industry first Digital Rights Management platform safeguards creative works against unauthorized access and distribution while providing seamless experiences for legitimate users.",
+    "website": "https://okynus.great-site.net/",
+    "pitchDeck": "https://okynus.great-site.net/"
+  },
+  "features": [
+    {
+      "icon": "Shield",
+      "title": "Next-Gen Protection",
+      "description": "Proprietary encryption algorithms designed specifically for multimedia content."
+    },
+    {
+      "icon": "Cpu",
+      "title": "Live Data Security",
+      "description": "Revoke access from end users at any time."
+    },
+    {
+      "icon": "Users",
+      "title": "User-Friendly",
+      "description": "Seamless experience for authorized users with minimal friction."
+    },
+    {
+      "icon": "Building",
+      "title": "Enterprise-Ready",
+      "description": "Scalable solutions for businesses of all sizes, from indie creators to media giants."
+    }
+  ],
+  "technologies": [
+    "Custom encryption algorithms specifically designed for video and audio content",
+    "Live access control and usage tracking",
+    "Cloud-native architecture for global scalability",
+    "Zero-knowledge authentication for enhanced privacy"
+  ],
+  "recognition": [
+    {
+      "title": "C3iHub @ IIT Kanpur",
+      "description": "Selected for incubation program (Cohort 6)"
+    },
+    {
+      "title": "SSIP 2.0",
+      "description": "Gujarat Government's startup support initiative"
+    },
+    {
+      "title": "UptoSkills Startup-a-thon",
+      "description": "Runner-up (2024)"
+    }
+  ],
+  "team": [
+    {
+      "name": "Aarsh Chaurasia",
+      "role": "Founder & CEO",
+      "initials": "AC",
+      "description": "Leading the team to build the future of digital content protection."
+    }
+  ],
+  "updates": [
+    {
+      "date": "April 2025",
+      "title": "Selected for C3iHub Incubation Program"
+    },
+    {
+      "date": "November 2024",
+      "title": "Selected For SSIP 2.0"
+    },
+    {
+      "date": "June 2024",
+      "title": "Released Early Proof Of Concept"
+    }
+  ]
+}
