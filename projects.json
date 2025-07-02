@@ -1,0 +1,75 @@
+{
+  "projects": [
+    {
+      "id": 1,
+      "name": "PhishSOC",
+      "description": "A personalized AI-powered anti-phishing suite integrating live threat feeds, sentiment analysis, and CNN-based screenshot classification. Designed for plug-and-play integration with SIEM platforms like Splunk.",
+      "techStack": ["AI", "Flask", "CNN", "Threat Intelligence", "SIEM"],
+      "tags": ["Cybersecurity", "AI", "Threat Detection"],
+      "githubUrl": "#",
+      "demoUrl": "#",
+      "image": "https://images.pexels.com/photos/30885916/pexels-photo-30885916/free-photo-of-phishing-awareness-in-digital-security.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    },
+    {
+      "id": 2,
+      "name": "Secure Behavioural Authentication",
+      "description": "Built a keystroke dynamics-based biometric authentication system using an ensemble classifier (SVM, KNN, Random Forest) achieving 95% accuracy with dynamic thresholds to reduce user rejection.",
+      "techStack": ["Python", "Machine Learning", "Flask"],
+      "tags": ["Authentication", "ML", "Biometrics"],
+      "githubUrl": "https://github.com/aarshx05/Behavioural_Secure_Authentication_",
+      "demoUrl": "https://github.com/aarshx05/Behavioural_Secure_Authentication_",
+      "image": "https://images.pexels.com/photos/60504/security-protection-anti-virus-software-60504.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2"
+    },
+    {
+      "id": 3,
+      "name": "Okynus PoC",
+      "description": "Developed a secure and efficient video encryption algorithm for AI-first Digital Rights Management. The solution is under incubation at IIT Kanpur (C3iHub) and SSIP 2.0, Govt. of Gujarat.",
+      "techStack": ["Python", "Cloud", "Encryption", "Blockchain"],
+      "tags": ["DRM", "Encryption", "AI", "Startup"],
+      "githubUrl": "https://github.com/aarshx05/CryptVid",
+      "demoUrl": "https://okynus.great-site.net/?i=1",
+      "image": "https://i.ibb.co/wZbNmmRP/Logo-p1-r2.jpg"
+    },
+  
+    {
+      "id": 5,
+      "name": "Container Vulnerability Scanner",
+      "description": "Web-based scanner that audits container images for security vulnerabilities. Supports JSON, CSV, and HTML reports with real-time email alerts to help developers harden container deployments.",
+      "techStack": ["Flask", "Docker", "Security Tools", "Email API"],
+      "tags": ["DevSecOps", "Containers", "Vulnerability Scanning"],
+      "githubUrl": "https://github.com/aarshx05/Cloud_Image_Vulnerability_Scanner",
+      "demoUrl": "https://github.com/aarshx05/Cloud_Image_Vulnerability_Scanner",
+      "image": "https://i.ibb.co/mCnPSWtL/Copilot-20250529-154220.png"
+    },
+    {
+      "id": 6,
+      "name": "Timeline Recreation via ADB",
+      "description": "Tool under development to extract and organize Android device data using ADB, enabling forensic timeline reconstruction of key events. Aimed at supporting mobile forensics investigations.",
+      "techStack": ["Android Forensics", "Python", "ADB"],
+      "tags": ["Forensics", "Mobile Security", "Android"],
+      "githubUrl": "#",
+      "demoUrl": "#",
+      "image": "https://i.ibb.co/27dpFKJ5/Copilot-20250529-155123.png"
+    },
+    {
+      "id": 7,
+      "name": "ResumePro AI",
+      "description": "ResumePro AI is a web application that helps job seekers enhance their resume process using AI. It allows users to upload and parse resumes, edit structured resume sections, and generate tailored cover letters or job responses using AI models.",
+      "techStack": ["Flask", "API", "LLM"],
+      "tags": ["AI", "Data Analytics", "Development"],
+      "githubUrl": "https://github.com/aarshx05/resume_ai_pro",
+      "demoUrl": "https://resume-ai-pro.onrender.com/",
+      "image":"https://i.ibb.co/wZczGtPT/image.png"
+    },
+    {
+      "id": 8,
+      "name": "StudySync",
+      "description": "An Android app built to enhance student productivity with secure login, real-time chat, notes management, and academic updates. Achieved 200+ downloads and strong early user feedback.",
+      "techStack": ["Android", "Java", "Firebase"],
+      "tags": ["Productivity", "Android", "Education"],
+      "githubUrl": "https://github.com/aarshx05/StudySync/tree/master",
+      "demoUrl": "https://github.com/aarshx05/StudySync/tree/master",
+      "image": "https://raw.githubusercontent.com/aarshx05/StudySync/master/Studysync%201.42.30%20Pm.jpeg"
+    }
+  ]
+}
