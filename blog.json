@@ -1,0 +1,37 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "3rd Place at Hack-IIT Kanpur: Inside the PhishSOC AI Suite",
+      "excerpt": "A behind-the-scenes look at how PhishSOC leverages AI and computer vision to combat phishing attacks effectively.",
+      "date": "Upcoming",
+      "image": "https://i.ibb.co/355snhky/DSC-4152.jpg",
+      "url": "#"
+    },
+    {
+      "id": 2,
+      "title": "Winning Innovation at Hack-IIT Kanpur with Okynus Tech",
+      "excerpt": "Sharing our journey and learnings that led to the Best Innovation Prize for AI-first DRM solutions.",
+      "date": "Upcoming",
+      "image": "https://i.ibb.co/cSXpjdtx/DSC-4225.jpg",
+      "url": "#"
+    },
+    {
+      "id": 3,
+      "title": "GDSC Lead Experience: Building a University Developer & Security Community",
+      "excerpt": "How I helped grow our club, organize hackathons, and foster partnerships that shaped student developers.",
+      "date": "Upcoming",
+      "image": "https://i.ibb.co/v6CCy3RQ/IMG-4080.jpg",
+      "url": "#"
+    },
+{
+  "id": 4,
+  "title": "The Startup Pathway",
+  "excerpt": "Stay tuned",
+  "date": "Coming Soon",
+  "image": "https://i.ibb.co/bMd9Mjjr/DSC-4118.jpg",
+  "url": "#"
+}
+
+  ]
+}
