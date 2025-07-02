@@ -1,0 +1,34 @@
+{
+  "achievements": [
+    {
+      "id": 1,
+      "title": "Hack-IITK 2024",
+      "description": "Secured 3rd place nationally for PhishSOC AI Suite in a competition with 4000+ teams"
+    },
+    {
+      "id": 2,
+      "title": "Best Innovation Prize – Hack-IITK 2024",
+      "description": "Awarded Best Innovation Prize for Okynus Tech in the Startup Track at Hack-IIT Kanpur"
+    },
+    {
+      "id": 3,
+      "title": "Lead – GDSC NFSU",
+      "description": "Established and led the official Google Developer & Security Club at NFSU, organizing major tech initiatives"
+    },
+    {
+      "id": 4,
+      "title": "Hackathons & CTFs",
+      "description": "Multiple winner and podium finishes in national-level cybersecurity hackathons and Capture The Flag competitions"
+    },
+    {
+      "id": 5,
+      "title": "NFSU Admission Test 2022",
+      "description": "Achieved All India Rank 3 in the entrance test for the prestigious B.Tech-M.Tech Cybersecurity program"
+    },
+    {
+      "id": 6,
+      "title": "UptoSkills Startup-a-thon",
+      "description": "Runner-up with Okynus Tech among 150+ university startups for AI-first encryption solutions"
+    }
+  ]
+}
