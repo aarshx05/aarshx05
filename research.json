@@ -1,0 +1,34 @@
+{
+  "papers": [
+    {
+      "id": 1,
+      "title": "Navigating the Frontiers of Encryption in Mobile Forensics",
+      "focus": "Mobile forensics with hybrid AI and cloud computing",
+      "publication": "Florida International University Journal",
+      "year": 2023,
+      "abstract": "This paper explores advanced approaches to overcoming encryption challenges in mobile device forensics by leveraging AI algorithms alongside cloud computing resources.",
+      "pdfUrl": "",
+      "publicationUrl": ""
+    },
+    {
+      "id": 2,
+      "title": "Towards Behavioural Secure Authentication Using Keystroke Dynamics",
+      "focus": "Biometric authentication with ensemble machine learning classifiers",
+      "publication": "Upcoming",
+      "year": 2025,
+      "abstract": "This upcoming paper presents a keystroke dynamics-based authentication framework using ensemble classifiers (SVM, KNN, Random Forest), emphasizing accuracy improvements and dynamic thresholding to reduce false rejections.",
+      "pdfUrl": "",
+      "publicationUrl": ""
+    },
+    {
+      "id": 3,
+      "title": "Complex Resource Allocation and Energy Consumption in 5G and Modern Wireless Networks",
+      "focus": "Analyzing energy efficiency challenges in advanced wireless technologies",
+      "publication": "Upcoming",
+      "year": 2025,
+      "abstract": "This study investigates the complexities of resource allocation in 5G and beyond networks, highlighting causes of higher energy consumption and proposing potential optimization strategies.",
+      "pdfUrl": "",
+      "publicationUrl": ""
+    }
+  ]
+}
