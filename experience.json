@@ -1,7 +1,20 @@
 {
   "roles": [
-    {
+        {
       "id": 1,
+      "company": "Okynus Aarsh",
+      "title": "Founder",
+      "period": "Feb 2024 - Present",
+      "description": "Founded a cybersecurity-focused startup building industry first encryption and DRM solutions. Incubated under C3iHub (IIT Kanpur) and SSIP 2.0 (Govt. of Gujarat).",
+      "achievements": [
+        "Developed a novel video encryption algorithm with enhanced speed and security",
+        "Winner of Best Innovation Prize - Hack-IITK Startup Track 2024",
+        "Runner-up at UptoSkills Startup-a-thon (150+ universities)",
+        "Secured government incubation and early-stage funding"
+      ]
+    },
+    {
+      "id": 2,
       "company": "Okynus Tech",
       "title": "Founder",
       "period": "Feb 2024 - Present",
@@ -15,7 +28,7 @@
     },
    
     {
-      "id": 2,
+      "id": 3,
       "company": "SecureDApp",
       "title": "Security Engineer Intern",
       "period": "May 2025 - Present",
@@ -27,7 +40,7 @@
       ]
     },
     {
-      "id": 3,
+      "id": 4,
       "company": "Login2Xplore",
       "title": "Backend Security & Development Intern",
       "period": "Sep 2024 - Apr 2025",
@@ -39,7 +52,7 @@
       ]
     },
     {
-      "id": 4,
+      "id": 5,
       "company": "CM Office Gujarat",
       "title": "Data Security Analyst Intern",
       "period": "Nov 2024 - Dec 2024",
@@ -51,7 +64,7 @@
       ]
     },
     {
-      "id": 5,
+      "id": 6,
       "company": "Florida International University",
       "title": "Summer Research Intern",
       "period": "Jun 2024 - Sep 2024",
@@ -63,7 +76,7 @@
       ]
     },
     {
-      "id": 6,
+      "id": 7,
       "company": "Stealth Startup (Now Acquired)",
       "title": "CTO",
       "period": "Feb 2022 - Apr 2025",
@@ -75,7 +88,7 @@
       ]
     },
      {
-      "id": 7,
+      "id": 8,
       "company": "Google Developer Student Clubs (GDSC)",
       "title": "Lead",
       "period": "Jun 2023 - Jun 2024",
