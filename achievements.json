@@ -7,31 +7,36 @@
     },
     {
       "id": 2,
+      "title": "TryHackMe Top 1%",
+      "description": "Ranked among the global Top 1% on TryHackMe for cybersecurity learning and practical labs"
+    },
+    {
+      "id": 3,
       "title": "Best Innovation Prize – Hack-IITK 2024",
       "description": "Awarded Best Innovation Prize for Okynus Tech in the Startup Track at Hack-IIT Kanpur"
     },
     {
-      "id": 3,
+      "id": 4,
       "title": "Grand Finalist",
       "description": "CDAC Cyber Hackathon 2025"
     },
     {
-      "id": 4,
+      "id": 5,
       "title": "Lead – GDSC NFSU",
-      "description": "Established and led the official Google Developer & Security Club at NFSU, organizing major tech initiatives"
+      "description": "Led the official Google Developer Student Club (GDSC) at NFSU, driving major tech initiatives and achieving historic growth"
     },
     {
-      "id": 5,
+      "id": 6,
       "title": "Hackathons & CTFs",
       "description": "Multiple winner and podium finishes in national-level cybersecurity hackathons and Capture The Flag competitions"
     },
     {
-      "id": 6,
+      "id": 7,
       "title": "NFSU Admission Test 2022",
       "description": "Achieved All India Rank 3 in the entrance test for the prestigious B.Tech-M.Tech Cybersecurity program"
     },
     {
-      "id": 7,
+      "id": 8,
       "title": "UptoSkills Startup-a-thon",
       "description": "Runner-up with Okynus Tech among 150+ university startups for industry first encryption solutions"
     }
