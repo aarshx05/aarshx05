@@ -12,23 +12,28 @@
     },
     {
       "id": 3,
+      "title": "Grand Finalist",
+      "description": "CDAC Cyber Hackathon 2025"
+    },
+    {
+      "id": 4,
       "title": "Lead – GDSC NFSU",
       "description": "Established and led the official Google Developer & Security Club at NFSU, organizing major tech initiatives"
     },
     {
-      "id": 4,
+      "id": 5,
       "title": "Hackathons & CTFs",
       "description": "Multiple winner and podium finishes in national-level cybersecurity hackathons and Capture The Flag competitions"
     },
     {
-      "id": 5,
+      "id": 6,
       "title": "NFSU Admission Test 2022",
       "description": "Achieved All India Rank 3 in the entrance test for the prestigious B.Tech-M.Tech Cybersecurity program"
     },
     {
-      "id": 6,
+      "id": 7,
       "title": "UptoSkills Startup-a-thon",
-      "description": "Runner-up with Okynus Tech among 150+ university startups for AI-first encryption solutions"
+      "description": "Runner-up with Okynus Tech among 150+ university startups for industry first encryption solutions"
     }
   ]
 }
