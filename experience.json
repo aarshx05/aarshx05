@@ -2,15 +2,12 @@
   "roles": [
         {
       "id": 1,
-      "company": "Okynus Aarsh",
-      "title": "Founder",
-      "period": "Feb 2024 - Present",
-      "description": "Founded a cybersecurity-focused startup building industry first encryption and DRM solutions. Incubated under C3iHub (IIT Kanpur) and SSIP 2.0 (Govt. of Gujarat).",
+      "company": "we45 Inc.",
+      "title": "Security Intern",
+      "period": "July 2025 - Present",
+      "description": "Currently working on the core aspects of threat modeling, including research, design, and security analysis.",
       "achievements": [
-        "Developed a novel video encryption algorithm with enhanced speed and security",
-        "Winner of Best Innovation Prize - Hack-IITK Startup Track 2024",
-        "Runner-up at UptoSkills Startup-a-thon (150+ universities)",
-        "Secured government incubation and early-stage funding"
+        "............"
       ]
     },
     {
