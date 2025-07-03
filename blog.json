@@ -2,11 +2,11 @@
   "posts": [
     {
       "id": 1,
-      "title": "3rd Place at Hack-IIT Kanpur: Inside the PhishSOC AI Suite Wowow",
+      "title": "3rd Place at Hack-IIT Kanpur: Inside the PhishSOC AI Suite",
       "excerpt": "A behind-the-scenes look at how PhishSOC leverages AI and computer vision to combat phishing attacks effectively.",
-      "date": "Upcoming",
+      "date": "Jun 16, 2025",
       "image": "https://i.ibb.co/355snhky/DSC-4152.jpg",
-      "url": "#"
+      "url": "https://medium.com/@aarsh.chaurasia.201007/building-phishsoc-and-winning-at-hackiitk-2025-experience-15e9c1cc708c"
     },
     {
       "id": 2,
