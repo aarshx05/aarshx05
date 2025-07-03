@@ -2,7 +2,7 @@
   "projects": [
     {
       "id": 1,
-      "name": "PhishSOC",
+      "name": "PhishSOCSIEM",
       "description": "A personalized AI-powered anti-phishing suite integrating live threat feeds, sentiment analysis, and CNN-based screenshot classification. Designed for plug-and-play integration with SIEM platforms like Splunk.",
       "techStack": ["AI", "Flask", "CNN", "Threat Intelligence", "SIEM"],
       "tags": ["Cybersecurity", "AI", "Threat Detection"],
