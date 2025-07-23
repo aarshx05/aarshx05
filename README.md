@@ -2,7 +2,7 @@
 
 # <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&duration=4000&lines=Hey+There!;+I'm+Aarsh+Chaurasia;" />
 
-### Cybersecurity Practitioner | Security Contributor | Building at [Okynus Tech](https://okynus.tech/)
+### Cybersecurity Practitioner | Security Contributor | Building [Okynus Tech](https://okynus.tech/)
 
 Passionate about building secure systems with real-world impact.  
 Actively contributing to the cybersecurity ecosystem through offensive research, red teaming, and threat intelligence.
