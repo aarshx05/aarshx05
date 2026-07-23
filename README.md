@@ -2,7 +2,7 @@
 
 # <img src="https://readme-typing-svg.herokuapp.com/?font=Righteous&size=35&duration=4000&lines=Hey+There!;+I'm+Aarsh+Chaurasia;" />
 
-<h3 align="center">Security Intern @ Microsoft | Cloud Security Student | Founder @ Okynus Tech</h3>
+<h3 align="center">Security Intern @ Microsoft | Cloud Security Student | Ex - Founder @ Okynus Tech</h3>
 
 <p align="center">
 Passionate about building secure systems with real-world impact.<br>
