@@ -14,7 +14,7 @@ Actively contributing to the cybersecurity ecosystem through offensive security 
 ## Current Focus
 
 ```yaml
-Role: Product Security Intern at we45
+Role: Security Intern at Microsoft
 Specialization: DevSecOps and Threat Modeling
 Building: Enterprise data security solutions at Okynus Tech (IIT Kanpur C3iHub Incubated)
 Expertise: Application Security | Web/API Security | VAPT | Bug Bounty Triage | DevSecOps
