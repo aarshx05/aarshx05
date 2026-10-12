@@ -265,7 +265,49 @@ The examples at $q=7,11,31$ come from the exceptional rotation groups $S_4$ and 
 
 ---
 
-## 8. What remains for the general case
+## 8. Approaches to the general case that cannot work, and why
+
+This section records attempts at the general case that were tested and ruled out, so that nobody repeats them. Two of them are proper negative results.
+
+### 8.1 A rep-free form of Theorem A
+
+For chords $\pi=\{a,\psi a\}$, $\rho=\{c,\psi c\}$ put
+$$E_{\pi\rho}=\chi\big((a,c;\psi a,\psi c)\big)=\chi\big([a,\psi a][c,\psi c][a,\psi c][c,\psi a]\big).$$
+This is independent of which endpoint represents each chord (swapping $a\leftrightarrow\psi a$ flips two of the four brackets), and $E_{\pi\rho}=\chi(1-\lambda(\pi,\rho))$ is the exotic sign of §3. Theorem A reads: **$\psi$ is canonical iff $E=\varepsilon\varepsilon^{\mathsf T}-I$ for some $\varepsilon\in\{\pm1\}^{M}$.** For $\psi(z)=n/z$ one has $E_{\pi\rho}=\varepsilon(a)\varepsilon(c)$ with $\varepsilon(a)=\chi(a^2-n)$.
+
+With $T$ the number of positive triangles minus negative ones (so $T=\binom m3$ iff canonical) and $K$ the matrix of §3,
+$$\operatorname{tr}K^3=3(q^2-1)+48\,T,\qquad \lambda_{\max}(K)=2\lambda_{\max}(E+I)-1 .$$
+(The first identity: ordered point-triples that meet some chord twice all contribute $+1$ by Lemma 3.1; there are $3(q^2-1)$ of them. The second: $K+I=D\big((E+I)\otimes J_2\big)D$ for a diagonal $\pm1$ matrix $D$.) So the conjecture is the statement $\lambda_{\max}(K)=q$, and a proof must get at $\operatorname{tr}K^3$ or $\lambda_{\max}(K)$ from the hypothesis.
+
+### 8.2 Negative result: no clique-bound certificate exists
+
+Let $\Gamma$ be the graph on all $q(q+1)/2$ chords, adjacent when they cross. An all-crossing matching is a clique of size $m=(q+1)/2$. The Blokhuis–Seress–Wilbrink style of argument for $q\equiv1 \pmod 4$ is a bound of Hoffman/Delsarte type, and its natural generalisation is the Lovász theta bound: a $PGL(2,q)$-invariant matrix $Z=J+\sum_c z_cA_c$ (sum over the non-crossing orbital classes $c$) with $\lambda_{\max}(Z)=m$. If such a $Z$ existed, every clique of size $m$ would satisfy $Z\mathbf 1_S=m\mathbf 1_S$, which gives strong regularity conditions that could be exploited. Averaging over $PGL(2,q)$ shows that one may assume $Z$ class-constant, so the condition for the canonical clique $S$ is a linear system in the $(q-1)/4+1$ unknowns $z_c$, one equation per chord outside $S$.
+
+[`theta_test.py`](theta_test.py) computes this system. **For $q=43,47,59,67$ it has full column rank, so the only solution is $z=0$, which is not a certificate.** Hence $\vartheta(\bar\Gamma)>m$ for these $q$ and the clique-bound route is closed for $q\equiv3 \pmod 4$. The reason is Lemma 4.1: the number of canonical chords crossed by an outside chord is governed by an elliptic-curve point count and is far from constant, and no reweighting of the cross-ratio classes evens it out.
+
+### 8.3 Negative result: no group-theoretic shortcut
+
+Every pair $\pi,\rho\in M$ determines the elliptic involution $\sigma_{\pi\rho}\in PSL(2,q)$ having both as orbits. One might hope that $H=\langle\sigma_{\pi\rho}\rangle$ is small, or that $M$ is $H$-invariant, and then apply Dickson's classification of subgroups of $PSL(2,q)$. [`structure_probe.py`](structure_probe.py) shows:
+
+| $q$ | $|H|$ | $M$ invariant under $H$? |
+|---|---|---|
+| 7 | 24 ($S_4$) | yes |
+| 11 | 60 ($A_5$) | yes |
+| 19, 23, 31 | $|PSL(2,q)|$ | no |
+
+So for the "generic" counterexamples the crossing involutions generate the whole group and $M$ is not invariant. Nothing can be extracted from $H$ alone.
+
+### 8.4 Spectral gap of the counterexamples
+
+For the same five counterexamples, $\lambda_{\max}(K)=3,3,11,9.93,9.93$, against $\lambda_{\max}(K)=q$ for the canonical solution. The non-canonical $E$ behaves like a random $\pm1$ matrix ($\lambda_{\max}\approx2\sqrt m$), while the canonical one has rank one. A proof will therefore have to show a dichotomy, not a perturbation statement: there is no "almost canonical" regime to exploit (Theorem B already says agreement on just over half the points forces full agreement).
+
+### 8.5 Subfields
+
+The $q=27$ counterexample is invariant under the Frobenius $z\mapsto z^3$ and restricts to the canonical solution $z\mapsto-1/z$ on $PG(1,3)$. In general, if $\psi$ commutes with Frobenius then $\psi|_{PG(1,p)}$ is again all-crossing (for $x\in GF(p)$, $\chi_q(x)=\chi_p(x)^k=\chi_p(x)$ as $k$ is odd), hence canonical once $p\ge43$. But this says nothing about $\psi$ off the subfield, and the prime-field counterexamples show that a subfield argument cannot be the whole story.
+
+### 8.6 What a proof must do
+
+Theorems A–C show that a counterexample for large $q$ has very specific features:
 
 Theorems A–C show that a counterexample for large $q$ has very specific features:
 
