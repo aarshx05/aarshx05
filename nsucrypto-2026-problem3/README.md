@@ -1,0 +1,32 @@
+# NSUCRYPTO 2026, Round 2: Problem 3 «The BSW Conjecture»
+
+The full solution is in **[SOLUTION.md](SOLUTION.md)**.
+
+## Results
+
+* **Computer-assisted proof.** Conjecture 1 holds for every prime power q ≡ 3 (mod 4) with 31 < q < 700 (61 values). With the Blokhuis–Seress–Wilbrink theorem for q ≡ 1 (mod 4), it therefore holds for all odd prime powers 31 < q < 700.
+* **The bound is sharp.** There are counterexamples for q = 7, 11, 19, 23, 27, 31. The q = 31 example is "icosahedral" (its stabiliser in PGL(2,31) is A5).
+* **Theorem A.** For q ≡ 3 (mod 4), ψ is canonical if and only if it has no "negative triangle". The sign of a triangle is χ((1−λ₁)(1−λ₂)(1−λ₃)), where λᵢ are the pairwise cross-ratios. The proof uses Carlitz's theorem.
+* **Theorem B (stability).** If ψ(x) = n/x for more than (q + 2√q − 7)/2 values of x, then it holds for all x.
+* **Theorem C (spreading).** A counterexample shares at most 3.5√q + 6 pairs with any elliptic involution.
+
+## Files
+
+| file | purpose |
+|------|---------|
+| `SOLUTION.md` | complete write-up with proofs |
+| `verify_bsw.c` | exhaustive search with symmetry breaking for one q; supports prime powers |
+| `run_all.sh` | runs `verify_bsw` for every prime power q ≡ 3 (mod 4) in a range |
+| `results_q3mod4_32_700.txt` | output of `./run_all.sh 32 700` |
+| `results_q1mod4_5_293.txt` | consistency run for q ≡ 1 (mod 4) |
+| `bruteforce_check.py` | independent brute-force cross-check for small primes |
+| `check_examples.py` | verifies the explicit small-q counterexamples |
+
+```sh
+gcc -O3 -march=native -o verify_bsw verify_bsw.c
+./verify_bsw 43              # -> RESULT: conjecture holds for q=43
+./verify_bsw 31 -print       # -> prints a counterexample for q=31
+./run_all.sh 32 700 > results_q3mod4_32_700.txt
+python3 bruteforce_check.py 7 11 19 23 31 43 47 59
+python3 check_examples.py
+```
