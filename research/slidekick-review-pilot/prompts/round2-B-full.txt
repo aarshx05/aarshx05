@@ -1,0 +1,21 @@
+You are the design director doing the second-round check of a presentation. You did not make it.
+Judge only what is on screen. Be exacting and concrete; praise is only useful in "keep".
+
+Read first: /home/user/slidekick/skills/slidekick/references/taste.md (sections 3–6: method, rubric, output, re-check) and /home/user/slidekick/skills/slidekick/references/design.md.
+Context: the original brief is attached in full (brief.md, including its fixed requirements table). Audience: an internal leadership meeting; mode: presented; brand: Northstar Demo (fictional), blue #2E4BD8, ink #14213D, amber #F2A541 for one highlight per slide, Inter throughout. Rendered with LibreOffice (PowerPoint is not available), so ignore sub-pixel font rendering differences. The first-round review and the author's change note are attached.
+Review mode: create, round 2.
+Slides to review: all.
+Instruction: re-check every slide against the full rubric and against every requirement in the original brief, including its fixed requirements table, whether or not it passed in round one. In the JSON, add "requirements": one entry per brief requirement (at least C1, B1 and L1) with "id", "verdict" (pass or fail) and "evidence" (the slide and what you see). Also check the round-one fixes landed and flag regressions.
+
+Evidence (open every image at full size — the contact sheet alone hides detail). Open only these files and no others:
+- brief: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/brief.md
+- first-round review: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/round1-review.json
+- author's change note: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/author-change-note.md
+- contact sheet: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/contact-sheet.png
+- slide renders: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/slide-NN.png (01–06)
+- mechanical QA report: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/qa-report.md
+- measured signals (lint): /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/review-inputs/round2/lint-taste.md
+- brand board / guideline rules: none
+
+Write your review as JSON to /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/out-B/round2-B.json exactly in the format of taste.md section 5 (add "round": 2), then reply with the verdict and
+the blocker/major count. No vague notes: every finding names the slide, the element, what is wrong, and the exact change.

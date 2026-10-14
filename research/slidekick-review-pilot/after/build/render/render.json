@@ -1,0 +1,28 @@
+{
+  "slides": [
+    {
+      "index": 1
+    },
+    {
+      "index": 2
+    },
+    {
+      "index": 3
+    },
+    {
+      "index": 4
+    },
+    {
+      "index": 5
+    },
+    {
+      "index": 6
+    }
+  ],
+  "engine": "libreoffice",
+  "seconds": 1.7,
+  "pptx": "/tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/after/deck.pptx",
+  "errors": [
+    "powerpoint: not installed"
+  ]
+}

@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Northstar Demo: Q3 field update (synthetic)</title>
+<link rel="stylesheet" href="deck.css">
+<link rel="stylesheet" href="brand.css">
+<style>
+  :root {
+    --blue: var(--brand-accent1); --amber: var(--brand-accent2); --ink: var(--brand-dk1); --mist: var(--brand-lt2);
+    --muted: color-mix(in srgb, var(--brand-dk1) 64%, #FFFFFF);
+    --line: color-mix(in srgb, var(--brand-dk1) 16%, #FFFFFF);
+    --blue-tint: color-mix(in srgb, var(--brand-accent1) 28%, #FFFFFF);
+  }
+  section.slide { background: #FFFFFF; color: var(--ink); }
+  section.slide.ink { background: var(--ink); color: #FFFFFF; }
+  p, h1, h2 { margin: 0; }
+  .hero  { font: 800 88px/96px var(--font-display); letter-spacing: -0.03em; }
+  .stmt  { font: 800 56px/64px var(--font-display); letter-spacing: -0.02em; }
+  .title { font: 700 44px/52px var(--font-display); letter-spacing: -0.015em; }
+  .lead  { font: 400 28px/40px var(--font-body); }
+  .body  { font: 400 22px/32px var(--font-body); }
+  .label { font: 600 22px/32px var(--font-body); }
+  .note  { font: 400 18px/24px var(--font-body); color: var(--muted); }
+  .num   { font: 800 96px/96px var(--font-display); letter-spacing: -0.03em; color: var(--blue); }
+  .mark  { font: 700 18px/24px var(--font-display); letter-spacing: 0.01em; color: var(--blue); }
+  .muted { color: var(--muted); }
+  table.sites { border-collapse: collapse; font: 400 22px/32px var(--font-body); color: var(--ink); }
+  table.sites th { font: 600 18px/24px var(--font-body); color: var(--muted); text-align: left; padding: 0 16px 12px 16px; border-bottom: 2px solid var(--ink); }
+  table.sites td { padding: 16px; border-bottom: 1px solid var(--line); }
+  table.sites td.n { text-align: right; }
+  table.sites tr.top td { background: var(--mist); font-weight: 600; }
+  table.sites tr.total td { font-weight: 600; border-bottom: none; }
+</style>
+</head>
+<body>
+<script>if (/[?&]debug/.test(location.search)) document.body.classList.add('debug');</script>
+
+<!-- 1. Title -->
+<section class="slide ink" data-transition="fade">
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:64px; width:400px; font-size:22px; line-height:32px; color:#FFFFFF">Northstar Demo</p>
+  <div data-pptx="shape" data-name="Accent bar" class="abs" style="left:64px; top:224px; width:64px; height:6px; background:var(--amber)"></div>
+  <h1 data-pptx="text" data-name="Title" class="abs hero" style="left:60px; top:256px; width:900px">Q3 field update</h1>
+  <p data-pptx="text" data-name="Subtitle" class="abs lead" style="left:64px; top:376px; width:760px; color:color-mix(in srgb, #FFFFFF 72%, var(--brand-dk1))">A synthetic deck for a review-regression pilot. Every number in it is fictional.</p>
+  <aside class="notes">Synthetic deck. The company and every number are fictional.</aside>
+</section>
+
+<!-- 2. Statement -->
+<section class="slide" data-transition="fade">
+  <h2 data-pptx="text" data-name="Statement" class="abs stmt" style="left:64px; top:232px; width:880px">Sensor uptime held above 99%<br>all quarter</h2>
+  <p data-pptx="text" data-name="Support" class="abs lead muted" style="left:64px; top:392px; width:760px">Across all 41 sites, from July to September.</p>
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+  <aside class="notes">The headline number for the quarter.</aside>
+</section>
+
+<!-- 3. Chart, with the C1 footnote beside it -->
+<section class="slide" data-transition="fade">
+  <h2 data-pptx="text" data-name="Headline" class="abs title" style="left:64px; top:112px; width:900px">Monthly readings grew 2.4× from July to September</h2>
+  <div data-pptx="chart" data-name="Chart – monthly readings" class="abs" style="left:64px; top:208px; width:768px; height:400px; font:400 22px var(--font-body); color:var(--ink)"
+       data-chart='{"type":"column","categories":["Jul","Aug","Sep"],"series":[{"name":"Readings (thousands)","values":[120,190,290],"color":"#B9C3F3","point_colors":{"2":"#2E4BD8"}}],
+                    "labels":true,"number_format":"#,##0\"k\"","label_position":"outside_end","gridlines":false,"value_axis":false,"legend":"none","gap":80}'></div>
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+  <aside class="notes">September is the record month.</aside>
+</section>
+
+<!-- 4. Three numbers -->
+<section class="slide" data-transition="fade">
+  <h2 data-pptx="text" data-name="Headline" class="abs title" style="left:64px; top:112px; width:900px">The network ran at 99.3% uptime across 41 sites</h2>
+  <p data-pptx="text" data-name="Stat uptime" class="abs num" style="left:60px; top:272px; width:352px">99.3%</p>
+  <p data-pptx="text" data-name="Stat uptime label" class="abs body" style="left:64px; top:384px; width:352px">uptime</p>
+  <p data-pptx="text" data-name="Stat sites" class="abs num" style="left:444px; top:272px; width:352px">41</p>
+  <p data-pptx="text" data-name="Stat sites label" class="abs body" style="left:448px; top:384px; width:352px">sites live</p>
+  <p data-pptx="text" data-name="Stat repair" class="abs num" style="left:828px; top:272px; width:352px">6&nbsp;h</p>
+  <p data-pptx="text" data-name="Stat repair label" class="abs body" style="left:832px; top:384px; width:352px">median repair time</p>
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+  <aside class="notes">Three numbers, all fictional.</aside>
+</section>
+
+<!-- 5. Table -->
+<section class="slide" data-transition="fade">
+  <h2 data-pptx="text" data-name="Headline" class="abs title" style="left:64px; top:112px; width:900px">North carries 17 of the 41 sites</h2>
+  <table data-pptx="table" data-name="Table – sites by region" class="abs sites" style="left:64px; top:216px; width:640px">
+    <tr><th>Region</th><th style="text-align:right">Sites</th></tr>
+    <tr class="top"><td>North</td><td class="n">17</td></tr>
+    <tr><td>Central</td><td class="n">14</td></tr>
+    <tr><td>South</td><td class="n">10</td></tr>
+    <tr class="total"><td>Total</td><td class="n">41</td></tr>
+  </table>
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+  <aside class="notes">Sites by region.</aside>
+</section>
+
+<!-- 6. Closing: timeline and card stack (L1) -->
+<section class="slide" data-transition="fade">
+  <h2 data-pptx="text" data-name="Headline" class="abs stmt" style="left:64px; top:112px; width:640px">Next: 20 more sites<br>by Q1</h2>
+  <div data-pptx="group" data-name="Card stack" class="abs" style="left:816px; top:200px; width:368px; height:248px">
+    <div data-pptx="shape" data-name="Card back" class="abs" style="left:48px; top:48px; width:320px; height:200px; border-radius:24px; background:var(--amber)"></div>
+    <div data-pptx="shape" data-name="Card middle" class="abs" style="left:24px; top:24px; width:320px; height:200px; border-radius:24px; background:var(--blue)"></div>
+    <div data-pptx="shape" data-name="Card top" class="abs" style="left:0; top:0; width:320px; height:200px; border-radius:24px; background:#FFFFFF; border:2px solid var(--ink); box-sizing:border-box"></div>
+    <p data-pptx="text" data-name="Card number" class="abs" style="left:32px; top:32px; width:256px; font:800 56px/64px var(--font-display); letter-spacing:-0.02em; color:var(--blue)">20 sites</p>
+    <p data-pptx="text" data-name="Card label" class="abs body" style="left:32px; top:112px; width:256px">planned by Q1</p>
+  </div>
+  <div data-pptx="group" data-name="Timeline" class="abs" style="left:64px; top:520px; width:1152px; height:96px">
+    <div data-pptx="shape" data-name="Timeline rule" class="abs" style="left:0; top:8px; width:1152px; height:2px; background:var(--ink)"></div>
+    <div data-pptx="shape" data-name="Dot Oct" class="abs" style="left:0; top:1px; width:16px; height:16px; border-radius:50%; background:var(--blue)"></div>
+    <div data-pptx="shape" data-name="Dot Nov" class="abs" style="left:384px; top:1px; width:16px; height:16px; border-radius:50%; background:var(--blue)"></div>
+    <div data-pptx="shape" data-name="Dot Dec" class="abs" style="left:768px; top:1px; width:16px; height:16px; border-radius:50%; background:var(--blue)"></div>
+    <p data-pptx="text" data-name="Step Oct" class="abs label" style="left:0; top:32px; width:352px">Oct · 6 sites</p>
+    <p data-pptx="text" data-name="Step Nov" class="abs label" style="left:384px; top:32px; width:352px">Nov · 7 sites</p>
+    <p data-pptx="text" data-name="Step Dec" class="abs label" style="left:768px; top:32px; width:352px">Dec · 7 sites</p>
+  </div>
+  <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+  <aside class="notes">Six, seven and seven sites take the network from 41 to 61.</aside>
+</section>
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+extract      6 slides, 0 warning(s)
+pptx         /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/before/deck.pptx
+render       libreoffice (4.2s)
+QA           PASS-WITH-WARNINGS — 0 error(s), 2 warning(s), renderer=libreoffice
+  slide  1  diff   0.8%  words 18
+  slide  2  diff   0.7%  words 17
+  slide  3  diff   0.3%  words 15
+  slide  4  diff   0.6%  words 21
+  slide  5  diff   0.2%  words 19
+  slide  6  diff   0.5%  words 25
+  warn  [slide -] renderer: rendered with libreoffice, an approximation of PowerPoint: pixel diffs are advisory, not failures (install PowerPoint for ground-truth QA)
+  warn  [slide 1] visual-drift: 0.8% differ, largest mismatch 20 cells — (560,272 128x80) e3 h1.abs.hero[data-name="Title"] "Q3 field update"; (128,272 48x80) e3 h1.abs.hero[data-name="Title"] "Q3 field update"; (256,288 48x64) e3 h1.abs.hero[data-name="Title"] "Q3 field update". See qa/compare-01.png
+report       /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/before/qa/report.md
+contact      /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/before/qa/contact-sheet.png
+taste        10 finding(s) — 6 distinct compositions in 6 slides, 7 text sizes, 1 families
+  major  [slide 1] near-miss: left edges 4px apart — align them exactly or offset on purpose — Brand name p.abs.mark[data-name="Brand name"] "Northstar Demo" / Title h1.abs.hero[data-name="Title"] "Q3 field update"
+  major  [slide 1] near-miss: left edges 4px apart — align them exactly or offset on purpose — Accent bar div.abs[data-name="Accent bar"] / Title h1.abs.hero[data-name="Title"] "Q3 field update"
+  major  [slide 1] near-miss: left edges 4px apart — align them exactly or offset on purpose — Title h1.abs.hero[data-name="Title"] "Q3 field update" / Subtitle p.abs.lead[data-name="Subtitle"] "A synthetic deck for a review-regression"
+  major  [slide 1] margin: left margin 60px vs 64px on most slides
+  major  [slide 2] runt: headline ends in a short last line (“…99%all quarter”) — rebalance with a <br> or a narrower box, or edit the copy — Statement h2.abs.stmt[data-name="Statement"] "Sensor uptime held above 99% all quarter"
+  major  [slide 3] runt: headline ends in a short last line (“…to September”) — rebalance with a <br> or a narrower box, or edit the copy — Headline h2.abs.title[data-name="Headline"] "Monthly readings grew 2.4× from July to "
+  major  [slide 4] runt: headline ends in a short last line (“…41 sites”) — rebalance with a <br> or a narrower box, or edit the copy — Headline h2.abs.title[data-name="Headline"] "The network ran at 99.3% uptime across 4"
+  major  [slide 6] runt: headline ends in a short last line (“…sitesby Q1”) — rebalance with a <br> or a narrower box, or edit the copy — Headline h2.abs.stmt[data-name="Headline"] "Next: 20 more sites by Q1"
+  polish [slide -] type-scale: 88px and 96px are too close to read as different levels — merge them
+  polish [slide -] weights: Inter in 4 weights (400, 600, 700, 800) — 2–3 weights read as a system
+taste report /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/before/qa/taste.md

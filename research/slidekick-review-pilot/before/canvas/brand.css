@@ -1,0 +1,24 @@
+/* Generated from brand/brand.json by `deck.py tokens` — edit brand.json, not this file. */
+:root {
+  --brand-dk1: #14213D;
+  --brand-lt1: #FFFFFF;
+  --brand-dk2: #2E4BD8;
+  --brand-lt2: #EEF0FB;
+  --brand-accent1: #2E4BD8;
+  --brand-accent2: #F2A541;
+  --brand-accent3: #1D2E86;
+  --brand-accent4: #8697E8;
+  --brand-accent5: #966628;
+  --brand-accent6: #F7CB91;
+  --color-primary: #2E4BD8;
+  --color-primary-text: #2E4BD8;
+  --color-bg: #FFFFFF;
+  --color-text: #14213D;
+  --color-dark: #2E4BD8;
+  --color-surface: #EEF0FB;
+  --color-accent-1: #2E4BD8;
+  --color-accent-2: #F2A541;
+  --color-muted: color-mix(in srgb, #14213D 62%, #FFFFFF);
+  --font-display: 'Inter', Segoe UI, Arial, sans-serif;
+  --font-body: 'Inter', Segoe UI, Arial, sans-serif;
+}

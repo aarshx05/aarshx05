@@ -1,0 +1,121 @@
+{
+  "metrics": {
+    "source": "layout",
+    "slides": 6,
+    "compositions": 6,
+    "font_sizes": [
+      18.0,
+      22.0,
+      28.0,
+      44.0,
+      56.0,
+      88.0,
+      96.0
+    ],
+    "families": [
+      "Inter"
+    ],
+    "off_palette": [],
+    "kicker_slides": [],
+    "card_grid_slides": [],
+    "headline_positions": {
+      "1": [
+        60,
+        335
+      ],
+      "2": [
+        64,
+        284
+      ],
+      "3": [
+        64,
+        154
+      ],
+      "4": [
+        64,
+        154
+      ],
+      "5": [
+        64,
+        154
+      ],
+      "6": [
+        64,
+        164
+      ]
+    }
+  },
+  "findings": [
+    {
+      "severity": "major",
+      "code": "near-miss",
+      "slide": 1,
+      "msg": "left edges 4px apart — align them exactly or offset on purpose",
+      "el": "Brand name p.abs.mark[data-name=\"Brand name\"] \"Northstar Demo\" / Title h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+    },
+    {
+      "severity": "major",
+      "code": "near-miss",
+      "slide": 1,
+      "msg": "left edges 4px apart — align them exactly or offset on purpose",
+      "el": "Accent bar div.abs[data-name=\"Accent bar\"] / Title h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+    },
+    {
+      "severity": "major",
+      "code": "near-miss",
+      "slide": 1,
+      "msg": "left edges 4px apart — align them exactly or offset on purpose",
+      "el": "Title h1.abs.hero[data-name=\"Title\"] \"Q3 field update\" / Subtitle p.abs.lead[data-name=\"Subtitle\"] \"A synthetic deck for a review-regression\""
+    },
+    {
+      "severity": "major",
+      "code": "margin",
+      "slide": 1,
+      "msg": "left margin 60px vs 64px on most slides",
+      "el": ""
+    },
+    {
+      "severity": "major",
+      "code": "runt",
+      "slide": 2,
+      "msg": "headline ends in a short last line (“…99%all quarter”) — rebalance with a <br> or a narrower box, or edit the copy",
+      "el": "Statement h2.abs.stmt[data-name=\"Statement\"] \"Sensor uptime held above 99% all quarter\""
+    },
+    {
+      "severity": "major",
+      "code": "runt",
+      "slide": 3,
+      "msg": "headline ends in a short last line (“…to September”) — rebalance with a <br> or a narrower box, or edit the copy",
+      "el": "Headline h2.abs.title[data-name=\"Headline\"] \"Monthly readings grew 2.4× from July to \""
+    },
+    {
+      "severity": "major",
+      "code": "runt",
+      "slide": 4,
+      "msg": "headline ends in a short last line (“…41 sites”) — rebalance with a <br> or a narrower box, or edit the copy",
+      "el": "Headline h2.abs.title[data-name=\"Headline\"] \"The network ran at 99.3% uptime across 4\""
+    },
+    {
+      "severity": "major",
+      "code": "runt",
+      "slide": 6,
+      "msg": "headline ends in a short last line (“…sitesby Q1”) — rebalance with a <br> or a narrower box, or edit the copy",
+      "el": "Headline h2.abs.stmt[data-name=\"Headline\"] \"Next: 20 more sites by Q1\""
+    },
+    {
+      "severity": "polish",
+      "code": "type-scale",
+      "slide": 0,
+      "msg": "88px and 96px are too close to read as different levels — merge them",
+      "el": ""
+    },
+    {
+      "severity": "polish",
+      "code": "weights",
+      "slide": 0,
+      "msg": "Inter in 4 weights (400, 600, 700, 800) — 2–3 weights read as a system",
+      "el": ""
+    }
+  ],
+  "report": "/tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/after/qa/taste.md"
+}

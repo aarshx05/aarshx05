@@ -1,0 +1,10 @@
+7,8c7,8
+< Slides to review: the changed slides (see the author's change note) plus the contact sheet; look at neighbours for consistency.
+< Instruction: check these fixes landed; flag regressions.
+---
+> Slides to review: all.
+> Instruction: re-check every slide against the full rubric and against every requirement in the original brief, including its fixed requirements table, whether or not it passed in round one. In the JSON, add "requirements": one entry per brief requirement (at least C1, B1 and L1) with "id", "verdict" (pass or fail) and "evidence" (the slide and what you see). Also check the round-one fixes landed and flag regressions.
+20c20
+< Write your review as JSON to /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/out-A/round2-A.json exactly in the format of taste.md section 5 (add "round": 2), then reply with the verdict and
+---
+> Write your review as JSON to /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/out-B/round2-B.json exactly in the format of taste.md section 5 (add "round": 2), then reply with the verdict and

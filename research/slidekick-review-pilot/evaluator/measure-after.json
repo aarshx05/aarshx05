@@ -1,0 +1,85 @@
+{
+  "project": "after",
+  "C1": {
+    "design": false,
+    "exported": false,
+    "rendered_pdf_text": false,
+    "pass": false
+  },
+  "B1": {
+    "per_slide": [
+      {
+        "slide": 1,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      },
+      {
+        "slide": 2,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      },
+      {
+        "slide": 3,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      },
+      {
+        "slide": 4,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      },
+      {
+        "slide": 5,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      },
+      {
+        "slide": 6,
+        "design": true,
+        "exported": true,
+        "rendered_pdf_text": true
+      }
+    ],
+    "pass": true
+  },
+  "L1": {
+    "design_boxes_px": {
+      "card_stack": {
+        "x": 816,
+        "y": 200,
+        "w": 368,
+        "h": 248
+      },
+      "timeline": {
+        "x": 64,
+        "y": 520,
+        "w": 1152,
+        "h": 96
+      }
+    },
+    "design_clearance_pt": 54.0,
+    "exported_boxes_pt": {
+      "card_stack": {
+        "top": 150.75,
+        "bottom": 336.0
+      },
+      "timeline": {
+        "top": 390.75,
+        "bottom": 438.0
+      }
+    },
+    "exported_clearance_pt": 54.75,
+    "rendered": {
+      "card_stack_bottom_px": 447.3333333333333,
+      "timeline_top_px": 521.3333333333334,
+      "clearance_pt": 55.5,
+      "method": "lowest amber (#F2A541) pixel row of the card stack vs topmost blue (#2E4BD8) pixel of the first timeline dot, in slide-06.png scaled to 1280x720"
+    },
+    "pass": true
+  }
+}

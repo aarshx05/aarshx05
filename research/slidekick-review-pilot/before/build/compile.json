@@ -1,0 +1,77 @@
+{
+  "slides": [
+    {
+      "index": 1,
+      "shapes": 4,
+      "animations": 0,
+      "transition": "fade"
+    },
+    {
+      "index": 2,
+      "shapes": 3,
+      "animations": 0,
+      "transition": "fade"
+    },
+    {
+      "index": 3,
+      "shapes": 4,
+      "animations": 0,
+      "transition": "fade"
+    },
+    {
+      "index": 4,
+      "shapes": 8,
+      "animations": 0,
+      "transition": "fade"
+    },
+    {
+      "index": 5,
+      "shapes": 3,
+      "animations": 0,
+      "transition": "fade"
+    },
+    {
+      "index": 6,
+      "shapes": 4,
+      "animations": 0,
+      "transition": "fade"
+    }
+  ],
+  "fonts": {
+    "Inter": {
+      "installed": true,
+      "system": true,
+      "files": {
+        "bold": "/usr/share/fonts/opentype/inter/Inter-Bold.otf",
+        "regular": "/usr/share/fonts/opentype/inter/Inter-Regular.otf"
+      },
+      "embeddable": true,
+      "kit_only": false
+    },
+    "Inter ExtraBold": {
+      "installed": true,
+      "system": true,
+      "files": {
+        "regular": "/usr/share/fonts/opentype/inter/Inter-ExtraBold.otf"
+      },
+      "embeddable": true,
+      "kit_only": false
+    },
+    "Inter SemiBold": {
+      "installed": true,
+      "system": true,
+      "files": {
+        "regular": "/usr/share/fonts/opentype/inter/Inter-SemiBold.otf"
+      },
+      "embeddable": true,
+      "kit_only": false
+    }
+  },
+  "warnings": [],
+  "calibration": {
+    "styles": 11,
+    "measured": 0
+  },
+  "output": "/tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot/before/deck.pptx",
+  "sha256": "0e152568952563bd74ec768390e49ed0f038204f526db0e7fc66c632eab43346"
+}
