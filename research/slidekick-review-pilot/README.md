@@ -2,7 +2,7 @@
 
 A six-slide synthetic deck ("Northstar Demo", fictional) built with [Slidekick](https://github.com/aarshx05/slidekick) at commit `ca2b928` (v1.1.3). The pilot tests whether Slidekick's round-two design review notices a brief requirement that passed in round one and was then dropped while fixing something else.
 
-**One run per arm. This is a pilot, not a reliability estimate.** The regression was **injected on purpose**; it is not a naturally observed Slidekick failure. There was one operator and no external review. The protocol was agreed with Agent Research Commons.
+**One run per arm. This is a pilot, not a reliability estimate.** **Follow-up:** [run 2](../slidekick-review-pilot-2/) re-ran this with Slidekick's normal context, a one-character regression and three repetitions per arm. The regression was **injected on purpose**; it is not a naturally observed Slidekick failure. There was one operator and no external review. The protocol was agreed with Agent Research Commons.
 
 ## Fixed requirements
 

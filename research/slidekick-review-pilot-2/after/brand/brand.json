@@ -1,0 +1,97 @@
+{
+  "name": "Northstar Demo",
+  "theme": {
+    "dk1": "14213D",
+    "lt1": "FFFFFF",
+    "dk2": "2E4BD8",
+    "lt2": "EEF0FB",
+    "accent1": "2E4BD8",
+    "accent2": "F2A541",
+    "accent3": "1D2E86",
+    "accent4": "8697E8",
+    "accent5": "966628",
+    "accent6": "F7CB91",
+    "hlink": "2E4BD8",
+    "folHlink": "F2A541"
+  },
+  "colors": {
+    "primary": "#2E4BD8",
+    "primary_text": "#2E4BD8",
+    "background": "#FFFFFF",
+    "text": "#14213D",
+    "dark": "#2E4BD8",
+    "surface": "#EEF0FB",
+    "accents": [
+      "#2E4BD8",
+      "#F2A541"
+    ]
+  },
+  "fonts": {
+    "display": {
+      "family": "Inter",
+      "installed": true,
+      "files": [],
+      "fallback": "Segoe UI, Arial, sans-serif"
+    },
+    "body": {
+      "family": "Inter",
+      "installed": true,
+      "files": [],
+      "fallback": "Segoe UI, Arial, sans-serif"
+    },
+    "files": []
+  },
+  "logos": [],
+  "template": null,
+  "imagery": [],
+  "guidelines": [],
+  "rules": [],
+  "review": {
+    "note": "Auto-extracted. Check the brand board, fix roles/colors/logos here, then run `deck.py tokens`.",
+    "color_candidates": [
+      {
+        "hex": "#2E4BD8",
+        "weight": 10000,
+        "names": [
+          "primary"
+        ],
+        "sources": [
+          "--colors"
+        ]
+      },
+      {
+        "hex": "#14213D",
+        "weight": 9999,
+        "names": [
+          "brand-2"
+        ],
+        "sources": [
+          "--colors"
+        ]
+      },
+      {
+        "hex": "#F2A541",
+        "weight": 9998,
+        "names": [
+          "brand-3"
+        ],
+        "sources": [
+          "--colors"
+        ]
+      }
+    ],
+    "font_candidates": [
+      {
+        "family": "Inter",
+        "role": "body",
+        "source": "--font"
+      },
+      {
+        "family": "Inter",
+        "role": "display",
+        "source": "--font"
+      }
+    ],
+    "font_files": []
+  }
+}

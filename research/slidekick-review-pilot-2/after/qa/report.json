@@ -1,0 +1,308 @@
+{
+  "status": "pass-with-warnings",
+  "errors": 0,
+  "warnings": 2,
+  "renderer": "libreoffice",
+  "slides": [
+    {
+      "slide": 1,
+      "diff": 0.0081,
+      "words": 18,
+      "regions": [
+        {
+          "x": 560.0,
+          "y": 272.0,
+          "w": 128.0,
+          "h": 80.0,
+          "area": 20,
+          "elements": [
+            "e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+          ]
+        },
+        {
+          "x": 128.0,
+          "y": 272.0,
+          "w": 48.0,
+          "h": 80.0,
+          "area": 11,
+          "elements": [
+            "e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+          ]
+        },
+        {
+          "x": 256.0,
+          "y": 288.0,
+          "w": 48.0,
+          "h": 64.0,
+          "area": 8,
+          "elements": [
+            "e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+          ]
+        },
+        {
+          "x": 208.0,
+          "y": 256.0,
+          "w": 48.0,
+          "h": 48.0,
+          "area": 7,
+          "elements": [
+            "e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\""
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 2,
+      "diff": 0.0066,
+      "words": 17,
+      "regions": [
+        {
+          "x": 64.0,
+          "y": 240.0,
+          "w": 32.0,
+          "h": 48.0,
+          "area": 6,
+          "elements": [
+            "e5 h2.abs.stmt[data-name=\"Statement\"] \"Sensor uptime held above 99% all quarter\""
+          ]
+        },
+        {
+          "x": 272.0,
+          "y": 304.0,
+          "w": 48.0,
+          "h": 48.0,
+          "area": 5,
+          "elements": [
+            "e5 h2.abs.stmt[data-name=\"Statement\"] \"Sensor uptime held above 99% all quarter\""
+          ]
+        },
+        {
+          "x": 512.0,
+          "y": 240.0,
+          "w": 32.0,
+          "h": 48.0,
+          "area": 4,
+          "elements": [
+            "e5 h2.abs.stmt[data-name=\"Statement\"] \"Sensor uptime held above 99% all quarter\""
+          ]
+        },
+        {
+          "x": 768.0,
+          "y": 240.0,
+          "w": 32.0,
+          "h": 48.0,
+          "area": 4,
+          "elements": [
+            "e5 h2.abs.stmt[data-name=\"Statement\"] \"Sensor uptime held above 99% all quarter\""
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 3,
+      "diff": 0.0028,
+      "words": 15,
+      "regions": [
+        {
+          "x": 272.0,
+          "y": 128.0,
+          "w": 32.0,
+          "h": 32.0,
+          "area": 3,
+          "elements": [
+            "e8 h2.abs.title[data-name=\"Headline\"] \"Monthly readings grew 2.4× from July to \""
+          ]
+        },
+        {
+          "x": 480.0,
+          "y": 128.0,
+          "w": 32.0,
+          "h": 16.0,
+          "area": 2,
+          "elements": [
+            "e8 h2.abs.title[data-name=\"Headline\"] \"Monthly readings grew 2.4× from July to \""
+          ]
+        },
+        {
+          "x": 128.0,
+          "y": 176.0,
+          "w": 32.0,
+          "h": 16.0,
+          "area": 2,
+          "elements": [
+            "e8 h2.abs.title[data-name=\"Headline\"] \"Monthly readings grew 2.4× from July to \""
+          ]
+        },
+        {
+          "x": 560.0,
+          "y": 112.0,
+          "w": 16.0,
+          "h": 16.0,
+          "area": 1,
+          "elements": [
+            "e8 h2.abs.title[data-name=\"Headline\"] \"Monthly readings grew 2.4× from July to \""
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 4,
+      "diff": 0.0061,
+      "words": 21,
+      "regions": [
+        {
+          "x": 128.0,
+          "y": 272.0,
+          "w": 32.0,
+          "h": 96.0,
+          "area": 7,
+          "elements": [
+            "e13 p.abs.num[data-name=\"Stat uptime\"] \"99.3%\""
+          ]
+        },
+        {
+          "x": 208.0,
+          "y": 272.0,
+          "w": 48.0,
+          "h": 64.0,
+          "area": 6,
+          "elements": [
+            "e13 p.abs.num[data-name=\"Stat uptime\"] \"99.3%\""
+          ]
+        },
+        {
+          "x": 848.0,
+          "y": 272.0,
+          "w": 32.0,
+          "h": 48.0,
+          "area": 5,
+          "elements": [
+            "e17 p.abs.num[data-name=\"Stat repair\"] \"6 h\""
+          ]
+        },
+        {
+          "x": 80.0,
+          "y": 272.0,
+          "w": 32.0,
+          "h": 32.0,
+          "area": 3,
+          "elements": [
+            "e13 p.abs.num[data-name=\"Stat uptime\"] \"99.3%\""
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 5,
+      "diff": 0.002,
+      "words": 19,
+      "regions": [
+        {
+          "x": 128.0,
+          "y": 128.0,
+          "w": 16.0,
+          "h": 16.0,
+          "area": 1,
+          "elements": [
+            "e20 h2.abs.title[data-name=\"Headline\"] \"North carries 17 of the 41 sites\""
+          ]
+        },
+        {
+          "x": 224.0,
+          "y": 128.0,
+          "w": 16.0,
+          "h": 16.0,
+          "area": 1,
+          "elements": [
+            "e20 h2.abs.title[data-name=\"Headline\"] \"North carries 17 of the 41 sites\""
+          ]
+        },
+        {
+          "x": 256.0,
+          "y": 128.0,
+          "w": 16.0,
+          "h": 16.0,
+          "area": 1,
+          "elements": [
+            "e20 h2.abs.title[data-name=\"Headline\"] \"North carries 17 of the 41 sites\""
+          ]
+        },
+        {
+          "x": 320.0,
+          "y": 128.0,
+          "w": 16.0,
+          "h": 16.0,
+          "area": 1,
+          "elements": [
+            "e20 h2.abs.title[data-name=\"Headline\"] \"North carries 17 of the 41 sites\""
+          ]
+        }
+      ]
+    },
+    {
+      "slide": 6,
+      "diff": 0.0052,
+      "words": 25,
+      "regions": [
+        {
+          "x": 368.0,
+          "y": 128.0,
+          "w": 64.0,
+          "h": 48.0,
+          "area": 6,
+          "elements": [
+            "e23 h2.abs.stmt[data-name=\"Headline\"] \"Next: 20 more sites by Q1\""
+          ]
+        },
+        {
+          "x": 944.0,
+          "y": 240.0,
+          "w": 48.0,
+          "h": 48.0,
+          "area": 5,
+          "elements": [
+            "e28 p.abs[data-name=\"Card number\"] \"20 sites\"",
+            "e25 div.abs[data-name=\"Card back\"]"
+          ]
+        },
+        {
+          "x": 224.0,
+          "y": 112.0,
+          "w": 64.0,
+          "h": 16.0,
+          "area": 4,
+          "elements": [
+            "e23 h2.abs.stmt[data-name=\"Headline\"] \"Next: 20 more sites by Q1\""
+          ]
+        },
+        {
+          "x": 112.0,
+          "y": 128.0,
+          "w": 32.0,
+          "h": 48.0,
+          "area": 4,
+          "elements": [
+            "e23 h2.abs.stmt[data-name=\"Headline\"] \"Next: 20 more sites by Q1\""
+          ]
+        }
+      ]
+    }
+  ],
+  "issues": [
+    {
+      "slide": 0,
+      "severity": "warn",
+      "code": "renderer",
+      "msg": "rendered with libreoffice, an approximation of PowerPoint: pixel diffs are advisory, not failures (install PowerPoint for ground-truth QA)",
+      "el": ""
+    },
+    {
+      "slide": 1,
+      "severity": "warn",
+      "code": "visual-drift",
+      "msg": "0.8% differ, largest mismatch 20 cells — (560,272 128x80) e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\"; (128,272 48x80) e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\"; (256,288 48x64) e3 h1.abs.hero[data-name=\"Title\"] \"Q3 field update\". See qa/compare-01.png",
+      "el": ""
+    }
+  ],
+  "contact_sheet": "/tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot2/after/qa/contact-sheet.png"
+}

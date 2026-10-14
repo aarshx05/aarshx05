@@ -1,0 +1,6 @@
+8c8
+< Instruction: re-check every slide against the full rubric, whether or not it passed in round one. Also check the round-one fixes landed and flag regressions.
+---
+> Instruction: re-check every slide against the full rubric and against every requirement in the original brief, including its fixed requirements table, whether or not it passed in round one. In the JSON, add "requirements": one entry per brief requirement (at least C1, B1 and L1) with "id", "verdict" (pass or fail) and "evidence" (the slide and what you see). Also check the round-one fixes landed and flag regressions.
+16a17
+> - original brief: /tmp/claude-0/-home-user/ea7fce7b-d852-5ea2-9526-76b4f2255c85/scratchpad/pilot2/review-inputs/round2-C-extra/brief.md

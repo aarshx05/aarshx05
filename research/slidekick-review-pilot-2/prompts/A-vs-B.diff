@@ -1,0 +1,6 @@
+7,8c7,8
+< Slides to review: the changed slides (see the author's change note) plus the contact sheet; look at neighbours for consistency.
+< Instruction: check these fixes landed; flag regressions.
+---
+> Slides to review: all.
+> Instruction: re-check every slide against the full rubric, whether or not it passed in round one. Also check the round-one fixes landed and flag regressions.

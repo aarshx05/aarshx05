@@ -1,0 +1,20 @@
+--- before/canvas/deck.html	2026-10-14 07:55:21.244652001 +0000
++++ after/canvas/deck.html	2026-10-14 07:59:14.270589292 +0000
+@@ -59,7 +59,7 @@
+   <div data-pptx="chart" data-name="Chart – monthly readings" class="abs" style="left:64px; top:208px; width:768px; height:400px; font:400 22px var(--font-body); color:var(--ink)"
+        data-chart='{"type":"column","categories":["Jul","Aug","Sep"],"series":[{"name":"Readings (thousands)","values":[120,190,290],"color":"#B9C3F3","point_colors":{"2":"#2E4BD8"}}],
+                     "labels":true,"number_format":"#,##0\"k\"","label_position":"outside_end","gridlines":false,"value_axis":false,"legend":"none","gap":80}'></div>
+-  <p data-pptx="text" data-name="Footnote C1" class="abs note" style="left:880px; top:560px; width:336px">Source: synthetic dataset v1 (fictional)</p>
++  <p data-pptx="text" data-name="Footnote C1" class="abs note" style="left:880px; top:560px; width:336px">Source: synthetic dataset v2 (fictional)</p>
+   <p data-pptx="text" data-name="Brand name" class="abs mark" style="left:64px; top:640px; width:400px">Northstar Demo</p>
+   <aside class="notes">September is the record month.</aside>
+ </section>
+@@ -101,7 +101,7 @@
+     <p data-pptx="text" data-name="Card number" class="abs" style="left:32px; top:32px; width:256px; font:800 56px/64px var(--font-display); letter-spacing:-0.02em; color:var(--blue)">20 sites</p>
+     <p data-pptx="text" data-name="Card label" class="abs body" style="left:32px; top:112px; width:256px">planned by Q1</p>
+   </div>
+-  <div data-pptx="group" data-name="Timeline" class="abs" style="left:64px; top:424px; width:1152px; height:96px">
++  <div data-pptx="group" data-name="Timeline" class="abs" style="left:64px; top:520px; width:1152px; height:96px">
+     <div data-pptx="shape" data-name="Timeline rule" class="abs" style="left:0; top:8px; width:1152px; height:2px; background:var(--ink)"></div>
+     <div data-pptx="shape" data-name="Dot Oct" class="abs" style="left:0; top:1px; width:16px; height:16px; border-radius:50%; background:var(--blue)"></div>
+     <div data-pptx="shape" data-name="Dot Nov" class="abs" style="left:384px; top:1px; width:16px; height:16px; border-radius:50%; background:var(--blue)"></div>
