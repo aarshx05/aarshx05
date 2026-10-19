@@ -5,7 +5,7 @@ The full solution is in **[SOLUTION.md](SOLUTION.md)**.
 ## Results
 
 * **Computer-assisted proof.** Conjecture 1 holds for every prime power q ≡ 3 (mod 4) with 31 < q < 700 (61 values). With the Blokhuis–Seress–Wilbrink theorem for q ≡ 1 (mod 4), it therefore holds for all odd prime powers 31 < q < 700.
-* **The bound is sharp.** There are counterexamples for q = 7, 11, 19, 23, 27, 31. The q = 31 example is "icosahedral" (its stabiliser in PGL(2,31) is A5).
+* **The bound is sharp.** There are counterexamples for q = 7, 11, 19, 23, 27, 31 (already noted by BSW; q = 7, 11 go back to Korchmáros 1981 — listed here explicitly with their stabilisers). The q = 31 example is "icosahedral" (its stabiliser in PGL(2,31) is A5).
 * **Theorem A.** For q ≡ 3 (mod 4), ψ is canonical if and only if it has no "negative triangle". The sign of a triangle is χ((1−λ₁)(1−λ₂)(1−λ₃)), where λᵢ are the pairwise cross-ratios. The proof uses Carlitz's theorem.
 * **Theorem B (stability).** If ψ(x) = n/x for more than (q + 2√q − 7)/2 values of x, then it holds for all x.
 * **Theorem C (spreading).** A counterexample shares at most 3.5√q + 6 pairs with any elliptic involution.

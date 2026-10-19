@@ -7,7 +7,7 @@ The problem asks for a proof of Conjecture 1 for all $q$, or for an infinite cla
 | # | Result | Type |
 |---|--------|------|
 | **1** | **Conjecture 1 holds for all 61 prime powers $q\equiv 3 \pmod 4$ with $31<q<700$** (the list is in §6). Together with BSW, this proves the conjecture for **every odd prime power $31<q<700$**. | computer-assisted proof; the algorithm's correctness is proved in §6 |
-| **2** | The condition $q>31$ is **sharp**. There are counterexamples for $q=7,11,19,23,27,31$. None exist for small $q\equiv1 \pmod 4$ (checked for all 37 prime powers $5\le q\le 293$). The $q=31$ counterexample is an "icosahedral" involution coming from a subgroup $A_5\le PSL(2,31)$. | explicit examples (§7) |
+| **2** | The condition $q>31$ is **sharp**. There are counterexamples for $q=7,11,19,23,27,31$ (their existence was already stated in the BSW abstract, and $q=7,11$ go back to Korchmáros 1981; what is new here is the explicit list, the stabilisers, and the polyhedral description). None exist for small $q\equiv1 \pmod 4$ (checked for all 37 prime powers $5\le q\le 293$). The $q=31$ counterexample is an "icosahedral" involution coming from a subgroup $A_5\le PSL(2,31)$. | explicit examples (§7) |
 | **3** | **Theorem A** (exact reformulation, every $q\equiv3 \pmod 4$). Every crossing involution $\psi$ carries a well-defined sign $\pm1$ on each triple of its pairs. $\psi$ is canonical ($\psi(x)=n/x$) **iff no triple is negative**. The sign has the closed form $\chi\big((1-\lambda_1)(1-\lambda_2)(1-\lambda_3)\big)$, where $\lambda_i$ are the three pairwise cross-ratios. The proof uses Carlitz's theorem on permutations. | theorem (§3) |
 | **4** | **Theorem B** (stability, every odd $q$). If $\psi(x)=n/x$ holds for more than $\frac{q+2\sqrt q-7}{2}$ elements $x\in GF(q)^*$, then it holds for all $x$. More generally, a crossing involution that shares more than $\frac{q-3+2\sqrt q}{4}$ pairs with an elliptic involution $\iota$ equals $\iota$. | theorem (§4) |
 | **5** | **Theorem C** (spreading, every odd $q$). A non-canonical $\psi$ shares at most $3.5\sqrt q+6$ pairs with **any** elliptic involution. In the language of Conjecture 2: every passant contains at most $3.5\sqrt q+6$ points of a non-collinear complete exterior set. | theorem (§5) |
@@ -98,7 +98,7 @@ by the crossing conditions for $(\pi,\sigma)$ and $(\rho,\sigma)$. $\square$
 
 (This formula was also checked numerically on tens of thousands of random triples for $q=7,\dots,67$.)
 
-**Theorem A.** Let $q\equiv3 \pmod 4$, with no lower bound on $q$, and let $\psi$ satisfy the hypotheses of Conjecture 1. The following are equivalent:
+**Theorem A.** Let $q\equiv3 \pmod 4$, with no lower bound on $q$, and let $\psi$ satisfy the hypotheses of Conjecture 1. (The equivalence (1)⇔(3) is the "twisted Carlitz" reformulation; the same reduction to Carlitz's theorem is the route BSW take for $q\equiv1 \pmod 4$. The triangle criterion (2) and its closed form are the new content.) The following are equivalent:
 
 1. $\psi(x)=n/x$ for some non-square $n$.
 2. $\widehat E\equiv 1$. That is, for every three pairs of $M_\psi$, $\chi\big((1-\lambda_1)(1-\lambda_2)(1-\lambda_3)\big)=1$.
@@ -248,6 +248,8 @@ python3 bruteforce_check.py 7 11 19 23 31 43 47
 ---
 
 ## 7. Small $q$: the bound $q>31$ is sharp
+
+*Attribution.* The abstract of Blokhuis–Seress–Wilbrink already states that for $q\equiv3 \pmod 4$ other examples exist "at least for $q=7,11,\dots,31$", and the $q=7,11$ examples appear in G. Korchmáros, *Example of a chain of circles on an elliptic quadric of PG(3,q), q=7,11*, J. Combin. Theory Ser. A 31 (1981). So the sharpness of $q>31$ is not new; the explicit lists, stabilisers and the polyhedral description below are our own computation.
 
 For **every** prime power $q\equiv3 \pmod 4$ with $7\le q\le31$ there is a non-canonical $\psi$. For $q=3$ there is none. Examples, written as the pairs of $M_\psi$ (the prime ones are verified directly against the statement of Conjecture 1 by `check_examples.py`):
 
