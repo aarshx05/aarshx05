@@ -214,11 +214,11 @@ For every one of them the program reports `canonical=1 noncanonical=0 verify_fai
 | 599 | $GF(599)$ | 150 | 20 351 591 | 161 |
 | 691 | $GF(691)$ | 173 | 65 243 036 | 630 |
 
-The whole range took about 65 CPU-minutes (run on 4 cores). The time grows roughly like $q^{8}$; `run_all.sh 700 1000` would extend the result to $q<1000$ in about two CPU-days.
+(The node counts and times in this table are those of the original run, without the balance test of Section 5.2; the whole range took about 65 CPU-minutes. With the balance test the same program needs 53 thousand nodes and 6 s for $q=691$, and the whole range takes a few minutes.)
 
 **Corollary.** Together with the theorem of Blokhuis–Seress–Wilbrink for $q\equiv 1\;(\mathrm{mod}\;4)$, *Conjecture 1 holds for every odd prime power $q$ with $31<q<700$.*
 
-*Independent confirmation.* The 38 values $31<q\le 431$ were also checked by a separately written program (two implementations of a different search, with a naive third program up to $q=127$); its solution counts agree with ours for every $q$.
+*Independent confirmation.* The 38 values $31<q\le 431$ were also checked by a separately written program (two implementations of a different search, with a naive third program up to $q=127$), and a third, again separately written program using the balance pruning reports the conjecture for every prime power $q\equiv 3\pmod 4$ with $103\le q\le 2251$; the solution counts of all three programs agree on every common value. With the balance pruning now built into `verify_bsw.c`, the cost grows only like $q^{2.5}$ nodes, so the range can be pushed further at will (`run_all.sh 700 3000`).
 
 ---
 
