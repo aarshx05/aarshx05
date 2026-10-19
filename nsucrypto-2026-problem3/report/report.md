@@ -18,7 +18,7 @@ The problem asks to prove Conjecture 1 for all $q$, for an infinite class of $q$
 
 5. **The bound $q>31$ cannot be lowered.** For $q=7,11,19,23,27,31$ there are maps $\psi$ satisfying all hypotheses that are not of the form $n/x$. Their existence was already stated by BSW ($q=7,11$ go back to Korchmáros, 1981); here they are listed explicitly, and the $q=7,11,31$ ones are explained as "antipodal maps" of the rotation groups of the cube and the icosahedron.
 
-6. Two natural proof strategies for the general case are shown to be impossible (Section 7): no clique-bound (Hoffman / Delsarte / Lovász theta) certificate can be tight, and the involutions attached to the counterexamples generate the whole group $PSL(2,q)$.
+6. Two natural proof strategies for the general case are shown to be impossible (Section 7): no clique-bound (Hoffman / Delsarte / Lovász theta) certificate can be tight, and for $q>11$ the involutions attached to the chords of a counterexample generate the whole group $PGL(2,q)$ (Theorem E, a Dickson-type argument). Exact identities satisfied by every good matching (every three chords give a genus-two curve with exactly $q+1$ points) are proved in Proposition 4.2.
 
 The conjecture for all $q$, or for an infinite class, remains open. All programs, raw outputs and the counterexamples are supplied with this report (Appendix).
 
@@ -152,6 +152,14 @@ By Theorem B, $|B|\ge\frac{q-2\sqrt q+5}{2}$, which gives $a\le 1+3.5\sqrt q+\fr
 
 In the language of Conjecture 2: *if a set $S$ as in Conjecture 2 is not contained in a passant, then every passant contains at most $3.5\sqrt q+6$ points of $S$.*
 
+**Proposition 4.2 (exact identities).** Let $M$ be a good matching, $q$ any odd prime power. For a chord $p=\{a,b\}$ put $s_p(y)=\chi([y,a]\,[y,b])$ for $y\notin p$ (for finite points this is $\chi((y-a)(y-b))$, the factor of $\infty$ omitted, and $s_p(\infty)=1$) and $s_p(y)=0$ for $y\in p$. Then for any **odd** number of chords $p_1,\dots,p_{2j+1}$ of $M$,
+$$\sum_{y\in PG(1,q)}\ s_{p_1}(y)\,s_{p_2}(y)\cdots s_{p_{2j+1}}(y)=0 .$$
+In particular, for any three chords of $M$ with six finite endpoints $a_1,\dots,a_6$, the curve $w^2=(y-a_1)(y-a_2)\cdots(y-a_6)$ has **exactly $q+1$ points** over $GF(q)$ (two of them at infinity).
+
+*Proof.* For $y\notin p$ we have $y,\psi y\notin p$ and $\chi\big((a,b;y,\psi y)\big)=\chi([a,y][b,\psi y][a,\psi y][b,y])=s_p(y)\,s_p(\psi y)$, so the crossing of $p$ with $\{y,\psi y\}$ says $s_p(\psi y)=-s_p(y)$. A product of an odd number of such functions therefore changes sign under $\psi$ on the complement of $p_1\cup\dots\cup p_{2j+1}$, and vanishes on that union. The complement is a union of chords $\{y,\psi y\}$ of $M$, and the two terms of each chord cancel. For the curve: the sum over $y\in F$ of $\chi(f(y))$, $f$ the sextic, equals $-s(\infty)=-1$, so the number of affine points is $\sum_{y\in F}(1+\chi(f(y)))=q-1$; the leading coefficient $1$ is a square, which gives two more points at infinity. $\square$
+
+These identities hold for the canonical matching and for the counterexamples alike (checked on all of them), so they do not decide the conjecture; but they are exact constraints of "Weil strength" on every triple of chords, and they explain why the search of Section 5 is so fast: a partial matching whose sign classes are unbalanced can never be completed.
+
 ---
 
 ## 5. Proof for all $q\equiv 3 \;(\mathrm{mod}\;4)$ with $31<q<700$
@@ -170,9 +178,9 @@ For each non-square $n\le n^{-1}$ the program lists **all** perfect matchings $M
 
 * for every uncovered point $w$ it keeps the set of uncovered $z$ such that $\{w,z\}$ crosses every chosen chord (and, for the first three chords, also satisfies the class condition);
 * it branches on the uncovered point with the fewest candidates, over **all** its candidates;
-* a branch is abandoned only when some uncovered point has no candidate left, or when a candidate violates the class condition.
+* a branch is abandoned only when some uncovered point has no candidate left, when a candidate violates the class condition, or when the *sign classes are unbalanced*: every uncovered point $w$ carries the vector of signs $s_{p}(w)$ over the chosen chords $p$; the partner of $w$ must carry the opposite vector (Proposition 4.2), so in any completion $\psi$ maps each class of equal vectors onto the class of opposite vectors, and the two classes must have the same size. (The program keeps a 64-bit hash of the vector; a hash collision can only merge classes, which weakens the test but never rejects a good matching.)
 
-Every rule only discards matchings that violate the constraints, so the enumeration is exhaustive. Every complete matching found is re-checked against the definition by brute force and then tested for being canonical. **Conjecture 1 holds for $q$ exactly when, for every $n$, the only matching found is the canonical one** (Lemmas 1.1 and 5.1).
+Every rule only discards matchings that violate the constraints, so the enumeration is exhaustive. The balance test is what makes the search feasible for large $q$: without it the number of search nodes grows like $q^8$, with it like $q^{2.5}$ (for $q=691$: 65 million nodes and 630 s against 53 thousand nodes and 6 s). Every complete matching found is re-checked against the definition by brute force and then tested for being canonical. **Conjecture 1 holds for $q$ exactly when, for every $n$, the only matching found is the canonical one** (Lemmas 1.1 and 5.1).
 
 ### 5.3 Validation
 
@@ -235,7 +243,14 @@ Theorems A–C show that a counterexample for large $q$ would have to contain ne
 
 **No clique-bound certificate.** On the graph whose vertices are all chords, adjacent when they cross, a good matching is a clique of size $\frac{q+1}{2}$. The method of BSW for $q\equiv 1\;(\mathrm{mod}\;4)$ is of Hoffman/Delsarte type, and its natural generalisation is a Lovász-theta certificate: a $PGL(2,q)$-invariant matrix $Z$ with $\lambda_{\max}(Z)=\frac{q+1}{2}$. Such a $Z$ would force every maximum clique to satisfy strong regularity conditions. Averaging over $PGL(2,q)$, $Z$ may be assumed constant on the cross-ratio classes, and then tightness for the canonical clique is a linear system with one unknown per non-crossing class. `theta_test.py` computes it: for $q=43,47,59,67$ the system has full column rank, so the only solution is $Z=J$, which is not a certificate. **Hence no clique-bound proof exists for $q\equiv 3\;(\mathrm{mod}\;4)$.** The reason is visible in Lemma 4.1: the number of canonical chords crossed by an outside chord is governed by an elliptic-curve point count and is far from constant.
 
-**No group-theoretic shortcut.** Every pair of chords of a good matching determines the elliptic involution having both as orbits. One might hope that these involutions generate a small subgroup of $PSL(2,q)$, to which Dickson's classification could be applied. For the counterexamples with $q=7,11$ they generate $S_4$ and $A_5$ and the matching is invariant; but for $q=19,23,31$ they generate all of $PSL(2,q)$ and the matching is not invariant (`structure_probe.py`).
+**Theorem E (the chords generate the whole group).** Let $q\equiv 3\pmod 4$, $q>11$, and let $M$ be a good matching. For a chord $p=\{a,b\}$ let $\iota_p$ be the Möbius involution fixing $a$ and $b$ (in coordinates $a=0$, $b=\infty$ it is $z\mapsto -z$). If $M$ is not canonical, then the involutions $\iota_p$, $p\in M$, generate all of $PGL(2,q)$.
+
+*Proof.* Two facts first. (i) $\iota_p\notin PSL(2,q)$: its matrix $\mathrm{diag}(1,-1)$ has determinant $-1$, a non-square. (ii) If chords $p,r$ cross then $\iota_p\iota_r$ has no fixed point ("elliptic"): with $p=\{0,\infty\}$, $r=\{c,d\}$ one computes $\iota_r(z)=\frac{(c+d)z-2cd}{2z-(c+d)}$ and the fixed points of $\iota_p\iota_r$ are the solutions of $z^2=cd$, which exist iff $\chi(cd)=1$, i.e. iff $p,r$ do **not** cross (Lemma 1.1).
+
+Let $H=\langle\iota_p:p\in M\rangle$ and run through Dickson's list of the subgroups of $PGL(2,q)$ (cyclic; dihedral; subgroups fixing a point; $A_4$, $S_4$, $A_5$; $PSL(2,q_0)$ and $PGL(2,q_0)$ for subfields $GF(q_0)\subseteq GF(q)$; see e.g. Cameron–Omidi–Tayfeh-Rezaie, *3-designs from PGL(2,q)*, Electron. J. Combin. 13 (2006), Thm. 2).
+*Cyclic:* contains one involution, but $H$ contains $m\ge 2$. *Fixing a point:* $\iota_p$ fixes only the two points of $p$, and distinct chords are disjoint. *$A_4$, $A_5$, and $S_4\le PSL(2,q)$:* these lie in $PSL(2,q)$, contradicting (i). *$S_4\not\le PSL(2,q)$:* then $S_4\cap PSL(2,q)=A_4$ and the involutions outside $A_4$ are the six transpositions, so $m\le 6$, $q\le 11$. *Subfield groups:* an element of $PGL(2,q_0)$ with two fixed points in $PG(1,q)$ has them in $PG(1,q_0)$ (they are roots of a quadratic over $GF(q_0)$, and $q=q_0^r$ with $r$ odd), so all chords of $M$ would lie in a subline with $q_0+1<q+1$ points. *Dihedral:* the product of two reflections $\iota_p\iota_r$ is a rotation and is elliptic by (ii), so the rotation subgroup lies in a cyclic group $T$ of order $q+1$ (a "non-split torus") and $H\le N(T)$. In the model of Lemma 4.1 ($PG(1,q)=$ the norm-one circle $U\subset GF(q^2)$, $T=$ the rotations $z\mapsto\zeta z$), the elements of $N(T)\setminus T$ are the maps $z\mapsto\zeta/z$, whose fixed points are the solutions of $z^2=\zeta$ in $U$: a pair $\{w,-w\}$. So every $\iota_p$ has an *antipodal* pair as its fixed points, i.e. every chord of $M$ is an orbit of the fixed-point-free involution $z\mapsto -z$, and $M$ is canonical. $\square$
+
+So for $q>11$ a counterexample cannot be "small" in the group: its chords generate the whole group $PGL(2,q)$, and nothing can be extracted from the subgroup structure. (For the counterexamples at $q=7$ and $11$ the group generated is $S_4$, and the matching is invariant under it; for the other counterexamples the computation confirms $H=PGL(2,q)$.)
 
 **Spectral form.** With $K_{uv}=\chi([u,v][\psi u,\psi v])$, Theorem A says that $\psi$ is canonical iff $\lambda_{\max}(K)=q$. For the counterexamples $\lambda_{\max}(K)\le 11$: they behave like random $\pm1$ matrices, while the canonical one is rank-one plus identity. So a proof must establish a sharp dichotomy; there is no "almost canonical" regime to perturb from (Theorem B says the same).
 

@@ -174,6 +174,14 @@ By Theorem B, $|B|\ge\frac{q-2\sqrt q+5}{2}$, which gives the bound. Finally, $\
 
 In Conjecture 2 language: **if a complete exterior set is not collinear, every passant contains at most $3.5\sqrt q+6$ of its points.** For $q\gtrsim250$ this is far below the $\frac{q+1}{2}$ points of the canonical example.
 
+**Proposition 4.2 (exact identities, every odd $q$).** Let $M$ be a good matching. For a chord $p=\{a,b\}$ put $s_p(y)=\chi([y,a][y,b])$ for $y\notin p$ and $s_p(y)=0$ for $y\in p$ (so $s_p(\infty)=1$ for finite $p$). For any odd number of chords $p_1,\dots,p_{2j+1}$ of $M$,
+$$\sum_{y\in PG(1,q)} s_{p_1}(y)\cdots s_{p_{2j+1}}(y)=0 .$$
+In particular, for three chords of $M$ with finite endpoints $a_1,\dots,a_6$ the genus-two curve $w^2=\prod(y-a_i)$ has exactly $q+1$ rational points.
+
+*Proof.* $\chi((a,b;y,\psi y))=s_p(y)s_p(\psi y)$ for $y\notin p$, so crossing says $s_p(\psi y)=-s_p(y)$. An odd product is therefore $\psi$-odd off $\bigcup p_i$ and zero on it; the complement is a union of chords of $M$, on each of which the two terms cancel. For the curve, $\sum_{y\in F}\chi(f(y))=-s(\infty)=-1$ gives $q-1$ affine points, plus two at infinity. $\square$
+
+The identities hold for canonical and non-canonical matchings alike (checked on all counterexamples); they are the reason the balance pruning of §6.2 is so effective.
+
 ---
 
 ## 6. Proof for finitely many $q$: all $q\equiv3 \pmod 4$ with $31<q<700$
@@ -196,7 +204,7 @@ For each such $n$ the program enumerates **all** perfect matchings $M\supseteq\{
 * It keeps, for every uncovered point $w$, the bitset of all uncovered $z$ such that $\{w,z\}$ crosses every chosen pair. Crossing factorises as $\chi$ of a product of four differences, so each update is a few word operations per point.
 * For the first three chosen pairs, these candidate sets are also filtered by the class condition. This uses $(w,z;u,v)=A_w/A_z$ with $A_w=[w,u]/[w,v]$, so one table lookup per candidate suffices. For deeper pairs the class condition is checked when a pair is chosen.
 * It branches on the uncovered point with the fewest candidates, over **all** of its candidates.
-* A branch is pruned only when a candidate violates the class condition, or when some uncovered point has no candidate left.
+* A branch is pruned only when a candidate violates the class condition, when some uncovered point has no candidate left, or when the **sign classes are unbalanced**: each uncovered point $w$ carries the vector of signs $s_p(w)=\chi([w,a][w,b])$ over the chosen chords $p=\{a,b\}$; its partner must carry the opposite vector (Proposition 4.2), so $\psi$ maps every class of equal vectors onto the class of opposite vectors and the two classes have equal size. The program stores a 64-bit hash of the vector; a collision can only merge classes, which weakens the test but never rejects a good matching. This pruning (taken from the "Boltzmann program" document, see `REVIEW_of_boltzmann_document.md`) reduces the search from about $q^8$ to about $q^{2.5}$ nodes.
 
 Both pruning rules only discard matchings that cannot satisfy the constraints, so the enumeration is exhaustive. Every complete matching found is re-checked against the definition by brute force, and then tested for canonicity.
 
@@ -287,17 +295,15 @@ Let $\Gamma$ be the graph on all $q(q+1)/2$ chords, adjacent when they cross. An
 
 [`theta_test.py`](theta_test.py) computes this system. **For $q=43,47,59,67$ it has full column rank, so the only solution is $z=0$, which is not a certificate.** Hence $\vartheta(\bar\Gamma)>m$ for these $q$ and the clique-bound route is closed for $q\equiv3 \pmod 4$. The reason is Lemma 4.1: the number of canonical chords crossed by an outside chord is governed by an elliptic-curve point count and is far from constant, and no reweighting of the cross-ratio classes evens it out.
 
-### 8.3 Negative result: no group-theoretic shortcut
+### 8.3 Theorem E: the chords of a counterexample generate $PGL(2,q)$
 
-Every pair $\pi,\rho\in M$ determines the elliptic involution $\sigma_{\pi\rho}\in PSL(2,q)$ having both as orbits. One might hope that $H=\langle\sigma_{\pi\rho}\rangle$ is small, or that $M$ is $H$-invariant, and then apply Dickson's classification of subgroups of $PSL(2,q)$. [`structure_probe.py`](structure_probe.py) shows:
+For a chord $p=\{a,b\}$ let $\iota_p$ be the involution of $PG(1,q)$ fixing $a$ and $b$ ($z\mapsto -z$ when $p=\{0,\infty\}$). Two facts: (i) $\iota_p\notin PSL(2,q)$, since $\det\mathrm{diag}(1,-1)=-1$ is a non-square; (ii) for $p=\{0,\infty\}$, $r=\{c,d\}$ one has $\iota_r(z)=\frac{(c+d)z-2cd}{2z-(c+d)}$ and the fixed points of $\iota_p\iota_r$ solve $z^2=cd$, so $\iota_p\iota_r$ is fixed-point-free ("elliptic") iff $p$ and $r$ cross.
 
-| $q$ | $|H|$ | $M$ invariant under $H$? |
-|---|---|---|
-| 7 | 24 ($S_4$) | yes |
-| 11 | 60 ($A_5$) | yes |
-| 19, 23, 31 | $|PSL(2,q)|$ | no |
+**Theorem E.** Let $q\equiv 3 \pmod 4$, $q>11$, and let $M$ be a non-canonical good matching. Then $\langle\iota_p:p\in M\rangle=PGL(2,q)$.
 
-So for the "generic" counterexamples the crossing involutions generate the whole group and $M$ is not invariant. Nothing can be extracted from $H$ alone.
+*Proof.* Let $H$ be the group generated and use Dickson's list of subgroups of $PGL(2,q)$ (cyclic, dihedral, subgroups of a point stabiliser, $A_4,S_4,A_5$, $PSL(2,q_0)$, $PGL(2,q_0)$; e.g. Cameron–Omidi–Tayfeh-Rezaie, Electron. J. Combin. 13 (2006), Thm. 2). Cyclic: one involution only. Point stabiliser: distinct chords are disjoint. $A_4,A_5,S_4\le PSL$: contradicts (i). $S_4\not\le PSL$: its involutions outside $A_4$ are six transpositions, so $m\le6$ and $q\le 11$. Subfield groups: an element of $PGL(2,q_0)$ with two fixed points in $PG(1,q)$ has them in $PG(1,q_0)$ ($q=q_0^r$, $r$ odd), so $M$ would lie in a subline. Dihedral: $\iota_p\iota_r$ is an elliptic rotation by (ii), so the rotation subgroup lies in a non-split torus $T$ and $H\le N(T)$; in the circle model of Lemma 4.1 the reflections of $N(T)$ are $z\mapsto\zeta/z$ with fixed points $\{w,-w\}$, so every chord of $M$ is an orbit of $z\mapsto -z$ and $M$ is canonical. $\square$
+
+This upgrades the earlier computational observation (`structure_probe.py`: for $q=19,23,31$ the involutions generate the whole group) to a theorem, and shows that Dickson's classification gives no shortcut. The statement and the idea are from the "Boltzmann program" document; the dihedral case there needs the antipodal-pair argument above, and $q=7$ is excluded by computation ($|H|=|PGL(2,7)|$ for the $q=7$ class).
 
 ### 8.4 Spectral gap of the counterexamples
 
