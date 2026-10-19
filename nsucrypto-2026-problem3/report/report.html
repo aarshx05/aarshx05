@@ -1,0 +1,1332 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Problem 3. The BSW Conjecture</title>
+  <style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+
+ul.task-list[class]{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+font-size: inherit;
+width: 0.8em;
+margin: 0 0.8em 0.2em -1.6em;
+vertical-align: middle;
+}
+</style>
+  <style type="text/css">@page { size: A4; margin: 22mm 20mm 22mm 20mm; }
+body { font-family: "Liberation Serif", "DejaVu Serif", serif; font-size: 11.5pt; line-height: 1.42; color: #000; max-width: none; margin: 0; }
+math { font-family: "DejaVu Serif", "Liberation Serif", serif; }
+math[display="block"] { margin: 0.5em 0; }
+header#title-block-header { text-align: center; margin-bottom: 1.2em; }
+h1.title { font-size: 20pt; margin: 0 0 0.2em 0; }
+p.subtitle { font-size: 13pt; margin: 0; }
+h2 { font-size: 14pt; margin-top: 1.4em; border-bottom: 1px solid #999; padding-bottom: 2px; page-break-after: avoid; }
+h3 { font-size: 12pt; margin-top: 1.1em; page-break-after: avoid; }
+p { text-align: justify; margin: 0.45em 0; }
+table { border-collapse: collapse; margin: 0.6em auto; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #888; padding: 2px 7px; }
+th { background: #eee; }
+code { font-family: "DejaVu Sans Mono", monospace; font-size: 9.5pt; }
+li { margin: 0.25em 0; }
+hr { border: 0; border-top: 1px solid #aaa; margin: 1.2em 0; }
+td:first-child, th:first-child { white-space: nowrap; }
+li { page-break-inside: avoid; }
+</style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Problem 3. The BSW Conjecture</h1>
+<p class="subtitle">NSUCRYPTO 2026, Second round — solution</p>
+</header>
+<h2 id="summary-of-what-is-proved">Summary of what is proved</h2>
+<p>The problem asks to prove Conjecture 1 for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,
+for an infinite class of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,
+or for finitely many
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>.
+The case
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1 \;(\mathrm{mod}\;4)</annotation></semantics></math>
+is the theorem of Blokhuis, Seress and Wilbrink (BSW). Everything below
+concerns the open case
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math>.</p>
+<ol type="1">
+<li><p><strong>Conjecture 1 holds for all 61 prime powers
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math></strong>
+(computer-assisted; the algorithm is proved correct in Section 5 and was
+checked by a second, unrelated program). Together with BSW this gives:
+<em>Conjecture 1 holds for every odd prime power
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math>.</em></p></li>
+<li><p><strong>Theorem A</strong> (every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math>,
+no lower bound). The hypotheses of Conjecture 1 say exactly that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+preserves a certain “orientation” of all triples of points that contain
+a pair
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x,\psi x\}</annotation></semantics></math>.
+The conclusion
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+holds <strong>if and only if</strong>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+preserves the orientation of <em>all</em> triples, and this is the case
+<strong>if and only if no three pairs form a “negative
+triangle”</strong>, where the sign of a triangle has the closed form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi((1-\lambda_1)(1-\lambda_2)(1-\lambda_3))</annotation></semantics></math>
+in terms of the three pairwise cross-ratios. So the conjecture is
+equivalent to a purely combinatorial statement about triangles.</p></li>
+<li><p><strong>Theorem B</strong> (stability, every odd
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>).
+If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+holds for more than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac displaystyle="false"><mrow><mi>q</mi><mo>+</mo><mn>2</mn><msqrt><mi>q</mi></msqrt><mo>−</mo><mn>7</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\tfrac{q+2\sqrt q-7}{2}</annotation></semantics></math>
+elements
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>,
+then it holds for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.</p></li>
+<li><p><strong>Theorem C</strong> (spreading, every odd
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>).
+A map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+that satisfies the hypotheses but is <em>not</em> of the form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">n/x</annotation></semantics></math>
+agrees with any map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>↦</mo><mi>n</mi><mi>′</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">x\mapsto n&#39;/x</annotation></semantics></math>
+on at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">7\sqrt q+12</annotation></semantics></math>
+elements
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.
+A counterexample would have to be “spread out” with respect to every
+candidate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">n&#39;</annotation></semantics></math>.</p></li>
+<li><p><strong>The bound
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q&gt;31</annotation></semantics></math>
+cannot be lowered.</strong> For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn><mo>,</mo><mn>11</mn><mo>,</mo><mn>19</mn><mo>,</mo><mn>23</mn><mo>,</mo><mn>27</mn><mo>,</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q=7,11,19,23,27,31</annotation></semantics></math>
+there are maps
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+satisfying all hypotheses that are not of the form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">n/x</annotation></semantics></math>.
+Their existence was already stated by BSW
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn><mo>,</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">q=7,11</annotation></semantics></math>
+go back to Korchmáros, 1981); here they are listed explicitly, and the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn><mo>,</mo><mn>11</mn><mo>,</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q=7,11,31</annotation></semantics></math>
+ones are explained as “antipodal maps” of the rotation groups of the
+cube and the icosahedron.</p></li>
+<li><p>Two natural proof strategies for the general case are shown to be
+impossible (Section 7): no clique-bound (Hoffman / Delsarte / Lovász
+theta) certificate can be tight, and the involutions attached to the
+counterexamples generate the whole group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>.</p></li>
+</ol>
+<p>The conjecture for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,
+or for an infinite class, remains open. All programs, raw outputs and
+the counterexamples are supplied with this report (Appendix).</p>
+<hr />
+<h2 id="notation-and-a-reformulation-as-a-matching-problem">1. Notation
+and a reformulation as a matching problem</h2>
+<p>Throughout,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+is an odd prime power,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>=</mo><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">F=GF(q)</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>χ</mi><annotation encoding="application/x-tex">\chi</annotation></semantics></math>
+is the quadratic character of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">\chi(0)=0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(a)=1</annotation></semantics></math>
+for non-zero squares,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(a)=-1</annotation></semantics></math>
+for non-squares). Recall
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>b</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(ab)=\chi(a)\chi(b)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(-1)=-1</annotation></semantics></math>
+exactly when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math>.</p>
+<p>We work on the projective line
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>F</mi><mo>∪</mo><mo stretchy="false" form="prefix">{</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">PG(1,q)=F\cup\{\infty\}</annotation></semantics></math>,
+with the representatives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>↦</mo><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">x\mapsto(x,1)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∞</mi><mo>↦</mo><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mn>0</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\infty\mapsto(1,0)</annotation></semantics></math>,
+and we write
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">[</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mo>det</mo><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo>,</mo><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mrow><mo stretchy="false">(</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><mrow><mtext mathvariant="normal">so that </mtext><mspace width="0.333em"></mspace></mrow><mrow><mo stretchy="false">[</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo>,</mo><mspace width="1.0em"></mspace><mrow><mo stretchy="false">[</mo><mi>∞</mi><mo>,</mo><mi>y</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mn>1</mn><mo>,</mo><mspace width="1.0em"></mspace><mrow><mo stretchy="false">[</mo><mi>x</mi><mo>,</mo><mi>∞</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">[u,v]=\det(\mathrm{rep}(u),\mathrm{rep}(v)),\qquad\text{so that }[x,y]=x-y,\quad[\infty,y]=1,\quad[x,\infty]=-1 .</annotation></semantics></math>
+The <em>cross-ratio</em> of four distinct points is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mfrac displaystyle="true"><mrow><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow><mspace width="0.167em"></mspace><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow></mrow><mrow><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow><mspace width="0.167em"></mspace><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">(a,b;c,d)=\dfrac{[a,c]\,[b,d]}{[a,d]\,[b,c]}</annotation></semantics></math>.
+It does not depend on the representatives and is invariant under the
+group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>
+of Möbius maps
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mfrac><mrow><mi>α</mi><mi>z</mi><mo>+</mo><mi>β</mi></mrow><mrow><mi>γ</mi><mi>z</mi><mo>+</mo><mi>δ</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">z\mapsto\frac{\alpha z+\beta}{\gamma z+\delta}</annotation></semantics></math>.</p>
+<p><strong>Definition.</strong> Two disjoint pairs (we call them
+<em>chords</em>)
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{c,d\}</annotation></semantics></math>
+<strong>cross</strong> if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">\chi((a,b;c,d))=-1.</annotation></semantics></math></p>
+<p>This is well defined since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mi>b</mi><mo>,</mo><mi>a</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><msup><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">(b,a;c,d)=(a,b;c,d)^{-1}</annotation></semantics></math>,
+it is symmetric in the two chords, and it is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>-invariant.
+For finite points,
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>−</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>−</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>b</mi><mo>−</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>b</mi><mo>−</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>,</mo></mrow><annotation encoding="application/x-tex">\chi((a,b;c,d))=\chi((a-c)(a-d)(b-c)(b-d)),</annotation></semantics></math>
+because the cross-ratio differs from this product by the square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>−</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>b</mi><mo>−</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">((a-d)(b-c))^2</annotation></semantics></math>.
+If one point is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>∞</mi><annotation encoding="application/x-tex">\infty</annotation></semantics></math>,
+simply omit the two factors containing it.</p>
+<p><strong>Lemma 1.1 (dictionary).</strong> A map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+satisfies the hypotheses of Conjecture 1 if and only if
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>M</mi><mi>ψ</mi></msub><mo>=</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">{</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">}</mo><mo>∪</mo><mo minsize="1.2" maxsize="1.2" stretchy="false" form="prefix">{</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo><mo>:</mo><mi>x</mi><mo>∈</mo><msup><mi>F</mi><mo>*</mo></msup><mo minsize="1.2" maxsize="1.2" stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M_\psi=\big\{\{0,\infty\}\big\}\cup\big\{\{x,\psi x\}:x\in F^*\big\}</annotation></semantics></math>
+is a perfect matching of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>
+(a partition into
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac displaystyle="false"><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\tfrac{q+1}{2}</annotation></semantics></math>
+chords) in which <strong>every two chords cross</strong>. Moreover
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+if and only if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+is the set of orbits of the Möbius involution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">z\mapsto n/z</annotation></semantics></math>.</p>
+<p><em>Proof.</em>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+has no fixed point, because it changes the quadratic character. The
+chord
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{0,\infty\}</annotation></semantics></math>
+crosses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x,\psi x\}</annotation></semantics></math>
+iff
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mn>0</mn><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>0</mn><mo>−</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mi>ψ</mi><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi((0-x)(0-\psi x))=\chi(x\psi x)=-1</annotation></semantics></math>,
+i.e. iff
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi x</annotation></semantics></math>
+have opposite characters — this is
+“<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+pairs squares with non-squares”. Two chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo><mo>,</mo><mo stretchy="false" form="prefix">{</mo><mi>y</mi><mo>,</mo><mi>ψ</mi><mi>y</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{x,\psi x\},\{y,\psi y\}</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>∉</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>ψ</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">y\notin\{x,\psi x\}</annotation></semantics></math>
+cross iff the displayed condition of Conjecture 1 holds.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p>We call such a matching a <strong>good matching</strong>, and we call
+it <strong>canonical</strong> if it is the orbit set of some Möbius
+involution without fixed points (an <em>elliptic</em> involution; in
+suitable coordinates every such involution is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">z\mapsto n/z</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+a non-square). Conjecture 1 for a given
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+says: <em>every good matching is canonical.</em></p>
+<p><strong>Lemma 1.2.</strong> For every non-square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+the map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+satisfies the hypotheses.</p>
+<p><em>Proof.</em>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>⋅</mo><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">x\cdot\psi(x)=n</annotation></semantics></math>
+is a non-square. For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>∉</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>x</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">y\notin\{x,n/x\}</annotation></semantics></math>,
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mfrac><mi>n</mi><mi>y</mi></mfrac><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mfrac><mi>n</mi><mi>x</mi></mfrac><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mfrac><mi>n</mi><mi>x</mi></mfrac><mo>−</mo><mfrac><mi>n</mi><mi>y</mi></mfrac><mo stretchy="false">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>n</mi><mspace width="0.167em"></mspace><msup><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mspace width="0.167em"></mspace><msup><mrow><mo stretchy="false">(</mo><mi>x</mi><mi>y</mi><mo>−</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mn>2</mn></msup></mrow><mrow><msup><mi>x</mi><mn>2</mn></msup><msup><mi>y</mi><mn>2</mn></msup></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">(x-y)(x-\frac ny)(\frac nx-y)(\frac nx-\frac ny)=\frac{n\,(x-y)^2\,(xy-n)^2}{x^2y^2},</annotation></semantics></math>
+whose character is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(n)=-1</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><em>Geometric meaning.</em> Identify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>
+with the conic
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>C</mi><annotation encoding="application/x-tex">C</annotation></semantics></math>
+of the problem statement; a chord is a secant line. Two chords cross
+exactly when the two secants meet in an interior point. So a good
+matching is a set of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{q+1}{2}</annotation></semantics></math>
+secants, any two of which meet in an interior point, and “canonical”
+means they all pass through one interior point. Taking poles turns this
+into Conjecture 2.</p>
+<hr />
+<h2 id="orientation-of-triples-when-qequiv-3-mathrmmod4">2. Orientation
+of triples when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math></h2>
+<p>From here to the end of Section 3 assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>,
+so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(-1)=-1</annotation></semantics></math>.</p>
+<p>For three distinct points
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi></mrow><annotation encoding="application/x-tex">u,v,w</annotation></semantics></math>
+define the <strong>orientation</strong>
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">[</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">]</mo></mrow><mspace width="0.167em"></mspace><mrow><mo stretchy="false">[</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">]</mo></mrow><mspace width="0.167em"></mspace><mrow><mo stretchy="false">[</mo><mi>w</mi><mo>,</mo><mi>u</mi><mo stretchy="false">]</mo></mrow><mo stretchy="false">)</mo></mrow><mo>∈</mo><mo stretchy="false" form="prefix">{</mo><mo>±</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo><mi>.</mi></mrow><annotation encoding="application/x-tex">o(u,v,w)=\chi([u,v]\,[v,w]\,[w,u])\in\{\pm1\}.</annotation></semantics></math>
+Each point occurs twice, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>
+does not depend on the representatives. For a Möbius map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+with matrix of determinant
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>det</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">\det g</annotation></semantics></math>
+one has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">[</mo><mi>g</mi><mi>u</mi><mo>,</mo><mi>g</mi><mi>v</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mo>det</mo><mi>g</mi><mo>⋅</mo><mrow><mo stretchy="false">[</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">]</mo></mrow><mo>⋅</mo><mrow><mo stretchy="false">(</mo><mtext mathvariant="normal">a square</mtext><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">[gu,gv]=\det g\cdot[u,v]\cdot(\text{a square})</annotation></semantics></math>,
+hence
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>g</mi><mi>u</mi><mo>,</mo><mi>g</mi><mi>v</mi><mo>,</mo><mi>g</mi><mi>w</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>det</mo><mi>g</mi><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">o(gu,gv,gw)=\chi(\det g)\,o(u,v,w).</annotation></semantics></math>
+So the maps with square determinant (the group
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>)
+<strong>preserve</strong>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>,
+the others reverse it. Because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(-1)=-1</annotation></semantics></math>,
+swapping two arguments changes the sign of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>,
+and cyclically rotating the arguments does not. This is a finite-field
+version of the cyclic order of points on a circle.</p>
+<p><strong>Lemma 2.1 (crossing = opposite sides).</strong> Chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{c,d\}</annotation></semantics></math>
+cross if and only if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">o(a,c,b)=-o(a,d,b)</annotation></semantics></math>.
+In words:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>c</mi><annotation encoding="application/x-tex">c</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>
+lie on different “sides” of the chord
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mi>b</mi></mrow><annotation encoding="application/x-tex">ab</annotation></semantics></math>,
+exactly as for chords of a circle.</p>
+<p><em>Proof.</em>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">]</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">o(a,c,b)\,o(a,d,b)=\chi([a,c][c,b][a,d][d,b])</annotation></semantics></math>
+(the factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>a</mi><mo stretchy="false">]</mo></mrow><mn>2</mn></msup><annotation encoding="application/x-tex">[b,a]^2</annotation></semantics></math>
+dropped). Using
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">[</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mo>−</mo><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow></mrow><annotation encoding="application/x-tex">[c,b]=-[b,c]</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">[</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">]</mo></mrow><mo>=</mo><mo>−</mo><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow></mrow><annotation encoding="application/x-tex">[d,b]=-[b,d]</annotation></semantics></math>
+this is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>b</mi><mo>,</mo><mi>d</mi><mo stretchy="false">]</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi([a,c][b,c][a,d][b,d])=\chi((a,b;c,d))</annotation></semantics></math>,
+as the cross-ratio differs from this product by a square.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><strong>Lemma 2.2 (four points).</strong> For any four distinct
+points,
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><msub><mi>u</mi><mn>2</mn></msub><mo>,</mo><msub><mi>u</mi><mn>3</mn></msub><mo>,</mo><msub><mi>u</mi><mn>4</mn></msub><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><msub><mi>u</mi><mn>3</mn></msub><mo>,</mo><msub><mi>u</mi><mn>4</mn></msub><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><msub><mi>u</mi><mn>2</mn></msub><mo>,</mo><msub><mi>u</mi><mn>4</mn></msub><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><msub><mi>u</mi><mn>2</mn></msub><mo>,</mo><msub><mi>u</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">o(u_2,u_3,u_4)\,o(u_1,u_3,u_4)\,o(u_1,u_2,u_4)\,o(u_1,u_2,u_3)=1 .</annotation></semantics></math></p>
+<p><em>Proof.</em> Write
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">[</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">]</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">d(u,v)=\chi([u,v])</annotation></semantics></math>,
+so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>v</mi><mo>,</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">d(v,u)=-d(u,v)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mi>d</mi><mrow><mo stretchy="false">(</mo><mi>w</mi><mo>,</mo><mi>u</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">o(u,v,w)=d(u,v)d(v,w)d(w,u)</annotation></semantics></math>.
+In the product every edge of the complete graph on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mn>1</mn></msub><mo>,</mo><mi>…</mi><mo>,</mo><msub><mi>u</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">u_1,\dots,u_4</annotation></semantics></math>
+occurs twice; four of the six edges occur twice in the same direction,
+the edges
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mn>1</mn></msub><msub><mi>u</mi><mn>3</mn></msub></mrow><annotation encoding="application/x-tex">u_1u_3</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>u</mi><mn>2</mn></msub><msub><mi>u</mi><mn>4</mn></msub></mrow><annotation encoding="application/x-tex">u_2u_4</annotation></semantics></math>
+once in each direction, contributing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mo>=</mo><mn>1</mn><mi>.</mi></mrow><annotation encoding="application/x-tex">(-1)^2=1.</annotation></semantics></math>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<hr />
+<h2 id="theorem-a-canonical-if-and-only-if-there-is-no-negative-triangle">3.
+Theorem A: canonical if and only if there is no negative triangle</h2>
+<p>Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+be any fixed-point-free involution of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>
+and put
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo>,</mo><mi>w</mi><mo stretchy="false">)</mo></mrow><mspace width="0.278em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>ψ</mi><mi>u</mi><mo>,</mo><mi>ψ</mi><mi>v</mi><mo>,</mo><mi>ψ</mi><mi>w</mi><mo stretchy="false">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">E(u,v,w)=o(u,v,w)\;o(\psi u,\psi v,\psi w).</annotation></semantics></math></p>
+<p><strong>Lemma 3.1.</strong>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+is good if and only if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>ψ</mi><mi>a</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">E(a,c,\psi a)=1</annotation></semantics></math>
+for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math>
+and every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>c</mi><mo>∉</mo><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>ψ</mi><mi>a</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">c\notin\{a,\psi a\}</annotation></semantics></math>.</p>
+<p>In words: <em>the hypotheses of Conjecture 1 say exactly that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+preserves the orientation of every triple that contains one of its own
+chords.</em></p>
+<p><em>Proof.</em> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mi>ψ</mi><mi>a</mi></mrow><annotation encoding="application/x-tex">b=\psi a</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>d</mi><mo>=</mo><mi>ψ</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">d=\psi c</annotation></semantics></math>.
+Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>ψ</mi><mi>a</mi><mo>,</mo><mi>ψ</mi><mi>c</mi><mo>,</mo><mi>ψ</mi><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>b</mi><mo>,</mo><mi>d</mi><mo>,</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">o(\psi a,\psi c,\psi b)=o(b,d,a)=o(a,b,d)=-o(a,d,b)</annotation></semantics></math>,
+so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>d</mi><mo>,</mo><mi>b</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>;</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">E(a,c,b)=-o(a,c,b)\,o(a,d,b)=-\chi((a,b;c,d))</annotation></semantics></math>
+by Lemma 2.1.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><strong>Lemma 3.2.</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+be good. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">a,c,e</annotation></semantics></math>
+lie in three different chords then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>e</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>ψ</mi><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>e</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">E(a,c,e)=E(\psi a,c,e)</annotation></semantics></math>.
+Consequently, for three distinct chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi></mrow><annotation encoding="application/x-tex">\pi,\rho,\sigma</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+the value
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>e</mi><mo stretchy="false">)</mo></mrow><mspace width="2.0em"></mspace><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>∈</mo><mi>π</mi><mo>,</mo><mspace width="0.222em"></mspace><mi>c</mi><mo>∈</mo><mi>ρ</mi><mo>,</mo><mspace width="0.222em"></mspace><mi>e</mi><mo>∈</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\widehat E(\pi,\rho,\sigma)=E(a,c,e)\qquad(a\in\pi,\ c\in\rho,\ e\in\sigma)</annotation></semantics></math>
+is well defined, symmetric, and invariant under
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>;
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>E</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat E</annotation></semantics></math>
+satisfies the identity of Lemma 2.2 on any four chords.</p>
+<p><em>Proof.</em>
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+satisfies the identity of Lemma 2.2 because both
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mo>∘</mo><mi>ψ</mi></mrow><annotation encoding="application/x-tex">o\circ\psi</annotation></semantics></math>
+do, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>E</mi><annotation encoding="application/x-tex">E</annotation></semantics></math>
+is symmetric because a transposition flips both factors. Apply the
+identity to the four points
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>ψ</mi><mi>a</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>e</mi></mrow><annotation encoding="application/x-tex">a,\psi a,c,e</annotation></semantics></math>
+and use
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>ψ</mi><mi>a</mi><mo>,</mo><mi>c</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>E</mi><mrow><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>ψ</mi><mi>a</mi><mo>,</mo><mi>e</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">E(a,\psi a,c)=E(a,\psi a,e)=1</annotation></semantics></math>
+(Lemma 3.1). Under a Möbius map the factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>det</mo><mi>g</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(\det g)</annotation></semantics></math>
+appears twice.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p>We call a triple of chords <strong>negative</strong> if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\widehat E=-1</annotation></semantics></math>.</p>
+<p><strong>Proposition 3.3 (closed form).</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi></mrow><annotation encoding="application/x-tex">\pi,\rho,\sigma</annotation></semantics></math>
+be pairwise crossing chords and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>,</mo><msub><mi>λ</mi><mn>2</mn></msub><mo>,</mo><msub><mi>λ</mi><mn>3</mn></msub></mrow><annotation encoding="application/x-tex">\lambda_1,\lambda_2,\lambda_3</annotation></semantics></math>
+the cross-ratios of the three pairs of chords (as in the Definition of
+Section 1). Then
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><mi>π</mi><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\widehat E(\pi,\rho,\sigma)=\chi((1-\lambda_1)(1-\lambda_2)(1-\lambda_3)).</annotation></semantics></math>
+Each factor
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(1-\lambda)</annotation></semantics></math>
+is independent of the order of the points, since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msup><mi>λ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>λ</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(1-\lambda^{-1})=\chi(\lambda-1)\chi(\lambda)=\chi(1-\lambda)</annotation></semantics></math>
+when
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(\lambda)=-1</annotation></semantics></math>.</p>
+<p><em>Proof.</em> Both sides are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>-invariant
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>
+is 3-transitive, so we may assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\pi=\{0,\infty\}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ρ</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>,</mo><mi>n</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\rho=\{1,n\}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\sigma=\{x,y\}</annotation></semantics></math>.
+Then
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mo>=</mo><mi>o</mi><mrow><mo stretchy="false">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>∞</mi><mo>,</mo><mi>n</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mo>−</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">\widehat E=o(0,1,x)\,o(\infty,n,y)=\chi(x(x-1))\,\chi(y-n).</annotation></semantics></math>
+The cross-ratios are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>1</mn></msub><mo>=</mo><mn>1</mn><mi>/</mi><mi>n</mi></mrow><annotation encoding="application/x-tex">\lambda_1=1/n</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>2</mn></msub><mo>=</mo><mi>x</mi><mi>/</mi><mi>y</mi></mrow><annotation encoding="application/x-tex">\lambda_2=x/y</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mn>3</mn></msub><mo>=</mo><mfrac displaystyle="true"><mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow></mrow><mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow></mfrac></mrow><annotation encoding="application/x-tex">\lambda_3=\dfrac{(1-x)(n-y)}{(1-y)(n-x)}</annotation></semantics></math>,
+and a direct computation gives
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mfrac><mrow><msup><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><msup><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mn>2</mn></msup></mrow><mrow><mi>n</mi><mspace width="0.167em"></mspace><mi>y</mi><mspace width="0.167em"></mspace><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow></mfrac><mo>,</mo></mrow><annotation encoding="application/x-tex">(1-\lambda_1)(1-\lambda_2)(1-\lambda_3)=-\frac{(n-1)^2(x-y)^2}{n\,y\,(1-y)(n-x)},</annotation></semantics></math>
+whose character is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(y(1-y)(n-x))</annotation></semantics></math>
+(recall
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>−</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(-n)=1</annotation></semantics></math>).
+Multiplying by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>y</mi><mo>−</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(x(x-1)(y-n))</annotation></semantics></math>
+gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mi>y</mi><mo stretchy="false">)</mo></mrow><mo>⋅</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(xy)\cdot\chi((1-x)(1-y)(n-x)(n-y))=(-1)(-1)=1</annotation></semantics></math>
+by the crossing conditions for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>π</mi><mo>,</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\pi,\sigma)</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">(\rho,\sigma)</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><strong>Theorem A.</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>
+(any size) and let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+satisfy the hypotheses of Conjecture 1. The following are
+equivalent.</p>
+<ol type="1">
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+for some non-square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+has no negative triangle:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>1</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>2</mn></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><msub><mi>λ</mi><mn>3</mn></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi((1-\lambda_1)(1-\lambda_2)(1-\lambda_3))=1</annotation></semantics></math>
+for every three chords.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+preserves the orientation
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>
+of <strong>every</strong> triple of points of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>.</li>
+</ol>
+<p><em>Proof.</em> (1 ⇒ 3):
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">z\mapsto n/z</annotation></semantics></math>
+has matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false">(</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>n</mi></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr></mtable><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">\begin{pmatrix}0&amp;n\\1&amp;0\end{pmatrix}</annotation></semantics></math>
+of determinant
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">-n</annotation></semantics></math>,
+a square because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(-1)=\chi(n)=-1</annotation></semantics></math>.
+So
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mo>∈</mo><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\psi\in PSL(2,q)</annotation></semantics></math>
+preserves
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>.</p>
+<p>(3 ⇔ 2): triples meeting some chord twice have
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>E</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">E=1</annotation></semantics></math>
+by Lemma 3.1; all other triples give
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mover><mi>E</mi><mo accent="true">̂</mo></mover><annotation encoding="application/x-tex">\widehat E</annotation></semantics></math>.</p>
+<p>(3 ⇒ 1): Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+be any permutation of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>
+preserving
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>.
+Since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>
+is 2-transitive, composing with a suitable
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>∈</mo><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">h\in PSL(2,q)</annotation></semantics></math>
+we get
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mo>=</mo><mi>h</mi><mo>∘</mo><mi>g</mi></mrow><annotation encoding="application/x-tex">f=h\circ g</annotation></semantics></math>
+fixing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>∞</mi><annotation encoding="application/x-tex">\infty</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>.
+As
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>o</mi><mrow><mo stretchy="false">(</mo><mi>∞</mi><mo>,</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">o(\infty,x,y)=\chi(y-x)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+satisfies
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>f</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mo>−</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\chi(f(y)-f(x))=\chi(y-x)</annotation></semantics></math>
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>≠</mo><mi>y</mi></mrow><annotation encoding="application/x-tex">x\ne y</annotation></semantics></math>
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>,
+i.e. every “slope”
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>f</mi><mrow><mo stretchy="false">(</mo><mi>y</mi><mo stretchy="false">)</mo></mrow><mo>−</mo><mi>f</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow><mrow><mi>y</mi><mo>−</mo><mi>x</mi></mrow></mfrac><annotation encoding="application/x-tex">\frac{f(y)-f(x)}{y-x}</annotation></semantics></math>
+is a non-zero square. By <strong>Carlitz’s theorem</strong> (L. Carlitz,
+Proc. AMS 11 (1960); extended to all odd
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+by McConnel, Acta Arith. 8 (1963)), such an
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>f</mi><annotation encoding="application/x-tex">f</annotation></semantics></math>
+is of the form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>f</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>α</mi><mo>+</mo><mi>β</mi><msup><mi>x</mi><msup><mi>p</mi><mi>j</mi></msup></msup></mrow><annotation encoding="application/x-tex">f(x)=\alpha+\beta x^{p^j}</annotation></semantics></math>.
+Hence
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+is a Möbius map composed with a field automorphism.</p>
+<p>Now
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><msup><mi>p</mi><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">q=p^k</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>
+odd (since
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>),
+so the group of field automorphisms has odd order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>k</mi><annotation encoding="application/x-tex">k</annotation></semantics></math>,
+and an involution
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>g</mi><annotation encoding="application/x-tex">g</annotation></semantics></math>
+in the semidirect product must lie in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>
+— in fact in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>,
+as it preserves
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>o</mi><annotation encoding="application/x-tex">o</annotation></semantics></math>.
+A Möbius map exchanging
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>0</mn><annotation encoding="application/x-tex">0</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>∞</mi><annotation encoding="application/x-tex">\infty</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">z\mapsto n/z</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>=</mo><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">n=\psi(1)</annotation></semantics></math>
+is a non-square.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><strong>Remarks.</strong> (a) The equivalence (1)⇔(3) is the
+“Carlitz” reduction, the same route BSW take for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1\;(\mathrm{mod}\;4)</annotation></semantics></math>;
+the triangle criterion (2) and its closed form are new. (b)
+<em>Combinatorial version.</em> For four distinct points
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo><mi>c</mi><mo>,</mo><mi>d</mi></mrow><annotation encoding="application/x-tex">a,b,c,d</annotation></semantics></math>
+the three ways to pair them have cross-ratios
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>λ</mi><annotation encoding="application/x-tex">\lambda</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><mi>λ</mi></mrow><annotation encoding="application/x-tex">1-\lambda</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mo>−</mo><msup><mi>λ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">1-\lambda^{-1}</annotation></semantics></math>
+(up to inversion), whose product
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><msup><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">-(1-\lambda)^2</annotation></semantics></math>
+is a non-square; so an <em>odd</em> number of the three pairings cross —
+either exactly one (as on a real circle) or all three (<em>exotic</em>
+quadruple, impossible over the reals). For two crossing chords,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>−</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(1-\lambda)=-1</annotation></semantics></math>
+exactly when their four points form an exotic quadruple. So Theorem A
+says:
+<em><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+is canonical iff the “exotic graph” on its chords is complete bipartite
+(or empty).</em> (c) In a non-canonical good matching <em>every</em>
+chord lies in a negative triangle: if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>π</mi><mn>0</mn></msub><annotation encoding="application/x-tex">\pi_0</annotation></semantics></math>
+lay in none, Lemma 2.2 for chords would give
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo>,</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><msub><mi>π</mi><mn>0</mn></msub><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><msub><mi>π</mi><mn>0</mn></msub><mo>,</mo><mi>ρ</mi><mo>,</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><mover><mi>E</mi><mo accent="true">̂</mo></mover><mrow><mo stretchy="false">(</mo><msub><mi>π</mi><mn>0</mn></msub><mo>,</mo><mi>σ</mi><mo>,</mo><mi>τ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\widehat E(\rho,\sigma,\tau)=\widehat E(\pi_0,\rho,\sigma)\widehat E(\pi_0,\rho,\tau)\widehat E(\pi_0,\sigma,\tau)=1</annotation></semantics></math>
+for all triples.</p>
+<hr />
+<h2 id="theorems-b-and-c-stability-and-spreading-every-odd-q">4.
+Theorems B and C: stability and spreading (every odd
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>)</h2>
+<p>We use Weil’s bound in the form: <em>if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>h</mi><mo>∈</mo><mi>F</mi><mrow><mo stretchy="false">[</mo><mi>t</mi><mo stretchy="false">]</mo></mrow></mrow><annotation encoding="application/x-tex">h\in F[t]</annotation></semantics></math>
+is not a constant times a square and has
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>d</mi><annotation encoding="application/x-tex">d</annotation></semantics></math>
+distinct roots, then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">|</mo><msub><mo>∑</mo><mrow><mi>t</mi><mo>∈</mo><mi>F</mi></mrow></msub><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>h</mi><mrow><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo stretchy="false">|</mo></mrow><mo>≤</mo><mrow><mo stretchy="false">(</mo><mi>d</mi><mo>−</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><msqrt><mi>q</mi></msqrt></mrow><annotation encoding="application/x-tex">|\sum_{t\in F}\chi(h(t))|\le(d-1)\sqrt q</annotation></semantics></math>.</em></p>
+<p><strong>Lemma 4.1.</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+be an elliptic involution and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+a chord that is not an orbit of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>.
+Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+crosses at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac displaystyle="true"><mrow><mi>q</mi><mo>−</mo><mn>3</mn><mo>+</mo><mn>2</mn><msqrt><mi>q</mi></msqrt></mrow><mn>4</mn></mfrac><annotation encoding="application/x-tex">\dfrac{q-3+2\sqrt q}{4}</annotation></semantics></math>
+of the
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{q+1}{2}</annotation></semantics></math>
+orbits of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>.</p>
+<p><em>Proof.</em> All elliptic involutions are conjugate, so let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ι</mi><mrow><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">\iota(z)=n/z</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+a non-square. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mi>F</mi><mrow><mo stretchy="false">(</mo><msqrt><mi>n</mi></msqrt><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">K=F(\sqrt n)</annotation></semantics></math>
+and identify
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>∈</mo><mi>F</mi></mrow><annotation encoding="application/x-tex">z\in F</annotation></semantics></math>
+with the line
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>⋅</mo><mrow><mo stretchy="false">(</mo><mi>z</mi><mo>+</mo><msqrt><mi>n</mi></msqrt><mo stretchy="false">)</mo></mrow><mo>⊂</mo><mi>K</mi></mrow><annotation encoding="application/x-tex">F\cdot(z+\sqrt n)\subset K</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>∞</mi><annotation encoding="application/x-tex">\infty</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>F</mi><mo>⋅</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">F\cdot 1</annotation></semantics></math>.
+Multiplication by elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>K</mi><mo>*</mo></msup><annotation encoding="application/x-tex">K^*</annotation></semantics></math>
+induces a cyclic subgroup of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>
+of order
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q+1</annotation></semantics></math>
+acting regularly on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,q)</annotation></semantics></math>;
+multiplication by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msqrt><mi>n</mi></msqrt><annotation encoding="application/x-tex">\sqrt n</annotation></semantics></math>
+is exactly
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>,
+so this group commutes with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>.
+Applying a suitable element we may assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false" form="postfix">}</mo><mo>⊂</mo><msup><mi>F</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">\sigma=\{c,d\}\subset F^*</annotation></semantics></math>.</p>
+<p>The orbits of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{0,\infty\}</annotation></semantics></math>
+and the chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>a</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{a,n/a\}</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>∈</mo><msup><mi>F</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">a\in F^*</annotation></semantics></math>;
+the latter correspond bijectively to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>T</mi><mo>=</mo><mo stretchy="false" form="prefix">{</mo><mi>t</mi><mo>:</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><msup><mi>t</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>1</mn><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">T=\{t:\chi(t^2-4n)=1\}</annotation></semantics></math>
+via
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>t</mi><mo>=</mo><mi>a</mi><mo>+</mo><mi>n</mi><mi>/</mi><mi>a</mi></mrow><annotation encoding="application/x-tex">t=a+n/a</annotation></semantics></math>.
+From
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mi>c</mi><mo>−</mo><mi>a</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>a</mi><mi>c</mi><mo>−</mo><mi>n</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mi>a</mi><mi>c</mi><mspace width="0.167em"></mspace><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>c</mi></msub><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">(c-a)(ac-n)=-ac\,(t-t_c)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>t</mi><mi>c</mi></msub><mo>=</mo><mi>c</mi><mo>+</mo><mi>n</mi><mi>/</mi><mi>c</mi></mrow><annotation encoding="application/x-tex">t_c=c+n/c</annotation></semantics></math>
+one gets:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+crosses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>a</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{a,n/a\}</annotation></semantics></math>
+iff
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>c</mi><mi>d</mi><mo stretchy="false">)</mo></mrow><mspace width="0.167em"></mspace><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>c</mi></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>d</mi></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(cd)\,\chi((t-t_c)(t-t_d))=-1</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+crosses
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{0,\infty\}</annotation></semantics></math>
+iff
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>c</mi><mi>d</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(cd)=-1</annotation></semantics></math>.
+Writing
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mi>c</mi><mi>d</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">e=\chi(cd)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ℰ</mi><mo>=</mo><msub><mo>∑</mo><mrow><mi>t</mi><mo>∈</mo><mi>F</mi></mrow></msub><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">(</mo><msup><mi>t</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>n</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>c</mi></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>d</mi></msub><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathcal E=\sum_{t\in F}\chi((t^2-4n)(t-t_c)(t-t_d))</annotation></semantics></math>
+and counting with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mn>𝟏</mn><mi>T</mi></msub><mrow><mo stretchy="false">(</mo><mi>t</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mfrac><mrow><mn>1</mn><mo>+</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><msup><mi>t</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>n</mi><mo stretchy="false">)</mo></mrow></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">\mathbf 1_T(t)=\frac{1+\chi(t^2-4n)}{2}</annotation></semantics></math>,
+the number of orbits crossed by
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>σ</mi><annotation encoding="application/x-tex">\sigma</annotation></semantics></math>
+is exactly
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>N</mi><mrow><mo stretchy="false">(</mo><mi>σ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>q</mi><mo>−</mo><mn>3</mn></mrow><mn>4</mn></mfrac><mo>−</mo><mfrac><mrow><mi>e</mi><mspace width="0.167em"></mspace><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>+</mo><mi>ℰ</mi><mo stretchy="false">)</mo></mrow></mrow><mn>4</mn></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">N(\sigma)=\frac{q-3}{4}-\frac{e\,(1+\mathcal E)}{4}.</annotation></semantics></math>
+The quartic
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><msup><mi>t</mi><mn>2</mn></msup><mo>−</mo><mn>4</mn><mi>n</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>c</mi></msub><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>t</mi><mo>−</mo><msub><mi>t</mi><mi>d</mi></msub><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">(t^2-4n)(t-t_c)(t-t_d)</annotation></semantics></math>
+is square-free with square leading coefficient, so
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>−</mo><mn>1</mn><mo>−</mo><mi>ℰ</mi></mrow><annotation encoding="application/x-tex">-1-\mathcal E</annotation></semantics></math>
+is the trace of Frobenius of an elliptic curve and Hasse’s bound gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">|</mo><mn>1</mn><mo>+</mo><mi>ℰ</mi><mo stretchy="false">|</mo></mrow><mo>≤</mo><mn>2</mn><msqrt><mi>q</mi></msqrt></mrow><annotation encoding="application/x-tex">|1+\mathcal E|\le 2\sqrt q</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p>(The exact formula and the bound were checked for every chord and all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>43</mn><mo>≤</mo><mi>q</mi><mo>≤</mo><mn>131</mn></mrow><annotation encoding="application/x-tex">43\le q\le 131</annotation></semantics></math>;
+the bound is attained up to rounding,
+e.g. <math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>13</mn><annotation encoding="application/x-tex">13</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>43</mn></mrow><annotation encoding="application/x-tex">q=43</annotation></semantics></math>
+against
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>13.28</mn><annotation encoding="application/x-tex">13.28</annotation></semantics></math>.)</p>
+<p><strong>Theorem B (stability).</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+be a good matching and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+an elliptic involution. If
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+contains more than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>−</mo><mn>3</mn><mo>+</mo><mn>2</mn><msqrt><mi>q</mi></msqrt></mrow><mn>4</mn></mfrac><annotation encoding="application/x-tex">\frac{q-3+2\sqrt q}{4}</annotation></semantics></math>
+orbits of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+is the orbit set of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>.
+In particular: <em>if
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+for more than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>+</mo><mn>2</mn><msqrt><mi>q</mi></msqrt><mo>−</mo><mn>7</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{q+2\sqrt q-7}{2}</annotation></semantics></math>
+elements
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><msup><mi>F</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">x\in F^*</annotation></semantics></math>,
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=n/x</annotation></semantics></math>
+for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>.</em></p>
+<p><em>Proof.</em> A chord of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+that is not an orbit of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+would have to cross all the orbits of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+lying in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>,
+contradicting Lemma 4.1.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p><strong>Theorem C (spreading).</strong> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+be a good matching that is not canonical and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>
+any elliptic involution. Then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+contains at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.5</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">3.5\sqrt q+6</annotation></semantics></math>
+orbits of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>.
+(Equivalently: a non-canonical
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+agrees with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>↦</mo><mi>n</mi><mi>′</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">x\mapsto n&#39;/x</annotation></semantics></math>
+on at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>12</mn></mrow><annotation encoding="application/x-tex">7\sqrt q+12</annotation></semantics></math>
+elements, for every non-square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">n&#39;</annotation></semantics></math>.)</p>
+<p><em>Proof.</em> Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>≥</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">a\ge 1</annotation></semantics></math>
+be the number of common chords. As in Lemma 4.1 assume
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ι</mi><mrow><mo stretchy="false">(</mo><mi>z</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>n</mi><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">\iota(z)=n/z</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo><mo>∈</mo><mi>M</mi></mrow><annotation encoding="application/x-tex">\{0,\infty\}\in M</annotation></semantics></math>.
+Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>
+be the set of points of the common chords other than
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>,</mo><mi>∞</mi></mrow><annotation encoding="application/x-tex">0,\infty</annotation></semantics></math>
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">|</mo><mi>A</mi><mo stretchy="false">|</mo></mrow><mo>=</mo><mn>2</mn><mi>a</mi><mo>−</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">|A|=2a-2</annotation></semantics></math>)
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>B</mi><annotation encoding="application/x-tex">B</annotation></semantics></math>
+the set of points of the remaining chords
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow><mo>=</mo><mi>q</mi><mo>+</mo><mn>1</mn><mo>−</mo><mn>2</mn><mi>a</mi><mo>&gt;</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">|B|=q+1-2a&gt;0</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>B</mi><mo>⊂</mo><msup><mi>F</mi><mo>*</mo></msup></mrow><annotation encoding="application/x-tex">B\subset F^*</annotation></semantics></math>).
+For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>∈</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">v\in B</annotation></semantics></math>
+put
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>v</mi></msub><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>−</mo><mi>v</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>u</mi><mo>−</mo><mi>ψ</mi><mi>v</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>u</mi><mi>v</mi><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo><mi>u</mi><mspace width="0.167em"></mspace><mi>ψ</mi><mi>v</mi><mo stretchy="false">)</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">F_v(u)=(u-v)(u-\psi v)(n-uv)(n-u\,\psi v).</annotation></semantics></math>
+For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>u</mi><mo>∈</mo><mi>A</mi></mrow><annotation encoding="application/x-tex">u\in A</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>∈</mo><mi>B</mi></mrow><annotation encoding="application/x-tex">v\in B</annotation></semantics></math>
+the crossing of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>u</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>u</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{u,n/u\}</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>v</mi><mo>,</mo><mi>ψ</mi><mi>v</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{v,\psi v\}</annotation></semantics></math>
+says
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>χ</mi><mrow><mo stretchy="false">(</mo><msub><mi>F</mi><mi>v</mi></msub><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>−</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\chi(F_v(u))=-1</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>F</mi><mi>v</mi></msub><annotation encoding="application/x-tex">F_v</annotation></semantics></math>
+has the four distinct roots
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mo>,</mo><mi>ψ</mi><mi>v</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>v</mi><mo>,</mo><mi>n</mi><mi>/</mi><mi>ψ</mi><mi>v</mi></mrow><annotation encoding="application/x-tex">v,\psi v,n/v,n/\psi v</annotation></semantics></math>
+(note
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mi>ψ</mi><mi>v</mi><mo>≠</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">v\psi v\ne n</annotation></semantics></math>
+because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>v</mi><mo>,</mo><mi>ψ</mi><mi>v</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{v,\psi v\}</annotation></semantics></math>
+is not an orbit of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ι</mi><annotation encoding="application/x-tex">\iota</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mi>v</mi><mn>2</mn></msup><mo>≠</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">v^2\ne n</annotation></semantics></math>).
+Two polynomials
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>v</mi></msub><mo>,</mo><msub><mi>F</mi><mrow><mi>v</mi><mi>′</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_v,F_{v&#39;}</annotation></semantics></math>
+have the same root set for at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>4</mn><annotation encoding="application/x-tex">4</annotation></semantics></math>
+values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>v</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">v&#39;</annotation></semantics></math>
+per
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>v</mi><annotation encoding="application/x-tex">v</annotation></semantics></math>,
+and otherwise
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>F</mi><mi>v</mi></msub><msub><mi>F</mi><mrow><mi>v</mi><mi>′</mi></mrow></msub></mrow><annotation encoding="application/x-tex">F_vF_{v&#39;}</annotation></semantics></math>
+is not a constant times a square. Let
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Φ</mi><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><msub><mo>∑</mo><mrow><mi>v</mi><mo>∈</mo><mi>B</mi></mrow></msub><mi>χ</mi><mrow><mo stretchy="false">(</mo><msub><mi>F</mi><mi>v</mi></msub><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\Phi(u)=\sum_{v\in B}\chi(F_v(u))</annotation></semantics></math>;
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Φ</mi><mo>≡</mo><mo>−</mo><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow></mrow><annotation encoding="application/x-tex">\Phi\equiv-|B|</annotation></semantics></math>
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math>,
+and by Weil’s bound
+<math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">(</mo><mn>2</mn><mi>a</mi><mo>−</mo><mn>2</mn><mo stretchy="false">)</mo></mrow><msup><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow><mn>2</mn></msup><mo>≤</mo><munder><mo>∑</mo><mrow><mi>u</mi><mo>∈</mo><mi>F</mi></mrow></munder><mi>Φ</mi><msup><mrow><mo stretchy="false">(</mo><mi>u</mi><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mo>=</mo><munder><mo>∑</mo><mrow><mi>v</mi><mo>,</mo><mi>v</mi><mi>′</mi><mo>∈</mo><mi>B</mi></mrow></munder><munder><mo>∑</mo><mrow><mi>u</mi><mo>∈</mo><mi>F</mi></mrow></munder><mi>χ</mi><mrow><mo stretchy="false">(</mo><msub><mi>F</mi><mi>v</mi></msub><msub><mi>F</mi><mrow><mi>v</mi><mi>′</mi></mrow></msub><mo stretchy="false">)</mo></mrow><mo>≤</mo><mn>4</mn><mi>q</mi><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow><mo>+</mo><mn>7</mn><msqrt><mi>q</mi></msqrt><mspace width="0.167em"></mspace><msup><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow><mn>2</mn></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">(2a-2)|B|^2\le\sum_{u\in F}\Phi(u)^2=\sum_{v,v&#39;\in B}\sum_{u\in F}\chi(F_vF_{v&#39;})\le 4q|B|+7\sqrt q\,|B|^2 .</annotation></semantics></math>
+By Theorem B,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mo stretchy="false">|</mo><mi>B</mi><mo stretchy="false">|</mo></mrow><mo>≥</mo><mfrac><mrow><mi>q</mi><mo>−</mo><mn>2</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>5</mn></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">|B|\ge\frac{q-2\sqrt q+5}{2}</annotation></semantics></math>,
+which gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>≤</mo><mn>1</mn><mo>+</mo><mn>3.5</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mfrac><mrow><mn>4</mn><mi>q</mi></mrow><mrow><mi>q</mi><mo>−</mo><mn>2</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>5</mn></mrow></mfrac><mo>≤</mo><mn>3.5</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">a\le 1+3.5\sqrt q+\frac{4q}{q-2\sqrt q+5}\le 3.5\sqrt q+6</annotation></semantics></math>,
+the last step being
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msup><mrow><mo stretchy="false">(</mo><msqrt><mi>q</mi></msqrt><mo>−</mo><mn>5</mn><mo stretchy="false">)</mo></mrow><mn>2</mn></msup><mo>≥</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">(\sqrt q-5)^2\ge 0</annotation></semantics></math>.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<p>In the language of Conjecture 2: <em>if a set
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>
+as in Conjecture 2 is not contained in a passant, then every passant
+contains at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>3.5</mn><msqrt><mi>q</mi></msqrt><mo>+</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">3.5\sqrt q+6</annotation></semantics></math>
+points of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>S</mi><annotation encoding="application/x-tex">S</annotation></semantics></math>.</em></p>
+<hr />
+<h2 id="proof-for-all-qequiv-3-mathrmmod4-with-31q700">5. Proof for all
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3 \;(\mathrm{mod}\;4)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math></h2>
+<h3 id="reduction-to-a-finite-search">5.1 Reduction to a finite
+search</h3>
+<p>For crossing chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>π</mi><mo>,</mo><mi>ρ</mi></mrow><annotation encoding="application/x-tex">\pi,\rho</annotation></semantics></math>
+the class
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>λ</mi><mo>,</mo><msup><mi>λ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{\lambda,\lambda^{-1}\}</annotation></semantics></math>
+of their cross-ratio is a complete
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>-invariant
+of the unordered pair
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>π</mi><mo>,</mo><mi>ρ</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{\pi,\rho\}</annotation></semantics></math>
+(because
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>
+is sharply 3-transitive). Order the elements of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>F</mi><annotation encoding="application/x-tex">F</annotation></semantics></math>
+by their integer codes and put
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mrow><mo stretchy="false">(</mo><mi>λ</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mo>min</mo><mrow><mo stretchy="false">(</mo><mi>λ</mi><mo>,</mo><msup><mi>λ</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{rep}(\lambda)=\min(\lambda,\lambda^{-1})</annotation></semantics></math>.</p>
+<p><strong>Lemma 5.1.</strong> If a non-canonical good matching exists,
+then there is one,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">M&#39;</annotation></semantics></math>,
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">M&#39;</annotation></semantics></math>
+contains
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{0,\infty\}</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>,</mo><mi>n</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{1,n\}</annotation></semantics></math>
+for a non-square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>≤</mo><msup><mi>n</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">n\le n^{-1}</annotation></semantics></math>,
+and every two chords of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mi>′</mi></mrow><annotation encoding="application/x-tex">M&#39;</annotation></semantics></math>
+have
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mo>≥</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">\mathrm{rep}\ge n</annotation></semantics></math>.</p>
+<p><em>Proof.</em> Take a non-canonical good
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>M</mi><annotation encoding="application/x-tex">M</annotation></semantics></math>
+and two of its chords
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo stretchy="false" form="postfix">}</mo><mo>,</mo><mo stretchy="false" form="prefix">{</mo><mi>c</mi><mo>,</mo><mi>d</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{a,b\},\{c,d\}</annotation></semantics></math>
+with the smallest value
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mo>*</mo></msup><annotation encoding="application/x-tex">n^*</annotation></semantics></math>
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><annotation encoding="application/x-tex">\mathrm{rep}</annotation></semantics></math>.
+Some
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mo>∈</mo><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">g\in PGL(2,q)</annotation></semantics></math>
+maps
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo><mi>c</mi></mrow><annotation encoding="application/x-tex">a,b,c</annotation></semantics></math>
+to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>,</mo><mi>∞</mi><mo>,</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">0,\infty,1</annotation></semantics></math>
+(or to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>∞</mi><mo>,</mo><mn>0</mn><mo>,</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\infty,0,1</annotation></semantics></math>);
+then
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>g</mi><mrow><mo stretchy="false">(</mo><mi>d</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">g(d)</annotation></semantics></math>
+equals
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>λ</mi><mrow><mo>±</mo><mn>1</mn></mrow></msup><annotation encoding="application/x-tex">\lambda^{\pm1}</annotation></semantics></math>
+and we choose the option equal to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mo>*</mo></msup><annotation encoding="application/x-tex">n^*</annotation></semantics></math>.
+Cross-ratio classes and being canonical are
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi></mrow><annotation encoding="application/x-tex">PGL</annotation></semantics></math>-invariant.
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>▫</mi><annotation encoding="application/x-tex">\square</annotation></semantics></math></p>
+<h3 id="the-algorithm-verify_bsw.c">5.2 The algorithm
+(<code>verify_bsw.c</code>)</h3>
+<p>For each non-square
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mo>≤</mo><msup><mi>n</mi><mrow><mo>−</mo><mn>1</mn></mrow></msup></mrow><annotation encoding="application/x-tex">n\le n^{-1}</annotation></semantics></math>
+the program lists <strong>all</strong> perfect matchings
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>M</mi><mo>⊇</mo><mo stretchy="false" form="prefix">{</mo><mo stretchy="false" form="prefix">{</mo><mn>0</mn><mo>,</mo><mi>∞</mi><mo stretchy="false" form="postfix">}</mo><mo>,</mo><mo stretchy="false" form="prefix">{</mo><mn>1</mn><mo>,</mo><mi>n</mi><mo stretchy="false" form="postfix">}</mo><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">M\supseteq\{\{0,\infty\},\{1,n\}\}</annotation></semantics></math>
+in which every two chords cross and every two chords have
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">p</mi></mrow><mo>≥</mo><mi>n</mi></mrow><annotation encoding="application/x-tex">\mathrm{rep}\ge n</annotation></semantics></math>,
+by depth-first search:</p>
+<ul>
+<li>for every uncovered point
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>w</mi><annotation encoding="application/x-tex">w</annotation></semantics></math>
+it keeps the set of uncovered
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>z</mi><annotation encoding="application/x-tex">z</annotation></semantics></math>
+such that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">{</mo><mi>w</mi><mo>,</mo><mi>z</mi><mo stretchy="false" form="postfix">}</mo></mrow><annotation encoding="application/x-tex">\{w,z\}</annotation></semantics></math>
+crosses every chosen chord (and, for the first three chords, also
+satisfies the class condition);</li>
+<li>it branches on the uncovered point with the fewest candidates, over
+<strong>all</strong> its candidates;</li>
+<li>a branch is abandoned only when some uncovered point has no
+candidate left, or when a candidate violates the class condition.</li>
+</ul>
+<p>Every rule only discards matchings that violate the constraints, so
+the enumeration is exhaustive. Every complete matching found is
+re-checked against the definition by brute force and then tested for
+being canonical. <strong>Conjecture 1 holds for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+exactly when, for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>,
+the only matching found is the canonical one</strong> (Lemmas 1.1 and
+5.1).</p>
+<h3 id="validation">5.3 Validation</h3>
+<ul>
+<li><p><em>Sanity invariant.</em> The canonical matching must be found
+exactly once per
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>,
+in the class
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>n</mi><mo>*</mo></msup><annotation encoding="application/x-tex">n^*</annotation></semantics></math>
+of its own smallest cross-ratio. This held for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+tested.</p></li>
+<li><p><em>Independent program.</em> <code>bruteforce_check.py</code>
+uses only the literal statement of Conjecture 1 (no geometry, no
+symmetry breaking, no bitsets) and counts all valid
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>.
+Its counts agree with the C program run without symmetry breaking
+(<code>-all</code>) for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+tested:</p>
+<table>
+<colgroup>
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+<col style="width: 6%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math></th>
+<th>7</th>
+<th>11</th>
+<th>19</th>
+<th>23</th>
+<th>31</th>
+<th>43</th>
+<th>47</th>
+<th>59</th>
+<th>67</th>
+<th>71</th>
+<th>79</th>
+<th>83</th>
+<th>103</th>
+<th>107</th>
+<th>127</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>valid
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math></td>
+<td>5</td>
+<td>12</td>
+<td>54</td>
+<td>121</td>
+<td>31</td>
+<td>21</td>
+<td>23</td>
+<td>29</td>
+<td>33</td>
+<td>35</td>
+<td>39</td>
+<td>41</td>
+<td>51</td>
+<td>53</td>
+<td>63</td>
+</tr>
+<tr class="even">
+<td>of the form
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">n/x</annotation></semantics></math></td>
+<td>3</td>
+<td>5</td>
+<td>9</td>
+<td>11</td>
+<td>15</td>
+<td>21</td>
+<td>23</td>
+<td>29</td>
+<td>33</td>
+<td>35</td>
+<td>39</td>
+<td>41</td>
+<td>51</td>
+<td>53</td>
+<td>63</td>
+</tr>
+</tbody>
+</table>
+<p>So all ten values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>43</mn><mo>≤</mo><mi>q</mi><mo>≤</mo><mn>127</mn></mrow><annotation encoding="application/x-tex">43\le q\le 127</annotation></semantics></math>
+are proved twice by unrelated code. (The number of maps
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>n</mi><mi>/</mi><mi>x</mi></mrow><annotation encoding="application/x-tex">n/x</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>−</mo><mn>1</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{q-1}{2}</annotation></semantics></math>,
+one per non-square.)</p></li>
+<li><p><em>Consistency with known results.</em> For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1\;(\mathrm{mod}\;4)</annotation></semantics></math>
+the program finds no counterexample for any of the 37 prime powers
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>5</mn><mo>≤</mo><mi>q</mi><mo>≤</mo><mn>293</mn></mrow><annotation encoding="application/x-tex">5\le q\le 293</annotation></semantics></math>
+(as BSW’s theorem predicts), and for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><mo>≤</mo><mi>q</mi><mo>≤</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">7\le q\le 31</annotation></semantics></math>,
+it finds exactly the counterexamples of Section 6.</p></li>
+<li><p><em>Field arithmetic.</em> For
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><msup><mi>p</mi><mi>k</mi></msup></mrow><annotation encoding="application/x-tex">q=p^k</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>k</mi><mo>&gt;</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">k&gt;1</annotation></semantics></math>,
+the program constructs
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(q)</annotation></semantics></math>
+from a primitive polynomial it finds by search and uses log/exponent
+tables; the values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>243</mn><mo>=</mo><msup><mn>3</mn><mn>5</mn></msup></mrow><annotation encoding="application/x-tex">q=243=3^5</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>343</mn><mo>=</mo><msup><mn>7</mn><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">q=343=7^3</annotation></semantics></math>
+are included.</p></li>
+</ul>
+<h3 id="result">5.4 Result</h3>
+<p><strong>Theorem D (computer-assisted).</strong> Conjecture 1 holds
+for each of the 61 prime powers
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math>:</p>
+<p>43, 47, 59, 67, 71, 79, 83, 103, 107, 127, 131, 139, 151, 163, 167,
+179, 191, 199, 211, 223, 227, 239, <strong>243</strong>, 251, 263, 271,
+283, 307, 311, 331, <strong>343</strong>, 347, 359, 367, 379, 383, 419,
+431, 439, 443, 463, 467, 479, 487, 491, 499, 503, 523, 547, 563, 571,
+587, 599, 607, 619, 631, 643, 647, 659, 683, 691.</p>
+<p>For every one of them the program reports
+<code>canonical=1 noncanonical=0 verify_fail=0</code> (file
+<code>results_q3mod4_32_700.txt</code>). Some rows:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: right;"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math></th>
+<th>field</th>
+<th style="text-align: right;">classes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>n</mi><annotation encoding="application/x-tex">n</annotation></semantics></math>
+searched</th>
+<th style="text-align: right;">search nodes</th>
+<th style="text-align: right;">time (s)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: right;">43</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>43</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(43)</annotation></semantics></math></td>
+<td style="text-align: right;">11</td>
+<td style="text-align: right;">62</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">103</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>103</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(103)</annotation></semantics></math></td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">709</td>
+<td style="text-align: right;">0.00</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">243</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><msup><mn>3</mn><mn>5</mn></msup><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(3^5)</annotation></semantics></math></td>
+<td style="text-align: right;">61</td>
+<td style="text-align: right;">66 325</td>
+<td style="text-align: right;">0.33</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">343</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><msup><mn>7</mn><mn>3</mn></msup><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(7^3)</annotation></semantics></math></td>
+<td style="text-align: right;">86</td>
+<td style="text-align: right;">595 172</td>
+<td style="text-align: right;">2.69</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">503</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>503</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(503)</annotation></semantics></math></td>
+<td style="text-align: right;">126</td>
+<td style="text-align: right;">5 922 226</td>
+<td style="text-align: right;">29</td>
+</tr>
+<tr class="even">
+<td style="text-align: right;">599</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>599</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(599)</annotation></semantics></math></td>
+<td style="text-align: right;">150</td>
+<td style="text-align: right;">20 351 591</td>
+<td style="text-align: right;">161</td>
+</tr>
+<tr class="odd">
+<td style="text-align: right;">691</td>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>691</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">GF(691)</annotation></semantics></math></td>
+<td style="text-align: right;">173</td>
+<td style="text-align: right;">65 243 036</td>
+<td style="text-align: right;">630</td>
+</tr>
+</tbody>
+</table>
+<p>The whole range took about 65 CPU-minutes (run on 4 cores). The time
+grows roughly like
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msup><mi>q</mi><mn>8</mn></msup><annotation encoding="application/x-tex">q^{8}</annotation></semantics></math>;
+<code>run_all.sh 700 1000</code> would extend the result to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&lt;</mo><mn>1000</mn></mrow><annotation encoding="application/x-tex">q&lt;1000</annotation></semantics></math>
+in about two CPU-days.</p>
+<p><strong>Corollary.</strong> Together with the theorem of
+Blokhuis–Seress–Wilbrink for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1\;(\mathrm{mod}\;4)</annotation></semantics></math>,
+<em>Conjecture 1 holds for every odd prime power
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math>.</em></p>
+<p><em>Independent confirmation.</em> The 38 values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>≤</mo><mn>431</mn></mrow><annotation encoding="application/x-tex">31&lt;q\le 431</annotation></semantics></math>
+were also checked by a separately written program (two implementations
+of a different search, with a naive third program up to
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>127</mn></mrow><annotation encoding="application/x-tex">q=127</annotation></semantics></math>);
+its solution counts agree with ours for every
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>.</p>
+<hr />
+<h2 id="the-bound-q31-cannot-be-improved">6. The bound
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q&gt;31</annotation></semantics></math>
+cannot be improved</h2>
+<p>For every prime power
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>7</mn><mo>≤</mo><mi>q</mi><mo>≤</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">7\le q\le 31</annotation></semantics></math>
+there is a non-canonical good matching (for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>3</mn></mrow><annotation encoding="application/x-tex">q=3</annotation></semantics></math>
+there is none). The <em>existence</em> of these examples is stated in
+the BSW abstract, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn><mo>,</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">q=7,11</annotation></semantics></math>
+were found by Korchmáros (J. Combin. Theory A 31, 1981); the explicit
+lists, stabilisers and the polyhedral description are our computation.
+Written as the chords of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>M</mi><mi>ψ</mi></msub><annotation encoding="application/x-tex">M_\psi</annotation></semantics></math>
+(verified against the statement of Conjecture 1 by
+<code>check_examples.py</code>):</p>
+<ul>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn></mrow><annotation encoding="application/x-tex">q=7</annotation></semantics></math>:
+{0,∞}, {1,3}, {2,6}, {4,5}. Its stabiliser in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mn>7</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,7)</annotation></semantics></math>
+is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>4</mn></msub><annotation encoding="application/x-tex">S_4</annotation></semantics></math>
+(the rotation group of the cube acting on 8 points) and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">\psi(x)</annotation></semantics></math>
+is the second fixed point of the stabiliser of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>x</mi><annotation encoding="application/x-tex">x</annotation></semantics></math>:
+an “antipodal map”.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">q=11</annotation></semantics></math>:
+{0,∞}, {1,2}, {3,6}, {4,8}, {5,10}, {7,9} — here
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ψ</mi><mrow><mo stretchy="false">(</mo><mi>x</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mn>2</mn><mi>x</mi></mrow><annotation encoding="application/x-tex">\psi(x)=2x</annotation></semantics></math>
+on squares and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mi>/</mi><mn>2</mn></mrow><annotation encoding="application/x-tex">x/2</annotation></semantics></math>
+on non-squares; the antipodal map of the icosahedron
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mn>5</mn></msub><mo>≤</mo><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mn>11</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">A_5\le PSL(2,11)</annotation></semantics></math>).</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>19</mn></mrow><annotation encoding="application/x-tex">q=19</annotation></semantics></math>:
+{0,∞}, {1,2}, {3,4}, {5,8}, {6,13}, {7,10}, {9,15}, {11,18}, {12,16},
+{14,17} (stabiliser of order 8).</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>23</mn></mrow><annotation encoding="application/x-tex">q=23</annotation></semantics></math>:
+{0,∞}, {1,5}, {2,7}, {3,22}, {4,20}, {6,15}, {8,14}, {9,10}, {11,16},
+{12,19}, {13,21}, {17,18} (stabiliser of order 12).</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>27</mn></mrow><annotation encoding="application/x-tex">q=27</annotation></semantics></math>:
+in
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>27</mn><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>G</mi><mi>F</mi><mrow><mo stretchy="false">(</mo><mn>3</mn><mo stretchy="false">)</mo></mrow><mrow><mo stretchy="false">[</mo><mi>θ</mi><mo stretchy="false">]</mo></mrow></mrow><annotation encoding="application/x-tex">GF(27)=GF(3)[\theta]</annotation></semantics></math>,
+elements coded as
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mn>0</mn></msub><mo>+</mo><mn>3</mn><msub><mi>c</mi><mn>1</mn></msub><mo>+</mo><mn>9</mn><msub><mi>c</mi><mn>2</mn></msub></mrow><annotation encoding="application/x-tex">c_0+3c_1+9c_2</annotation></semantics></math>
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>c</mi><mn>0</mn></msub><mo>+</mo><msub><mi>c</mi><mn>1</mn></msub><mi>θ</mi><mo>+</mo><msub><mi>c</mi><mn>2</mn></msub><msup><mi>θ</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">c_0+c_1\theta+c_2\theta^2</annotation></semantics></math>
+with the primitive polynomial used by the program: {0,∞}, {1,2}, {3,13},
+{4,9}, {5,16}, {6,26}, {7,23}, {8,18}, {10,12}, {11,17}, {14,15},
+{19,22}, {20,24}, {21,25}. It commutes with the Frobenius
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><msup><mi>z</mi><mn>3</mn></msup></mrow><annotation encoding="application/x-tex">z\mapsto z^3</annotation></semantics></math>
+and restricts to the canonical map
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>z</mi><mo>↦</mo><mo>−</mo><mn>1</mn><mi>/</mi><mi>z</mi></mrow><annotation encoding="application/x-tex">z\mapsto -1/z</annotation></semantics></math>
+on
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mrow><mo stretchy="false">(</mo><mn>1</mn><mo>,</mo><mn>3</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PG(1,3)</annotation></semantics></math>.</li>
+<li><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q=31</annotation></semantics></math>:
+{0,∞}, {1,3}, {2,30}, {4,24}, {5,15}, {6,19}, {7,11}, {8,29}, {9,21},
+{10,26}, {12,14}, {13,25}, {16,23}, {17,28}, {18,22}, {20,27}. Its
+stabiliser is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mn>5</mn></msub><annotation encoding="application/x-tex">A_5</annotation></semantics></math>
+with orbits of sizes
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>+</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">12+20</annotation></semantics></math>:
+the vertices of an icosahedron and of a dodecahedron, and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+is the antipodal map. 320 of its 560 triangles are negative.</li>
+</ul>
+<p>The polyhedral mechanism is bounded:
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mn>5</mn></msub><annotation encoding="application/x-tex">A_5</annotation></semantics></math>
+has at most
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>12</mn><mo>+</mo><mn>20</mn><mo>+</mo><mn>30</mn><mo>=</mo><mn>62</mn></mrow><annotation encoding="application/x-tex">12+20+30=62</annotation></semantics></math>
+points with non-trivial stabiliser and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>4</mn></msub><annotation encoding="application/x-tex">S_4</annotation></semantics></math>
+at most 26, so antipodal maps of polyhedral groups cannot cover
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">q+1</annotation></semantics></math>
+points once
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>&gt;</mo><mn>61</mn></mrow><annotation encoding="application/x-tex">q&gt;61</annotation></semantics></math>.
+The remaining examples
+(<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>19</mn><mo>,</mo><mn>23</mn><mo>,</mo><mn>27</mn></mrow><annotation encoding="application/x-tex">q=19,23,27</annotation></semantics></math>)
+have small symmetry and look like isolated coincidences. This is
+consistent with Theorem D.</p>
+<hr />
+<h2 id="what-remains-and-two-approaches-that-cannot-work">7. What
+remains, and two approaches that cannot work</h2>
+<p>Theorems A–C show that a counterexample for large
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math>
+would have to contain negative triangles through every chord (Theorem A)
+and be spread out with respect to every elliptic involution (Theorem C).
+We also record two negative results, so that nobody repeats these
+attempts.</p>
+<p><strong>No clique-bound certificate.</strong> On the graph whose
+vertices are all chords, adjacent when they cross, a good matching is a
+clique of size
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mfrac><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac><annotation encoding="application/x-tex">\frac{q+1}{2}</annotation></semantics></math>.
+The method of BSW for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1\;(\mathrm{mod}\;4)</annotation></semantics></math>
+is of Hoffman/Delsarte type, and its natural generalisation is a
+Lovász-theta certificate: a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>-invariant
+matrix
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mo>max</mo></msub><mrow><mo stretchy="false">(</mo><mi>Z</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mfrac><mrow><mi>q</mi><mo>+</mo><mn>1</mn></mrow><mn>2</mn></mfrac></mrow><annotation encoding="application/x-tex">\lambda_{\max}(Z)=\frac{q+1}{2}</annotation></semantics></math>.
+Such a
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+would force every maximum clique to satisfy strong regularity
+conditions. Averaging over
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>G</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PGL(2,q)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>Z</mi><annotation encoding="application/x-tex">Z</annotation></semantics></math>
+may be assumed constant on the cross-ratio classes, and then tightness
+for the canonical clique is a linear system with one unknown per
+non-crossing class. <code>theta_test.py</code> computes it: for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>43</mn><mo>,</mo><mn>47</mn><mo>,</mo><mn>59</mn><mo>,</mo><mn>67</mn></mrow><annotation encoding="application/x-tex">q=43,47,59,67</annotation></semantics></math>
+the system has full column rank, so the only solution is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Z</mi><mo>=</mo><mi>J</mi></mrow><annotation encoding="application/x-tex">Z=J</annotation></semantics></math>,
+which is not a certificate. <strong>Hence no clique-bound proof exists
+for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>.</strong>
+The reason is visible in Lemma 4.1: the number of canonical chords
+crossed by an outside chord is governed by an elliptic-curve point count
+and is far from constant.</p>
+<p><strong>No group-theoretic shortcut.</strong> Every pair of chords of
+a good matching determines the elliptic involution having both as
+orbits. One might hope that these involutions generate a small subgroup
+of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>,
+to which Dickson’s classification could be applied. For the
+counterexamples with
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>7</mn><mo>,</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">q=7,11</annotation></semantics></math>
+they generate
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>S</mi><mn>4</mn></msub><annotation encoding="application/x-tex">S_4</annotation></semantics></math>
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mn>5</mn></msub><annotation encoding="application/x-tex">A_5</annotation></semantics></math>
+and the matching is invariant; but for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>19</mn><mo>,</mo><mn>23</mn><mo>,</mo><mn>31</mn></mrow><annotation encoding="application/x-tex">q=19,23,31</annotation></semantics></math>
+they generate all of
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>P</mi><mi>S</mi><mi>L</mi><mrow><mo stretchy="false">(</mo><mn>2</mn><mo>,</mo><mi>q</mi><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">PSL(2,q)</annotation></semantics></math>
+and the matching is not invariant (<code>structure_probe.py</code>).</p>
+<p><strong>Spectral form.</strong> With
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mrow><mi>u</mi><mi>v</mi></mrow></msub><mo>=</mo><mi>χ</mi><mrow><mo stretchy="false">(</mo><mrow><mo stretchy="false">[</mo><mi>u</mi><mo>,</mo><mi>v</mi><mo stretchy="false">]</mo></mrow><mrow><mo stretchy="false">[</mo><mi>ψ</mi><mi>u</mi><mo>,</mo><mi>ψ</mi><mi>v</mi><mo stretchy="false">]</mo></mrow><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">K_{uv}=\chi([u,v][\psi u,\psi v])</annotation></semantics></math>,
+Theorem A says that
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+is canonical iff
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mo>max</mo></msub><mrow><mo stretchy="false">(</mo><mi>K</mi><mo stretchy="false">)</mo></mrow><mo>=</mo><mi>q</mi></mrow><annotation encoding="application/x-tex">\lambda_{\max}(K)=q</annotation></semantics></math>.
+For the counterexamples
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>λ</mi><mo>max</mo></msub><mrow><mo stretchy="false">(</mo><mi>K</mi><mo stretchy="false">)</mo></mrow><mo>≤</mo><mn>11</mn></mrow><annotation encoding="application/x-tex">\lambda_{\max}(K)\le 11</annotation></semantics></math>:
+they behave like random
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo>±</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">\pm1</annotation></semantics></math>
+matrices, while the canonical one is rank-one plus identity. So a proof
+must establish a sharp dichotomy; there is no “almost canonical” regime
+to perturb from (Theorem B says the same).</p>
+<hr />
+<h2 id="appendix-files-supplied-with-this-report">Appendix: files
+supplied with this report</h2>
+<table>
+<colgroup>
+<col style="width: 50%" />
+<col style="width: 50%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>file</th>
+<th>purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>verify_bsw.c</code></td>
+<td>the search of Section 5
+(<code>gcc -O3 -march=native -o verify_bsw verify_bsw.c</code>;
+<code>./verify_bsw q [-all] [-print]</code>)</td>
+</tr>
+<tr class="even">
+<td><code>run_all.sh</code></td>
+<td>runs it for every prime power
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>3</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 3\;(\mathrm{mod}\;4)</annotation></semantics></math>
+in a range</td>
+</tr>
+<tr class="odd">
+<td><code>results_q3mod4_32_700.txt</code></td>
+<td>output for all 61 values
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>31</mn><mo>&lt;</mo><mi>q</mi><mo>&lt;</mo><mn>700</mn></mrow><annotation encoding="application/x-tex">31&lt;q&lt;700</annotation></semantics></math>
+(Theorem D)</td>
+</tr>
+<tr class="even">
+<td><code>results_q1mod4_5_293.txt</code></td>
+<td>consistency run for
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>≡</mo><mn>1</mn><mspace width="0.278em"></mspace><mrow><mo stretchy="false">(</mo><mrow><mi mathvariant="normal">m</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">d</mi></mrow><mspace width="0.278em"></mspace><mn>4</mn><mo stretchy="false">)</mo></mrow></mrow><annotation encoding="application/x-tex">q\equiv 1\;(\mathrm{mod}\;4)</annotation></semantics></math></td>
+</tr>
+<tr class="odd">
+<td><code>bruteforce_check.py</code></td>
+<td>independent brute-force count of all valid
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>ψ</mi><annotation encoding="application/x-tex">\psi</annotation></semantics></math>
+for small prime
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>q</mi><annotation encoding="application/x-tex">q</annotation></semantics></math></td>
+</tr>
+<tr class="even">
+<td><code>check_examples.py</code></td>
+<td>verifies the counterexamples of Section 6 against the statement</td>
+</tr>
+<tr class="odd">
+<td><code>theta_test.py</code>, <code>structure_probe.py</code></td>
+<td>the computations of Section 7</td>
+</tr>
+</tbody>
+</table>
+<p>To reproduce everything: <code>./run_all.sh 32 700</code>,
+<code>python3 bruteforce_check.py 7 11 19 23 31 43 47 59</code>,
+<code>python3 check_examples.py</code>.</p>
+<p><em>Use of generative AI.</em> The arguments, programs and
+computations in this report were produced with the assistance of an AI
+system (Claude, Anthropic), as permitted by the rules; all proofs are
+given in full and all computations can be reproduced from the supplied
+code.</p>
+</body>
+</html>
