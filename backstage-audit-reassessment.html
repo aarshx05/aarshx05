@@ -1,0 +1,525 @@
+<title>Backstage Audit Reassessment</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg:#fdfdfd;--bg2:#f4f5f7;--bg3:#ebedf0;
+  --fg:#1a1d23;--fg2:#5e6370;--fg3:#9ca0ab;
+  --bd:#d4d7de;--bd2:#e2e5ea;
+  --ac:#2563eb;--ac2:#eff4ff;
+  --crit:#dc2626;--crit-bg:#fef2f2;--crit-bd:#fecaca;
+  --hi:#c2410c;--hi-bg:#fff7ed;--hi-bd:#fed7aa;
+  --med:#a16207;--med-bg:#fefce8;--med-bd:#fef08a;
+  --lo:#6b7280;--lo-bg:#f9fafb;--lo-bd:#e5e7eb;
+  --grn:#15803d;--grn-bg:#f0fdf4;--grn-bd:#bbf7d0;
+  --red:#dc2626;--red-bg:#fef2f2;--red-bd:#fecaca;
+  --elim:#6b7280;--elim-bg:#f3f4f6;--elim-bd:#d1d5db;
+  --font-body:'Inter',-apple-system,system-ui,sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  color-scheme:light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111318;--bg2:#1a1d24;--bg3:#22252e;
+  --fg:#e1e4ea;--fg2:#8b8f9a;--fg3:#585c66;
+  --bd:#2e323b;--bd2:#262a33;
+  --ac:#60a5fa;--ac2:#1e293b;
+  --crit:#f87171;--crit-bg:#291515;--crit-bd:#5c2020;
+  --hi:#fb923c;--hi-bg:#291e0e;--hi-bd:#5c3a14;
+  --med:#facc15;--med-bg:#29250a;--med-bd:#5c4d10;
+  --lo:#9ca3af;--lo-bg:#1a1d24;--lo-bd:#2e323b;
+  --grn:#4ade80;--grn-bg:#0f2919;--grn-bd:#1a5c2e;
+  --red:#f87171;--red-bg:#291515;--red-bd:#5c2020;
+  --elim:#6b7280;--elim-bg:#1f2937;--elim-bd:#374151;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111318;--bg2:#1a1d24;--bg3:#22252e;
+  --fg:#e1e4ea;--fg2:#8b8f9a;--fg3:#585c66;
+  --bd:#2e323b;--bd2:#262a33;
+  --ac:#60a5fa;--ac2:#1e293b;
+  --crit:#f87171;--crit-bg:#291515;--crit-bd:#5c2020;
+  --hi:#fb923c;--hi-bg:#291e0e;--hi-bd:#5c3a14;
+  --med:#facc15;--med-bg:#29250a;--med-bd:#5c4d10;
+  --lo:#9ca3af;--lo-bg:#1a1d24;--lo-bd:#2e323b;
+  --grn:#4ade80;--grn-bg:#0f2919;--grn-bd:#1a5c2e;
+  --red:#f87171;--red-bg:#291515;--red-bd:#5c2020;
+  --elim:#6b7280;--elim-bg:#1f2937;--elim-bd:#374151;
+  color-scheme:dark;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;font-size:14px;line-height:1.6}
+.wrap{max-width:920px;margin:0 auto;padding:32px 0 80px}
+h1{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;text-wrap:balance}
+.meta{color:var(--fg2);font-size:.82rem;margin-top:6px}
+.meta strong{color:var(--fg);font-weight:600}
+
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px}
+.stat{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:10px 14px;min-width:80px;flex:1}
+.stat-n{font-size:1.5rem;font-weight:700;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.stat-l{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--fg2);margin-top:2px}
+
+.box{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:.84rem;color:var(--fg2);line-height:1.6}
+.box strong{color:var(--fg)}
+
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.filters label{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);margin-right:2px;flex-shrink:0}
+.fbtn{background:var(--bg2);border:1px solid var(--bd2);color:var(--fg2);padding:3px 10px;border-radius:14px;font-size:.76rem;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap}
+.fbtn:hover{border-color:var(--ac);color:var(--fg)}
+.fbtn.on{background:var(--ac2);border-color:var(--ac);color:var(--ac)}
+
+.search{width:100%;background:var(--bg2);border:1px solid var(--bd2);color:var(--fg);padding:8px 12px;border-radius:8px;font-size:.85rem;font-family:inherit;margin:12px 0}
+.search::placeholder{color:var(--fg3)}.search:focus{outline:none;border-color:var(--ac)}
+.count{font-family:var(--font-mono);font-size:.78rem;color:var(--fg2);margin:8px 0 4px}
+
+.f{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;margin:8px 0;overflow:hidden;transition:border-color .12s}
+.f:hover{border-color:var(--fg3)}
+.f.elim{opacity:.55}.f.elim:hover{opacity:.8}
+.fh{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;cursor:pointer;user-select:none;flex-wrap:wrap}
+.fh:hover{background:var(--bg3)}
+
+.sev{font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.s-critical{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-bd)}
+.s-high{background:var(--hi-bg);color:var(--hi);border:1px solid var(--hi-bd)}
+.s-medium{background:var(--med-bg);color:var(--med);border:1px solid var(--med-bd)}
+.s-low{background:var(--lo-bg);color:var(--lo);border:1px solid var(--lo-bd)}
+
+.tag{font-size:.58rem;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.t-survives{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+.t-elim{background:var(--elim-bg);color:var(--elim);border:1px solid var(--elim-bd)}
+
+.reason{font-size:.6rem;padding:2px 6px;border-radius:3px;font-weight:500;white-space:nowrap;flex-shrink:0;margin-top:3px;background:var(--bg3);color:var(--fg2);border:1px solid var(--bd)}
+
+.ft{font-weight:600;font-size:.88rem;flex:1;min-width:0}
+.fi{font-family:var(--font-mono);font-size:.75rem;color:var(--fg3);flex-shrink:0}
+.arrow{color:var(--fg3);flex-shrink:0;margin-top:3px;transition:transform .15s;font-size:.7rem}
+.f.open .arrow{transform:rotate(90deg)}
+
+.fb{padding:0 14px 16px;font-size:.84rem;line-height:1.6;display:none}
+.f.open .fb{display:block}
+.fb h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);margin:14px 0 6px;font-weight:600}
+.fb h4:first-child{margin-top:0}
+
+.verdict-box{padding:10px 12px;border-radius:6px;margin:10px 0;font-size:.82rem;border-left:3px solid}
+.vb-survive{background:var(--red-bg);border-color:var(--red)}
+.vb-elim{background:var(--elim-bg);border-color:var(--elim)}
+
+code{font-family:var(--font-mono);font-size:.8em;background:var(--bg3);padding:1px 4px;border-radius:3px}
+hr{border:none;border-top:1px solid var(--bd2);margin:28px 0}
+
+.surv-section{margin:24px 0}
+.surv-section h2{font-size:1.1rem;font-weight:700;margin-bottom:4px}
+.surv-section .sub{color:var(--fg2);font-size:.82rem;margin-bottom:14px}
+
+@media(max-width:600px){
+  .stats{gap:6px}.stat{min-width:70px;padding:8px 10px}.stat-n{font-size:1.2rem}
+  .fh{gap:6px;padding:10px 12px}
+}
+</style>
+
+<div class="wrap">
+
+<h1>Backstage Audit — Business Reassessment</h1>
+<p class="meta">Filtering 57 confirmed true positives through exploitability, business logic, and attacker realism</p>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n" style="color:var(--fg)">57</div><div class="stat-l">Original TPs</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--red)">7</div><div class="stat-l">Survive</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--elim)">50</div><div class="stat-l">Eliminated</div></div>
+</div>
+
+<div class="box">
+  <strong>Filter applied:</strong> For each of the 57 confirmed findings, we asked: <em>Can an external attacker exploit this against a responsibly-configured Backstage instance without the operator first shooting themselves in the foot?</em> Findings were eliminated if they require the victim to opt into a "dangerously" prefixed flag, depend on operator misconfiguration where the default is safe, require pre-existing access that makes the finding redundant, are not currently exploitable, rely on trusted-author trust boundaries working as designed, or are deployment/infrastructure concerns rather than code vulnerabilities.
+</div>
+
+<div class="box">
+  <strong>What "responsibly configured" means:</strong> Default Backstage deployment. No <code>dangerously*</code> flags enabled. <code>backend.reading.allow</code> set to specific SCM hosts (no reckless wildcards). Standard auth. Permission system may or may not be enabled (default is off, which is the operator's call). Behind standard corporate network or public with auth. Template actions installed from known sources.
+</div>
+
+<div class="surv-section">
+<h2>The 7 That Survive</h2>
+<p class="sub">Genuine code-level issues an attacker could hit without operator self-sabotage</p>
+</div>
+
+<div class="filters">
+  <label>View:</label>
+  <button class="fbtn on" data-f="v" data-v="all">All (57)</button>
+  <button class="fbtn" data-f="v" data-v="survives">Survives (7)</button>
+  <button class="fbtn" data-f="v" data-v="eliminated">Eliminated (50)</button>
+</div>
+<div class="filters">
+  <label>Elimination reason:</label>
+  <button class="fbtn on" data-f="r" data-v="all">All</button>
+  <button class="fbtn" data-f="r" data-v="by-design">By Design / Opt-In</button>
+  <button class="fbtn" data-f="r" data-v="misconfig">Requires Misconfig</button>
+  <button class="fbtn" data-f="r" data-v="pre-compromise">Requires Pre-Compromise</button>
+  <button class="fbtn" data-f="r" data-v="not-exploitable">Not Exploitable</button>
+  <button class="fbtn" data-f="r" data-v="trust-boundary">Trust Boundary OK</button>
+  <button class="fbtn" data-f="r" data-v="infra">Infra / Deployment</button>
+  <button class="fbtn" data-f="r" data-v="info-only">Info Disclosure Only</button>
+  <button class="fbtn" data-f="r" data-v="duplicate">Duplicate</button>
+</div>
+
+<input class="search" type="text" placeholder="Search findings..." id="q">
+<div class="count" id="cnt"></div>
+<div id="list"></div>
+
+<hr>
+<div class="box">
+  <strong>Bottom line:</strong> Of 57 confirmed true positives, only <strong>7</strong> represent genuine code-level security issues exploitable against a properly-configured instance. The remaining 50 are by-design behaviors with explicit opt-in, operator misconfiguration prerequisites, defense-in-depth observations, or minor information disclosures with no actionable impact. The 7 survivors are: one real community-module bug (H4), three protocol/implementation weaknesses (M1, M3, M4), one least-privilege design gap (H2), one systemic design limitation (M11), and one minor DoS vector (L12). None are remotely exploitable without authentication, and none lead to RCE or data breach on a default deployment.
+</div>
+</div>
+
+<script>
+const D=[
+// === SURVIVES ===
+{id:"H2",s:"high",surv:true,reason:"",orig_s:"high",new_s:"medium",
+t:"Full User Token Leaked to Template Actions — Least Privilege Violation",
+logic:"Template actions are trusted, but the full unscoped user token is unnecessarily broad. Any action — even a legitimate one with a bug — can impersonate the user across all APIs. This isn't 'the operator installed something malicious', it's 'Backstage hands out more privilege than any action needs.' A vulnerability in any trusted action becomes full-user-impersonation because the token is unscoped. Real least-privilege violation.",
+ruling:"SURVIVES (downgraded High → Medium) — Not exploitable by end users, but any vulnerability in any template action automatically escalates to full-user impersonation because of the unscoped token. A properly scoped token would contain the blast radius."},
+
+{id:"H4",s:"high",surv:true,reason:"",orig_s:"high",new_s:"high",
+t:"Path Traversal in Rails Scaffolder Module — Real Code Bug",
+logic:"This is a genuine code bug. Core Backstage actions use <code>resolveSafeChildPath</code> in 15+ locations — the Rails module uses it zero times. The <code>values.name</code> input comes from the user running the template, not the template author. Unlike the 'dangerously' flags, nothing warns the operator that this module doesn't sanitize paths. It's a missing security control that the core codebase consistently implements. The only caveat: it's a community module you opt into installing.",
+ruling:"SURVIVES (stays High, scoped to community module) — Real path traversal bug. User input unsanitized where core actions sanitize. But you have to install the Rails module."},
+
+{id:"M1",s:"medium",surv:true,reason:"",orig_s:"medium",new_s:"medium",
+t:"PKCE 'plain' Method Supported — Protocol Weakness",
+logic:"Supporting <code>plain</code> PKCE serves no legitimate purpose. Any client can downgrade from S256 to plain, defeating PKCE entirely. This isn't an operator configuration choice — it's the OIDC implementation accepting a weaker method than it should. The fix is trivial (remove the plain case). No operator action caused this; the code just unnecessarily supports a weak method.",
+ruling:"SURVIVES (stays Medium) — Real protocol weakness. No operator action needed to create the vulnerability. Any client can choose the weak method."},
+
+{id:"M3",s:"medium",surv:true,reason:"",orig_s:"medium",new_s:"low",
+t:"Static Token Comparison Not Timing-Safe — Real Anti-Pattern",
+logic:"Using <code>===</code> instead of <code>crypto.timingSafeEqual()</code> is a real, well-documented vulnerability pattern. The operator didn't choose this — it's a code bug. Practical exploitation is hard (requires network proximity, many measurements), but the fix is one line. The 8-character minimum token length makes the key space smaller than it should be.",
+ruling:"SURVIVES (downgraded Medium → Low) — Real anti-pattern in code the operator didn't choose. Practically hard to exploit but trivial to fix."},
+
+{id:"M4",s:"medium",surv:true,reason:"",orig_s:"medium",new_s:"medium",
+t:"No Response Size Limits in URL Readers — Authenticated DoS",
+logic:"Any authenticated user can register a catalog entity pointing to a URL returning gigabytes. <code>getRawBody(stream)</code> reads unbounded into memory. The URL must be in the allowlist, but any allowed host can serve a huge response. This isn't operator misconfiguration — the operator correctly allowed github.com, and a repo there could contain a massive file. The code simply has no size limit.",
+ruling:"SURVIVES (stays Medium) — Real DoS vector. No misconfiguration needed. Any allowed host could serve a huge response. Missing a basic <code>limit</code> parameter."},
+
+{id:"M11",s:"medium",surv:true,reason:"",orig_s:"medium",new_s:"low",
+t:"Secret Enumeration Gap — Systemic Credential Leakage Risk",
+logic:"Plugin authors who forget <code>@visibility secret</code> on credential fields cause those values to appear unredacted in all logs. This isn't one operator's misconfiguration — it's a systemic gap across the entire plugin ecosystem. The <code>ignoreSchemaErrors: true</code> silently drops protection for any plugin with a schema error. An operator running standard plugins from the ecosystem inherits whatever annotation gaps those plugins have.",
+ruling:"SURVIVES (downgraded Medium → Low) — Systemic design limitation. Operator can't fix plugin authors' oversights. Credentials silently leak to logs."},
+
+{id:"L12",s:"low",surv:true,reason:"",orig_s:"low",new_s:"low",
+t:"Full-Text Filter LIKE Has No Length Limit — Minor DoS",
+logic:"Any authenticated user can send very long search terms forcing sequential scans on PostgreSQL. No operator misconfiguration needed — the code simply doesn't cap the input length. Leading <code>%</code> wildcard in LIKE always forces sequential scans. Minor but real.",
+ruling:"SURVIVES (stays Low) — Minor DoS vector. Missing basic input length validation."},
+
+// === ELIMINATED: By Design / Opt-In ===
+{id:"C1",s:"critical",surv:false,reason:"by-design",orig_s:"critical",
+t:"dangerouslyDisableDefaultAuthPolicy = Complete Auth Bypass",
+logic:"The flag literally starts with <code>dangerously</code>. It's an explicit opt-in that the operator must add to their config. If you enable a flag called 'dangerouslyDisableDefaultAuthPolicy' and get burned, that is categorically not a vulnerability — it's the feature working exactly as documented. Backstage gave you a gun, labeled it 'DANGEROUS GUN', and you pointed it at yourself.",
+ruling:"ELIMINATED — By design. Opt-in flag with 'dangerously' prefix. Working as documented."},
+
+{id:"H5",s:"high",surv:false,reason:"by-design",orig_s:"high",
+t:"Proxy credentials:forward Leaks Backstage Token",
+logic:"<code>credentials: 'forward'</code> is an explicit operator configuration choice. The operator is saying 'yes, forward my users' auth headers to this target.' If you forward credentials to an untrusted target, that's your configuration decision, not a vulnerability.",
+ruling:"ELIMINATED — By design. Operator explicitly chooses to forward credentials to a specific target."},
+
+{id:"H6",s:"high",surv:false,reason:"by-design",orig_s:"high",
+t:"Unauthenticated Proxy Routes via dangerously-allow-unauthenticated",
+logic:"Same as C1. It starts with <code>dangerously</code>. Explicit opt-in. If you configure 'dangerously-allow-unauthenticated' and get unauthenticated traffic, the software did exactly what you asked.",
+ruling:"ELIMINATED — By design. 'Dangerously' prefixed opt-in."},
+
+{id:"H8",s:"high",surv:false,reason:"by-design",orig_s:"high",
+t:"Service Principals Bypass All Permissions",
+logic:"This is the documented Backstage plugin architecture. Plugins are first-party trusted code installed by the operator. The service-to-service trust model is: if you installed a plugin, you trust it. This is the same trust model as npm packages, database drivers, or any other dependency. A compromised plugin is a supply chain attack, not a Backstage vulnerability.",
+ruling:"ELIMINATED — By design. Documented architectural trust model. Plugins are operator-installed trusted code."},
+
+{id:"H9",s:"high",surv:false,reason:"by-design",orig_s:"high",
+t:"Permission System Disabled by Default",
+logic:"Many infrastructure tools ship with permissive defaults — MongoDB historically had no auth, Redis still doesn't by default, Elasticsearch was wide open until 8.x. Backstage logs a warning, documents the behavior, and provides a one-line config to enable it. The operator is responsible for enabling security features in their deployment, just like setting up TLS or auth for any other tool.",
+ruling:"ELIMINATED — By design. Documented default. Operator responsibility to enable, like auth on any database."},
+
+{id:"M2",s:"medium",surv:false,reason:"by-design",orig_s:"medium",
+t:"Unauthenticated Dynamic Client Registration",
+logic:"Requires <code>auth.experimentalDynamicClientRegistration.enabled = true</code>. It's an opt-in experimental feature. The 'experimental' prefix signals it's not production-ready. Deprecated. If you enable a deprecated experimental feature and it's insecure, that's your choice.",
+ruling:"ELIMINATED — By design. Opt-in experimental + deprecated feature."},
+
+// === ELIMINATED: Requires Misconfiguration ===
+{id:"H1",s:"high",surv:false,reason:"misconfig",orig_s:"high",
+t:"No DNS Rebinding / IP Validation in URL Readers",
+logic:"The <code>backend.reading.allow</code> allowlist is the security boundary. For DNS rebinding to work, the attacker needs to control DNS of a host IN the allowlist. If you allowlisted <code>github.com</code>, the attacker needs to control github.com's DNS — not happening. If you set <code>*.mycompany.com</code> wildcard and an attacker has evil.mycompany.com, that's your wildcard being too broad. The lack of IP validation is a defense-in-depth gap, but the actual security model (explicit hostname allowlist) works correctly when configured with specific hosts.",
+ruling:"ELIMINATED — Requires misconfiguration (overly broad wildcards in allowlist). With specific hostnames, DNS rebinding is impractical."},
+
+{id:"H7",s:"high",surv:false,reason:"misconfig",orig_s:"high",
+t:"User/Group Entity Injection for Privilege Escalation",
+logic:"Default denies User/Group from URL locations. Only exploitable if operator explicitly relaxes the default rules. The default is safe, and the code even documents the denial.",
+ruling:"ELIMINATED — Default is safe. Requires operator to explicitly override safe defaults."},
+
+{id:"M9",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"RemoteConfigSource — No TLS Pinning, Size Limits, or Integrity",
+logic:"The operator configures the remote config URL. If they use HTTP instead of HTTPS, that's their choice. The remote config URL is set in code or config files, not by end users.",
+ruling:"ELIMINATED — Operator configures the URL. Using HTTP is their misconfiguration."},
+
+{id:"M10",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"Remote Config Content Undergoes Env Var Substitution",
+logic:"Only exploitable via MITM of the remote config URL, which requires the operator to use HTTP or have their TLS compromised. The remote config URL is operator-configured.",
+ruling:"ELIMINATED — Requires MITM of operator-configured URL."},
+
+{id:"M12",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"No Private IP / SSRF Protection on Proxy Targets",
+logic:"Proxy targets are set by the operator in config. If the operator points a proxy at 169.254.169.254, that's their config, not an attacker exploit. End users cannot change proxy targets.",
+ruling:"ELIMINATED — Proxy targets are operator-configured, not user-controllable."},
+
+{id:"M13",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"Catalog Location Registration SSRF (POST /locations)",
+logic:"Bounded by the URL reader allowlist. The catalog is DESIGNED to fetch from user-registered URLs — that's its core job. The allowlist is the security boundary, and the operator configures it. This is like saying 'a web browser can fetch URLs' — that's the feature.",
+ruling:"ELIMINATED — By design. Catalog ingestion from user-registered URLs is the core feature. Bounded by operator's allowlist."},
+
+{id:"M14",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"POST /analyze-location — Same SSRF Vector",
+logic:"Same as M13. By design, bounded by allowlist.",
+ruling:"ELIMINATED — Same as M13. Core feature, not SSRF."},
+
+{id:"M19",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"Glob-Based Origin Filter Potential Bypass",
+logic:"The operator configures the origin patterns. If they set <code>https://*.example.com</code> and an attacker on evil.example.com exploits it, that's the operator's pattern being too broad. The code correctly implements glob matching.",
+ruling:"ELIMINATED — Operator configures the patterns. Code works correctly."},
+
+{id:"M20",s:"medium",surv:false,reason:"misconfig",orig_s:"medium",
+t:"RemoteConfigSource — No URL Restriction",
+logic:"URL set programmatically by operator. Not controllable by end users or attackers.",
+ruling:"ELIMINATED — Operator-configured URL, not attacker-controllable."},
+
+{id:"L3",s:"low",surv:false,reason:"misconfig",orig_s:"low",
+t:"1000-Day Default Refresh Token Cookie Lifetime",
+logic:"Configurable via <code>sessionDuration</code>. Default is long but the operator is expected to configure session management for their deployment. Same as any framework's session defaults.",
+ruling:"ELIMINATED — Configurable default. Operator responsibility."},
+
+{id:"L23",s:"low",surv:false,reason:"misconfig",orig_s:"low",
+t:"No Minimum Interval for Remote Config Polling",
+logic:"Operator configures the interval. Setting <code>{ milliseconds: 1 }</code> is operator self-harm, not a vulnerability.",
+ruling:"ELIMINATED — Operator misconfiguration."},
+
+// === ELIMINATED: Requires Pre-Existing Compromise ===
+{id:"M6",s:"medium",surv:false,reason:"pre-compromise",orig_s:"medium",
+t:"BACKSTAGE_ENV Path Traversal",
+logic:"Requires the attacker to control environment variables on the Backstage backend. If they have that access, they can already override any config via <code>APP_CONFIG_*</code>, access the filesystem, or just read the database credentials directly. The path traversal is redundant to the access they already have.",
+ruling:"ELIMINATED — If attacker controls env vars, they already own the backend. This finding is redundant to their existing access."},
+
+{id:"M7",s:"medium",surv:false,reason:"pre-compromise",orig_s:"medium",
+t:"$file Path Traversal in Config Directives",
+logic:"Requires control over config file contents. If the attacker can modify config files on the Backstage backend, they can already change database connections, auth keys, or proxy targets directly. The $file traversal adds nothing to their existing capability.",
+ruling:"ELIMINATED — Requires config file control, which already grants full system compromise."},
+
+{id:"M8",s:"medium",surv:false,reason:"pre-compromise",orig_s:"medium",
+t:"$include Path Traversal in Config Directives",
+logic:"Same as M7. Requires config file control.",
+ruling:"ELIMINATED — Same as M7."},
+
+{id:"L14",s:"low",surv:false,reason:"pre-compromise",orig_s:"low",
+t:"No Restriction on Env Vars Readable via Substitution",
+logic:"Requires config file control. By design for trusted config files.",
+ruling:"ELIMINATED — Requires config file control. By design."},
+
+{id:"L15",s:"low",surv:false,reason:"pre-compromise",orig_s:"low",
+t:"Env Var Values Can Control $include File Paths",
+logic:"Requires both config file and env var control.",
+ruling:"ELIMINATED — Requires pre-existing access."},
+
+{id:"L19",s:"low",surv:false,reason:"pre-compromise",orig_s:"low",
+t:"No Symlink Protection in Config File Reading",
+logic:"Requires filesystem access to plant symlinks. If you have that, you already own the system.",
+ruling:"ELIMINATED — Requires filesystem access (already compromised)."},
+
+{id:"L24",s:"low",surv:false,reason:"pre-compromise",orig_s:"low",
+t:"Environment Variables Override File Config",
+logic:"Requires env var access. Documented behavior. If attacker controls env vars, they already own the system.",
+ruling:"ELIMINATED — Requires env var access. By design, documented."},
+
+// === ELIMINATED: Not Currently Exploitable ===
+{id:"M5",s:"medium",surv:false,reason:"not-exploitable",orig_s:"medium",
+t:"No Protocol Validation in FetchUrlReader",
+logic:"Node.js native <code>fetch()</code> does not support <code>file://</code>, <code>ftp://</code>, or other dangerous schemes. There is no current code path that makes this exploitable. It's a 'what if the runtime changes in the future' concern — a defense-in-depth observation, not a vulnerability.",
+ruling:"ELIMINATED — Not exploitable. Node.js fetch doesn't support dangerous protocols."},
+
+{id:"M18",s:"medium",surv:false,reason:"not-exploitable",orig_s:"medium",
+t:"Limited Token Reconstruction Fragility",
+logic:"The token reconstruction is not currently broken. The concern is 'if someone refactors this code wrong in the future, it might break.' That's a code quality concern, not a security vulnerability. The uip binding currently works correctly.",
+ruling:"ELIMINATED — Theoretical future risk. Currently working correctly."},
+
+{id:"L1",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"OAuth State Not Cryptographically Signed",
+logic:"Nonce-cookie binding (crypto.randomBytes(16), 10-min TTL, httpOnly) is the actual CSRF protection and works correctly. The unsigned state is defense-in-depth, not the security boundary.",
+ruling:"ELIMINATED — Not exploitable. Nonce-cookie binding is the real protection."},
+
+{id:"L17",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"lodash.merge — Theoretical Proto Pollution",
+logic:"YAML parser doesn't produce <code>__proto__</code> keys. Modern lodash has mitigations. No code path makes this exploitable with current inputs.",
+ruling:"ELIMINATED — Not exploitable with current input sources."},
+
+{id:"L21",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"Lodash Template Used for index.html",
+logic:"Template file is a build artifact from disk, not user input. Interpolate-only mode (no code execution). Only exploitable via supply chain attack on the build artifact.",
+ruling:"ELIMINATED — Controlled input. Not exploitable in normal operation."},
+
+// === ELIMINATED: Trust Boundary OK ===
+{id:"H3",s:"high",surv:false,reason:"trust-boundary",orig_s:"high",
+t:"User-Controlled Docker Image Name in Cookiecutter Module",
+logic:"The <code>imageName</code> is defined by the template author, not the end user running the template. Template authors are trusted entities — the operator installs their templates. If a template author sets a malicious imageName, that's a supply chain issue with that template, not a Backstage vulnerability. The cookiecutter module's Docker fallback is the documented behavior when the local binary isn't installed. The operator chose to install this community module and chose to deploy templates that use it.",
+ruling:"ELIMINATED — Template author is trusted. imageName comes from template definition, not end-user input. Operator chooses which templates to deploy."},
+
+{id:"M16",s:"medium",surv:false,reason:"trust-boundary",orig_s:"medium",
+t:"Template Regex Execution Enables ReDoS",
+logic:"Templates are written by trusted authors installed by the operator. If a template contains a catastrophic regex, that's the template author's bug. <code>allowRegexExecution: true</code> is needed for template functionality. End users running a template don't control its regex patterns.",
+ruling:"ELIMINATED — Template authors are trusted. End users don't control regex patterns."},
+
+{id:"M17",s:"medium",surv:false,reason:"trust-boundary",orig_s:"medium",
+t:"Scaffolder Dry-Run Deserializes User Files to Disk",
+logic:"Gated by <code>templateDryRunPermission</code>. Users with this permission are trusted for template development. Files cleaned up in finally block.",
+ruling:"ELIMINATED — Permission-gated. Trusted user role."},
+
+// === ELIMINATED: Infra / Deployment Responsibility ===
+{id:"M15",s:"medium",surv:false,reason:"infra",orig_s:"medium",
+t:"No Rate Limiting on Catalog API Endpoints",
+logic:"Rate limiting is a deployment/infrastructure concern, not an application code bug. Express apps are expected to be deployed behind a reverse proxy (nginx, envoy, Cloudflare, AWS ALB) that handles rate limiting. Almost no Node.js framework ships with built-in rate limiting. This is like saying 'this app doesn't handle TLS termination' — that's the reverse proxy's job.",
+ruling:"ELIMINATED — Infrastructure concern. Rate limiting belongs at the reverse proxy layer."},
+
+{id:"L4",s:"low",surv:false,reason:"infra",orig_s:"low",
+t:"SameSite=None for Cross-Domain Setups",
+logic:"Required for cross-domain OAuth to work. The Secure flag is properly enforced. This is the correct browser security pattern for cross-domain auth flows.",
+ruling:"ELIMINATED — Required for cross-domain OAuth. Correct implementation."},
+
+{id:"L22",s:"low",surv:false,reason:"infra",orig_s:"low",
+t:"No Plugin-Level Config Isolation",
+logic:"Documented architectural design of the Backstage service framework. Plugins are trusted code. Changing this would require a fundamental framework redesign, not a security fix.",
+ruling:"ELIMINATED — Architectural design, not a fixable vulnerability."},
+
+// === ELIMINATED: Info Disclosure Only ===
+{id:"L7",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"Error Messages Leak Internal API URLs",
+logic:"Internal API URL structure in error messages. No credentials leaked (unless operator put tokens in URL query strings, which is their misconfiguration). Knowing the URL structure of github.com's API or gitlab.com's API is public knowledge anyway.",
+ruling:"ELIMINATED — Minor info disclosure. API URL structure is generally public knowledge."},
+
+{id:"L9",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"Entity Ancestry Leaks Denied Entity Refs",
+logic:"Leaks entity existence (kind:namespace/name triplet) but not entity content. Knowing that an entity called 'Component:default/secret-project' exists is minimal information disclosure. You still can't read it, modify it, or access it.",
+ruling:"ELIMINATED — Entity name existence is minimal information disclosure with no actionable impact."},
+
+{id:"L13",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"Relations Expose Entity Ref Existence",
+logic:"Same class as L9. Entity name existence only.",
+ruling:"ELIMINATED — Same as L9."},
+
+{id:"L18",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"Error Messages Include Config Paths and URLs",
+logic:"File paths in error messages. Standard across virtually all applications. No credentials exposed (unless URL contains embedded creds, which is a separate misconfiguration).",
+ruling:"ELIMINATED — Standard error behavior. No credentials exposed."},
+
+{id:"L20",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"Remote Config URL Exposed in Error Logs",
+logic:"URL in logs. Only sensitive if operator put credentials in the URL. Logging the URL of a service you're connecting to is normal behavior.",
+ruling:"ELIMINATED — Normal logging behavior. Sensitive only if operator embeds credentials in URLs."},
+
+{id:"L27",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"postMessage Leaks App Origin via Wildcard",
+logic:"Leaks the Backstage app's base URL. The app URL is already known to anyone who uses the app. No auth data leaked — the actual auth response uses the correct targetOrigin.",
+ruling:"ELIMINATED — App URL is not secret. Auth data correctly scoped."},
+
+{id:"L16",s:"low",surv:false,reason:"info-only",orig_s:"low",
+t:"XSS Protection in Config HTML Injection is Minimal",
+logic:"<code>JSON.stringify</code> provides the primary XSS protection by escaping special characters. The additional <code>&lt;/script</code> and <code>&lt;!--</code> stripping is defense-in-depth. Config values are already filtered to frontend-visible only. The developers acknowledge this in code comments and have accepted the risk. An attacker would need to control a frontend-visible config value — which requires config file or env var control (already compromised).",
+ruling:"ELIMINATED — JSON.stringify provides primary protection. Attacker would need config control."},
+
+// === ELIMINATED: Legacy / Working as Intended ===
+{id:"L2",s:"low",surv:false,reason:"by-design",orig_s:"low",
+t:"Auth Code Reuse Without Token Revocation",
+logic:"The code reuse is detected and rejected. The RFC says 'SHOULD' revoke (not 'MUST'). The first-use tokens remain valid, which is the correct behavior for the legitimate user. This is a spec recommendation, not a security requirement.",
+ruling:"ELIMINATED — Spec 'SHOULD' not 'MUST'. Reuse correctly rejected. First-use tokens belong to legitimate user."},
+
+{id:"L5",s:"low",surv:false,reason:"by-design",orig_s:"low",
+t:"X-Requested-With Lightweight CSRF Protection",
+logic:"This is a functional, standard CSRF protection mechanism. Custom headers can't be set in simple cross-origin requests. Layered with Origin checking. Working correctly.",
+ruling:"ELIMINATED — Working CSRF protection. Standard pattern."},
+
+{id:"L10",s:"low",surv:false,reason:"by-design",orig_s:"low",
+t:"authorizationToken in Request Body (Catalog /refresh)",
+logic:"Legacy support. Token is still validated via <code>auth.authenticate()</code>. No auth bypass. The body-based path is a migration convenience, not a security vulnerability.",
+ruling:"ELIMINATED — Legacy support. Token still validated. No bypass."},
+
+{id:"L6",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"HarnessUrlReader Cross-Origin Redirect Allowlist Expansion",
+logic:"Requires a compromised Harness server. If Harness is compromised, the attacker has bigger problems than cross-origin redirects. Credentials correctly stripped on cross-origin.",
+ruling:"ELIMINATED — Requires compromised Harness server. Credentials stripped on redirect."},
+
+{id:"L8",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"Proxy Path Traversal Protection — Brittle Single Decode",
+logic:"For double-encoding to be exploitable, the target server would need to perform an additional decode of the already-decoded path. That's target-specific behavior Backstage can't control. The catch-all returning 400 on malformed encoding is a safe fallback.",
+ruling:"ELIMINATED — Depends on specific target server behavior that Backstage can't control. Fallback is safe."},
+
+{id:"L11",s:"low",surv:false,reason:"not-exploitable",orig_s:"low",
+t:"Placeholder Same-Repo Check Has Edge Cases",
+logic:"Significantly hardened with host-level checks, path traversal rejection, and reliable-marker distinction. The remaining edge case is narrow (non-standard SCM + missing filepath), and the host-level check still catches cross-host attempts.",
+ruling:"ELIMINATED — Significantly hardened. Remaining edge case narrow, mitigated by host check."},
+
+{id:"L25",s:"low",surv:false,reason:"duplicate",orig_s:"low",
+t:"Proxy Path Traversal — Double-Encoding Edge Case",
+logic:"Duplicate of L8.",
+ruling:"ELIMINATED — Duplicate of L8."},
+
+{id:"L26",s:"low",surv:false,reason:"duplicate",orig_s:"low",
+t:"authorizationToken Body Parameter (Proxy Review Duplicate)",
+logic:"Duplicate of L10.",
+ruling:"ELIMINATED — Duplicate of L10."}
+];
+
+const el=document.getElementById('list'),cnt=document.getElementById('cnt'),q=document.getElementById('q');
+let fv='all',fr='all';
+
+const reasonLabels={"by-design":"By Design","misconfig":"Requires Misconfig","pre-compromise":"Pre-Compromise","not-exploitable":"Not Exploitable","trust-boundary":"Trust Boundary OK","infra":"Infra/Deployment","info-only":"Info Only","duplicate":"Duplicate"};
+
+function render(){
+  const qt=q.value.toLowerCase();
+  let html='',n=0;
+  for(const d of D){
+    if(fv==='survives'&&!d.surv)continue;
+    if(fv==='eliminated'&&d.surv)continue;
+    if(fr!=='all'&&d.reason!==fr)continue;
+    if(qt&&!JSON.stringify(d).toLowerCase().includes(qt))continue;
+    n++;
+    const sc='s-'+d.s;
+    const tc=d.surv?'t-survives':'t-elim';
+    const tl=d.surv?'survives':'eliminated';
+    const ec=d.surv?'':'elim';
+    const rl=d.reason?reasonLabels[d.reason]||d.reason:'';
+    const vbc=d.surv?'vb-survive':'vb-elim';
+    const ns=d.new_s?` → <strong>${d.new_s}</strong>`:'';
+    html+=`<div class="f ${ec}" data-id="${d.id}">
+<div class="fh" onclick="this.parentElement.classList.toggle('open')">
+<span class="arrow">&#9654;</span>
+<span class="sev ${sc}">${d.s}</span>
+<span class="tag ${tc}">${tl}</span>
+${rl?`<span class="reason">${rl}</span>`:''}
+<span class="ft">${d.t}</span>
+<span class="fi">${d.id}</span>
+</div>
+<div class="fb">
+<h4>Business Logic Analysis</h4><p>${d.logic}</p>
+<div class="verdict-box ${vbc}"><strong>${d.surv?'SURVIVES':'ELIMINATED'}${ns?` (${d.orig_s}${ns})`:''}</strong> — ${d.ruling.replace(/^(SURVIVES|ELIMINATED)\s*[—–-]?\s*/,'')}</div>
+</div></div>`;
+  }
+  el.innerHTML=html;
+  cnt.textContent=`Showing ${n} of ${D.length}`;
+}
+
+document.querySelectorAll('.fbtn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const g=b.dataset.f;
+    document.querySelectorAll(`.fbtn[data-f="${g}"]`).forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    if(g==='v')fv=b.dataset.v;
+    if(g==='r')fr=b.dataset.v;
+    render();
+  });
+});
+q.addEventListener('input',render);
+render();
+</script>
