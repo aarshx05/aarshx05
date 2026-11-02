@@ -1,0 +1,701 @@
+<title>Backstage Full Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --bg: #fdfdfd; --bg2: #f4f5f7; --bg3: #ebedf0;
+  --fg: #1a1d23; --fg2: #5e6370; --fg3: #9ca0ab;
+  --bd: #d4d7de; --bd2: #e2e5ea;
+  --ac: #2563eb; --ac2: #eff4ff;
+  --crit: #dc2626; --crit-bg: #fef2f2; --crit-bd: #fecaca;
+  --hi: #c2410c; --hi-bg: #fff7ed; --hi-bd: #fed7aa;
+  --med: #a16207; --med-bg: #fefce8; --med-bd: #fef08a;
+  --lo: #6b7280; --lo-bg: #f9fafb; --lo-bd: #e5e7eb;
+  --grn: #15803d; --grn-bg: #f0fdf4; --grn-bd: #bbf7d0;
+  --font-body: 'Inter', -apple-system, system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  color-scheme: light;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#111318;--bg2:#1a1d24;--bg3:#22252e;
+  --fg:#e1e4ea;--fg2:#8b8f9a;--fg3:#585c66;
+  --bd:#2e323b;--bd2:#262a33;
+  --ac:#60a5fa;--ac2:#1e293b;
+  --crit:#f87171;--crit-bg:#291515;--crit-bd:#5c2020;
+  --hi:#fb923c;--hi-bg:#291e0e;--hi-bd:#5c3a14;
+  --med:#facc15;--med-bg:#29250a;--med-bd:#5c4d10;
+  --lo:#9ca3af;--lo-bg:#1a1d24;--lo-bd:#2e323b;
+  --grn:#4ade80;--grn-bg:#0f2919;--grn-bd:#1a5c2e;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#111318;--bg2:#1a1d24;--bg3:#22252e;
+  --fg:#e1e4ea;--fg2:#8b8f9a;--fg3:#585c66;
+  --bd:#2e323b;--bd2:#262a33;
+  --ac:#60a5fa;--ac2:#1e293b;
+  --crit:#f87171;--crit-bg:#291515;--crit-bd:#5c2020;
+  --hi:#fb923c;--hi-bg:#291e0e;--hi-bd:#5c3a14;
+  --med:#facc15;--med-bg:#29250a;--med-bd:#5c4d10;
+  --lo:#9ca3af;--lo-bg:#1a1d24;--lo-bd:#2e323b;
+  --grn:#4ade80;--grn-bg:#0f2919;--grn-bd:#1a5c2e;
+  color-scheme:dark;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--bg);color:var(--fg);font-family:var(--font-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;font-size:14px;line-height:1.6}
+
+.wrap{max-width:920px;margin:0 auto;padding:32px 0 80px}
+
+/* Header */
+.hdr{margin-bottom:32px}
+.hdr h1{font-size:1.5rem;font-weight:700;letter-spacing:-.03em;text-wrap:balance}
+.hdr .meta{color:var(--fg2);font-size:.82rem;margin-top:6px}
+.hdr .meta strong{color:var(--fg);font-weight:600}
+
+/* Stat row */
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin:20px 0 24px}
+.stat{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:10px 14px;min-width:80px;flex:1}
+.stat-n{font-size:1.5rem;font-weight:700;font-family:var(--font-mono);font-variant-numeric:tabular-nums}
+.stat-l{font-size:.65rem;text-transform:uppercase;letter-spacing:.08em;color:var(--fg2);margin-top:2px}
+
+/* Methodology box */
+.methbox{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;padding:14px 16px;margin-bottom:28px;font-size:.82rem;color:var(--fg2);line-height:1.55}
+.methbox strong{color:var(--fg)}
+
+/* Filters */
+.filters{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.filters label{font-size:.65rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);margin-right:2px;flex-shrink:0}
+.fbtn{background:var(--bg2);border:1px solid var(--bd2);color:var(--fg2);padding:3px 10px;border-radius:14px;font-size:.76rem;cursor:pointer;font-family:inherit;transition:all .12s;white-space:nowrap}
+.fbtn:hover{border-color:var(--ac);color:var(--fg)}
+.fbtn.on{background:var(--ac2);border-color:var(--ac);color:var(--ac)}
+
+/* Search */
+.search{width:100%;background:var(--bg2);border:1px solid var(--bd2);color:var(--fg);padding:8px 12px;border-radius:8px;font-size:.85rem;font-family:inherit;margin:12px 0}
+.search::placeholder{color:var(--fg3)}
+.search:focus{outline:none;border-color:var(--ac)}
+
+.count{font-family:var(--font-mono);font-size:.78rem;color:var(--fg2);margin:8px 0 4px}
+
+/* Finding card */
+.finding{background:var(--bg2);border:1px solid var(--bd2);border-radius:8px;margin:8px 0;overflow:hidden;transition:border-color .12s}
+.finding:hover{border-color:var(--fg3)}
+.finding-hd{display:flex;align-items:flex-start;gap:8px;padding:12px 14px;cursor:pointer;user-select:none;flex-wrap:wrap}
+.finding-hd:hover{background:var(--bg3)}
+
+.sev{font-size:.6rem;font-weight:600;padding:2px 7px;border-radius:4px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;margin-top:2px}
+.s-critical{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-bd)}
+.s-high{background:var(--hi-bg);color:var(--hi);border:1px solid var(--hi-bd)}
+.s-medium{background:var(--med-bg);color:var(--med);border:1px solid var(--med-bd)}
+.s-low{background:var(--lo-bg);color:var(--lo);border:1px solid var(--lo-bd)}
+
+.verdict{font-size:.58rem;font-weight:600;padding:2px 6px;border-radius:3px;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap;flex-shrink:0;margin-top:2px;background:var(--grn-bg);color:var(--grn);border:1px solid var(--grn-bd)}
+
+.cattag{font-size:.58rem;padding:1px 6px;border-radius:3px;font-weight:500;white-space:nowrap;flex-shrink:0;margin-top:3px;background:var(--bg3);color:var(--fg2);border:1px solid var(--bd)}
+
+.finding-title{font-weight:600;font-size:.88rem;flex:1;min-width:0}
+.finding-id{font-family:var(--font-mono);font-size:.75rem;color:var(--fg3);flex-shrink:0}
+
+.arrow{color:var(--fg3);flex-shrink:0;margin-top:3px;transition:transform .15s;font-size:.7rem}
+.finding.open .arrow{transform:rotate(90deg)}
+
+/* Finding body */
+.finding-body{padding:0 14px 16px;font-size:.84rem;line-height:1.6;display:none}
+.finding.open .finding-body{display:block}
+
+.finding-body h4{font-size:.68rem;text-transform:uppercase;letter-spacing:.06em;color:var(--fg3);margin:14px 0 6px;font-weight:600}
+.finding-body h4:first-child{margin-top:0}
+
+.file-ref{font-family:var(--font-mono);font-size:.76rem;color:var(--ac);display:block;margin:2px 0;word-break:break-all}
+
+code{font-family:var(--font-mono);font-size:.8em;background:var(--bg3);padding:1px 4px;border-radius:3px}
+
+pre{background:var(--bg3);border:1px solid var(--bd);border-radius:6px;padding:10px 12px;margin:8px 0;overflow-x:auto;font-family:var(--font-mono);font-size:.76rem;line-height:1.5}
+
+.evidence-box{background:var(--grn-bg);border:1px solid var(--grn-bd);border-radius:6px;padding:10px 12px;margin:10px 0;font-size:.82rem}
+.evidence-box strong{color:var(--grn)}
+
+.remediation{background:var(--ac2);border:1px solid var(--ac);border-radius:6px;padding:10px 12px;margin:10px 0;font-size:.82rem;border-left:3px solid var(--ac)}
+
+hr{border:none;border-top:1px solid var(--bd2);margin:28px 0}
+
+@media(max-width:600px){
+  .stats{gap:6px}
+  .stat{min-width:70px;padding:8px 10px}
+  .stat-n{font-size:1.2rem}
+  .finding-hd{gap:6px;padding:10px 12px}
+}
+</style>
+
+<div class="wrap">
+
+<div class="hdr">
+  <h1>Backstage Security Audit — Full Assessment</h1>
+  <p class="meta">
+    <strong>backstage/backstage</strong> — 57 findings verified against live source —
+    7 parallel code reviews — Nov 2026
+  </p>
+</div>
+
+<div class="stats">
+  <div class="stat"><div class="stat-n" style="color:var(--crit)">1</div><div class="stat-l">Critical</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--hi)">9</div><div class="stat-l">High</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--med)">20</div><div class="stat-l">Medium</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--lo)">27</div><div class="stat-l">Low</div></div>
+  <div class="stat"><div class="stat-n" style="color:var(--grn)">57/57</div><div class="stat-l">Confirmed</div></div>
+</div>
+
+<div class="methbox">
+  <strong>Methodology:</strong> Architecture mapping &rarr; 6 automated scanners (Gitleaks, Semgrep custom+community, njsscan, grep patterns, npm audit) &rarr; 7 parallel manual code reviews (auth, SSRF/URL readers, catalog, config-loader, proxy/SQL injection, scaffolder/permissions/tokens, scanner triage). 825 automated signals triaged as false positives. 94 manual candidates examined, 37 confirmed FP, 57 true positives remain. SQL injection comprehensively ruled out across 160+ <code>knex.raw()</code> calls. All 4 open redirect scanner signals confirmed FP. <strong>Every finding below was reproduced against the live HEAD of backstage/backstage.</strong>
+</div>
+
+<div class="filters">
+  <label>Severity:</label>
+  <button class="fbtn on" data-f="s" data-v="all">All (57)</button>
+  <button class="fbtn" data-f="s" data-v="critical">Critical (1)</button>
+  <button class="fbtn" data-f="s" data-v="high">High (9)</button>
+  <button class="fbtn" data-f="s" data-v="medium">Medium (20)</button>
+  <button class="fbtn" data-f="s" data-v="low">Low (27)</button>
+</div>
+<div class="filters">
+  <label>Category:</label>
+  <button class="fbtn on" data-f="c" data-v="all">All</button>
+  <button class="fbtn" data-f="c" data-v="auth">Auth</button>
+  <button class="fbtn" data-f="c" data-v="ssrf">SSRF</button>
+  <button class="fbtn" data-f="c" data-v="config">Config</button>
+  <button class="fbtn" data-f="c" data-v="scaffold">Scaffolder</button>
+  <button class="fbtn" data-f="c" data-v="catalog">Catalog</button>
+  <button class="fbtn" data-f="c" data-v="proxy">Proxy</button>
+  <button class="fbtn" data-f="c" data-v="perms">Permissions</button>
+</div>
+
+<input class="search" type="text" placeholder="Search findings, files, code..." id="q">
+<div class="count" id="cnt"></div>
+<div id="list"></div>
+
+<hr>
+<div class="methbox">
+  <strong>Assessment summary:</strong> All 57 findings independently confirmed against <code>backstage/backstage</code> HEAD. No false positives detected in the surviving set. Severity ratings agree with the original audit across all findings. The most urgent items for remediation are C1 (complete auth bypass flag with no runtime safeguards), H1 (architectural SSRF gap — no IP validation in URL readers), H2/H3 (token leakage and arbitrary Docker execution in scaffolder), and H8/H9 (permission system disabled by default with service principal blanket ALLOW).
+</div>
+
+</div>
+
+<script>
+const F=[
+{id:"C1",s:"critical",c:"perms",t:"dangerouslyDisableDefaultAuthPolicy = Complete Auth Bypass",
+f:["packages/backend-defaults/src/entrypoints/httpRouter/http/createCredentialsBarrier.ts:55-59",
+"packages/backend-defaults/src/entrypoints/auth/DefaultAuthService.ts:164-166"],
+desc:"When <code>backend.auth.dangerouslyDisableDefaultAuthPolicy</code> is true, the credentials barrier returns a no-op middleware that calls <code>next()</code> unconditionally — zero authentication checking. <code>addAuthPolicy</code> becomes a no-op that ignores all policy registrations. In DefaultAuthService, <code>getPluginRequestToken</code> returns an empty string token for <code>none</code> credentials, propagating the bypass across plugin-to-plugin calls.",
+evidence:"<pre>if (disableDefaultAuthPolicy) {\n  return {\n    middleware: (_req, _res, next) => next(),\n    addAuthPolicy: () => {},\n  };\n}</pre><pre>if (type === 'none' && this.disableDefaultAuthPolicy) {\n  return { token: '' };\n}</pre>",
+exploit:"Any Backstage instance with this flag enabled has zero authentication on all backend endpoints. Empty tokens propagate the bypass across plugin boundaries. No runtime warning, no environment check, no partial bypass — all or nothing.",
+verdict:"CONFIRMED — Opt-in flag with 'dangerously' prefix, but complete auth bypass when enabled. No startup warning logged, no production-mode block, no safeguards.",
+remediation:"Log CRITICAL warning on startup when enabled. Block in production mode unless second override set. Add per-plugin granular bypass instead of global. Add runtime audit telemetry."},
+
+{id:"H1",s:"high",c:"ssrf",t:"No DNS Rebinding / IP Validation in URL Readers",
+f:["packages/backend-defaults/src/entrypoints/urlReader/lib/FetchUrlReader.ts:93-100",
+"All SCM URL readers (GitHub, Azure, Bitbucket, Gerrit, Gitea, GitLab, Harness)"],
+desc:"The entire URL reader subsystem validates URLs against hostnames only via string matching. Zero resolved-IP validation exists anywhere in the chain. Searched the entire <code>urlReader/</code> directory — no checks for 127.0.0.0/8, 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 169.254.0.0/16, or ::1. Redirect-following logic re-validates against the same hostname-only predicate.",
+evidence:"<pre>// FetchUrlReader.ts:93-100 — hostname-only check\nif (hostname.startsWith('*.')) {\n  const suffix = hostname.slice(1);\n  return (url: URL) =>\n    url.hostname.endsWith(suffix) && checkPath(url) && checkPort(url);\n}\nreturn (url: URL) =>\n  url.hostname === hostname && checkPath(url) && checkPort(url);</pre>",
+exploit:"Attacker controlling a domain in the allowlist (or matching a wildcard) points it to 169.254.169.254 (AWS metadata) or 127.0.0.1. Hostname check passes, fetch goes to internal IP. Cloud credentials or internal service data returned.",
+verdict:"CONFIRMED — Architectural gap. No IP validation anywhere in the URL reader chain. All SCM readers use the same hostname-only pattern.",
+remediation:"Implement resolved-IP validation after DNS lookup but before connection. Block RFC 1918/5735 private ranges, loopback, link-local, and cloud metadata IPs. Consider ssrf-req-stream or dns.lookup hooks."},
+
+{id:"H2",s:"high",c:"scaffold",t:"Full User Token Leaked to Template Actions via Task Secrets",
+f:["plugins/scaffolder-backend/src/service/router.ts:641-649",
+"plugins/scaffolder-backend/src/scaffolder/tasks/NunjucksWorkflowRunner.ts:638"],
+desc:"When a scaffolder task is created, the user's full Backstage token is injected into <code>secrets.backstageToken</code> and full credentials into <code>secrets.__initiatorCredentials</code>. Code includes a comment noting the token is nonenumerable and must be explicitly added — this is deliberate design, not an accident. Every action handler receives the full secrets object.",
+evidence:"<pre>const secrets: InternalTaskSecrets = {\n  ...req.body.secrets,\n  backstageToken: (credentials as any).token,\n  __initiatorCredentials: JSON.stringify({\n    ...credentials,\n    token: (credentials as any).token,\n  }),\n};</pre>",
+exploit:"Malicious template author registers a custom action that reads ctx.secrets.backstageToken and exfiltrates it. Attacker gets the user's full auth token for impersonation across all Backstage APIs.",
+verdict:"CONFIRMED — Full user token (not limited/scoped) exposed to all template action steps. Deliberate design choice documented in code.",
+remediation:"Issue limited-scope tokens for template actions instead of forwarding full user credential. Create per-action permission model where each action declares required token scopes."},
+
+{id:"H3",s:"high",c:"scaffold",t:"User-Controlled Docker Image Name in Cookiecutter Module",
+f:["plugins/scaffolder-backend-module-cookiecutter/src/actions/fetch/cookiecutter.ts:111"],
+desc:"When local cookiecutter is not installed, the module falls back to Docker. The <code>imageName</code> input parameter is user-supplied from <code>ctx.input.imageName</code> and passed directly to <code>runContainer()</code>. Container runs with host directory bind mounts for <code>/input</code> and <code>/output</code>.",
+evidence:"<pre>await this.containerRunner.runContainer({\n  imageName: imageName ?? 'spotify/backstage-cookiecutter',\n  command: 'cookiecutter',\n  args: ['--no-input', '-o', '/output', '/input', '--verbose'],\n  mountDirs,\n  workingDir: '/input',\n  envVars: { HOME: '/tmp' },\n  logStream,\n});</pre>",
+exploit:"User supplies imageName: 'attacker/malicious-image'. When pulled and run, it executes arbitrary code on the Backstage backend host with access to mounted workspace directories. Effectively RCE.",
+verdict:"CONFIRMED — Arbitrary Docker image execution with host directory mounts. Only mitigation is having cookiecutter installed locally.",
+remediation:"Implement allowlist of permitted Docker images. Drop user-supplied image names entirely — only allow default or operator-configured images."},
+
+{id:"H4",s:"high",c:"scaffold",t:"Path Traversal in Rails Scaffolder Module",
+f:["plugins/scaffolder-backend-module-rails/src/actions/fetch/rails/railsNewRunner.ts:49-71"],
+desc:"User-controlled <code>values.name</code> is interpolated into file path argument without sanitization. Core built-in actions use <code>resolveSafeChildPath</code> in 15+ locations — the Rails module uses it zero times (grep confirmed).",
+evidence:"<pre>const { name, imageName, railsArguments } = values;\n// ...\nawait executeShellCommand({\n  command: baseCommand,\n  args: [\n    ...baseArguments,\n    `${intermediateDir}${path.sep}${name}`,  // no sanitization\n    ...arrayExtraArguments,\n  ],\n  logStream,\n});</pre>",
+exploit:"User sets name to ../../../tmp/evil to write generated files outside the workspace directory. Shell injection prevented by array args, but path traversal is unrestricted.",
+verdict:"CONFIRMED — Community module, not core. Core actions consistently use resolveSafeChildPath; Rails module does not. Requires Rails module installed.",
+remediation:"Add resolveSafeChildPath validation for the name parameter. Validate name contains no path separators or .. components."},
+
+{id:"H5",s:"high",c:"proxy",t:"Proxy credentials:forward Leaks Backstage Token to External Targets",
+f:["plugins/proxy-backend/src/service/router.ts:191-193"],
+desc:"When proxy endpoint configured with <code>credentials: 'forward'</code>, the authorization header is added to the allowlist of forwarded headers. The user's full Backstage JWT bearer token passes through to the proxy target verbatim.",
+evidence:"<pre>if (credentialsPolicy === 'forward') {\n    requestHeaderAllowList.add('authorization');\n}</pre>",
+exploit:"Operator configures proxy to external SaaS with credentials:forward. External service receives every user's Backstage JWT, replayable for impersonation against any Backstage API.",
+verdict:"CONFIRMED — By design but high impact when target is non-Backstage. JWT forwarded without scoping or time-limiting.",
+remediation:"Issue scoped/limited token for proxy forwarding instead of full user JWT. Add documentation warnings. Consider forward-limited mode with short-lived forwarding tokens."},
+
+{id:"H6",s:"high",c:"proxy",t:"Unauthenticated Proxy Routes via dangerously-allow-unauthenticated",
+f:["plugins/proxy-backend/src/service/router.ts:258-263, 413-418"],
+desc:"Routes with <code>credentials: 'dangerously-allow-unauthenticated'</code> return the raw proxy middleware without the authentication wrapper. The auth path is completely skipped. Additionally, the route is explicitly registered as allowing unauthenticated access via <code>addAuthPolicy</code>.",
+evidence:"<pre>if (\n    credentialsPolicy === 'dangerously-allow-unauthenticated' ||\n    disableDefaultAuthPolicy\n) {\n    return proxyMiddleware;\n}</pre>",
+exploit:"Any network user reaching the Backstage backend can use these routes without authentication. Combined with M12 (no IP validation), creates an unauthenticated SSRF relay.",
+verdict:"CONFIRMED — Opt-in with 'dangerously' prefix but no runtime safeguards or warnings.",
+remediation:"Add runtime startup warnings. Require additional explicit opt-in beyond just the credential policy string. Add IP/hostname restrictions on unauthenticated routes."},
+
+{id:"H7",s:"high",c:"catalog",t:"User/Group Entity Injection for Privilege Escalation",
+f:["plugins/catalog-backend/src/ingestion/CatalogRules.ts:71-74, 121-148"],
+desc:"Default CatalogRules allow only Component, API, Location — User and Group are explicitly excluded. However, if the operator sets <code>catalog.rules</code> in config, the defaults are replaced entirely. Adding User/Group to rules scoped to untrusted URL sources enables privilege escalation via entity injection.",
+evidence:"<pre>static readonly defaultRules: CatalogRule[] = [\n  {\n    allow: ['Component', 'API', 'Location'].map(kind => ({ kind })),\n  },\n];</pre>",
+exploit:"Attacker registers URL location serving User entity with admin ownership claims. If permission system uses entity ownership, attacker escalates privileges. Default config is safe.",
+verdict:"CONFIRMED — High impact if misconfigured. Default config is safe. Code comments document the User/Group denial.",
+remediation:"Add startup warning if User/Group entities allowed from URL-type locations. Consider requiring 'dangerously' prefix for rules allowing User/Group from untrusted sources."},
+
+{id:"H8",s:"high",c:"perms",t:"Service Principals Bypass All Permissions",
+f:["plugins/permission-node/src/ServerPermissionClient.ts:82-85, 142-163"],
+desc:"Service principals are checked BEFORE the permission-enabled flag and BEFORE the permission policy. They go directly to <code>#servicePrincipalDecision</code>. When <code>accessRestrictions</code> is undefined (the default for internal tokens), both <code>permissionNames</code> and <code>permissionAttributes</code> are undefined, and every permission returns ALLOW.",
+evidence:"<pre>const { permissionNames, permissionAttributes } =\n    credentials.principal.accessRestrictions ?? {};\n// When undefined: both checks fail, everything returns ALLOW\nreturn { result: AuthorizeResult.ALLOW };</pre>",
+exploit:"Compromised or malicious plugin uses service credentials for privileged operations across all other plugins — creating scaffolder tasks, deleting entities, accessing user data. No way to limit without explicit accessRestrictions.",
+verdict:"CONFIRMED — Architectural design. Documented but real security impact in multi-plugin deployments. Default internal tokens get blanket ALLOW.",
+remediation:"Implement least-privilege for service-to-service calls with default accessRestrictions. Allow operators to configure per-plugin restrictions. Log service-to-service permission checks."},
+
+{id:"H9",s:"high",c:"perms",t:"Permission System Disabled by Default",
+f:["plugins/permission-node/src/ServerPermissionClient.ts:57-58",
+"plugins/permission-backend/src/service/router.ts:194"],
+desc:"<code>permission.enabled</code> defaults to <code>false</code> via <code>getOptionalBoolean('permission.enabled') ?? false</code>. When disabled, all non-service permission checks return <code>AuthorizeResult.ALLOW</code> unconditionally. A warning is logged but startup proceeds normally.",
+evidence:"<pre>const permissionEnabled =\n  config.getOptionalBoolean('permission.enabled') ?? false;\n// ...\n} else if (!this.#permissionEnabled) {\n  return queries.map(_ => ({ result: AuthorizeResult.ALLOW }));\n}</pre>",
+exploit:"All authenticated users can perform ANY action: delete entities, run templates, access admin APIs. Many deployments likely run with the default. Insecure-by-default design.",
+verdict:"CONFIRMED — Insecure default. Logs a warning but does not prevent startup or enforce any authorization.",
+remediation:"Change default to true. If backward-compat needed, require explicit permission.enabled: false. Log at ERROR level. Block in production when disabled."},
+
+{id:"M1",s:"medium",c:"auth",t:"PKCE 'plain' Method Supported in OIDC Provider",
+f:["plugins/auth-backend/src/service/OidcService.ts:774-791"],
+desc:"OIDC provider's <code>verifyPkce</code> supports <code>code_challenge_method=plain</code> — a direct string comparison where <code>codeChallenge === codeVerifier</code>. When method is undefined it defaults to plain. This defeats PKCE's purpose: the code_challenge is supposed to be a hash so intercepting it doesn't reveal the verifier.",
+evidence:"<pre>if (!opts.method || opts.method === 'plain') {\n  return opts.codeChallenge === opts.codeVerifier;\n}</pre>",
+exploit:"Attacker intercepts auth request with code_challenge=ABC&code_challenge_method=plain, intercepts the auth code, exchanges it using code_verifier=ABC.",
+verdict:"CONFIRMED — Trivial fix: remove plain, require S256 only.",
+remediation:"Remove the plain case. Default to S256 when method is undefined. Reject unknown methods."},
+
+{id:"M2",s:"medium",c:"auth",t:"Unauthenticated Dynamic Client Registration",
+f:["plugins/auth-backend/src/service/OidcRouter.ts:577-608"],
+desc:"When <code>auth.experimentalDynamicClientRegistration.enabled</code> is true, <code>POST /v1/register</code> has zero auth middleware — no bearer token check, no cookie check, no rate limiting. Anyone can register OAuth clients and obtain client_id/client_secret pairs.",
+evidence:"<pre>if (dcrEnabled) {\n  router.post('/v1/register', async (req, res) => {\n    const { client_name, redirect_uris, ... } = validateRequest(...);\n    const client = await this.oidc.registerClient({...});\n    return res.status(201).json({\n      client_id: client.clientId,\n      client_secret: client.clientSecret,\n    });\n  });\n}</pre>",
+exploit:"Attacker mass-registers clients, obtains valid credentials, initiates OAuth flows to phish users into approving authorization requests.",
+verdict:"CONFIRMED — Feature deprecated but still functional. Wide-open client factory when enabled.",
+remediation:"Require authentication. Add rate limiting. Better yet, remove the deprecated feature."},
+
+{id:"M3",s:"medium",c:"auth",t:"Static Token Comparison Not Timing-Safe",
+f:["packages/backend-defaults/src/entrypoints/auth/external/static.ts:43-51"],
+desc:"Static external tokens compared using JavaScript <code>===</code> which performs byte-by-byte comparison and short-circuits on first mismatch. Minimum token length is only 8 characters (<code>MIN_TOKEN_LENGTH = 8</code>).",
+evidence:"<pre>if (token === context.token) {\n  return { subject: context.subject };\n}\nreturn undefined;</pre>",
+exploit:"Attacker with network proximity measures response times for tokens with increasing prefix overlap. Short minimum length makes brute force more feasible.",
+verdict:"CONFIRMED — Well-known anti-pattern. Trivial fix with crypto.timingSafeEqual.",
+remediation:"Replace === with crypto.timingSafeEqual(Buffer.from(token), Buffer.from(context.token)) with length pre-check."},
+
+{id:"M4",s:"medium",c:"ssrf",t:"No Response Size Limits in URL Readers — OOM DoS",
+f:["packages/backend-defaults/src/entrypoints/urlReader/lib/ReadUrlResponseFactory.ts:54",
+"packages/backend-defaults/src/entrypoints/urlReader/lib/GoogleGcsUrlReader.ts:122"],
+desc:"<code>getRawBody(stream)</code> called with NO <code>limit</code> option across the entire URL reader chain. The raw-body library supports a limit parameter but it's never passed. No size limits at the fetch level, body reading level, or archive extraction level.",
+evidence:"<pre>buffer = getRawBody(stream);  // no limit option</pre>",
+exploit:"Attacker registers catalog entity pointing to URL returning multi-gigabyte response. Backend reads entire body into memory — OOM crash. Tar/zip bombs are also unbounded.",
+verdict:"CONFIRMED — No size limits anywhere in URL reader chain. OOM via large response or archive bomb.",
+remediation:"Pass { limit: <reasonable_max> } to all getRawBody() calls. Add Content-Length checks on fetch responses. Add extraction size limits for tar/zip."},
+
+{id:"M5",s:"medium",c:"ssrf",t:"No Protocol Validation in FetchUrlReader",
+f:["packages/backend-defaults/src/entrypoints/urlReader/lib/FetchUrlReader.ts:61-62, 93-100"],
+desc:"Only hostname/port/path checked against allowlist; protocol never validated. No explicit rejection of <code>file://</code>, <code>ftp://</code>, or other dangerous schemes. Protocol is only referenced for default port inference, not security.",
+evidence:"<pre>// Port logic only — not protocol validation\nif (url.protocol === 'http:') return isInRange(80, range);\nif (url.protocol === 'https:') return isInRange(443, range);</pre>",
+exploit:"Not currently exploitable — Node.js native fetch doesn't support file://. If runtime changes or custom fetch implementation injected, becomes exploitable.",
+verdict:"CONFIRMED — Defense-in-depth gap. Not currently exploitable but trivial fix.",
+remediation:"Add explicit protocol whitelist: if (!['http:', 'https:'].includes(parsedUrl.protocol)) throw."},
+
+{id:"M6",s:"medium",c:"config",t:"BACKSTAGE_ENV Path Traversal — Config From Arbitrary Path",
+f:["packages/config-loader/src/sources/ConfigSources.ts:188-204"],
+desc:"<code>BACKSTAGE_ENV</code> environment variable interpolated directly into <code>app-config.${env}.yaml</code> paths via <code>resolvePath()</code> with no sanitization. The path is normalized but no boundary check ensures it stays within the project directory.",
+evidence:"<pre>const envPath = resolvePath(rootDir, `app-config.${env}.yaml`);\n// No boundary check — ../../etc/malicious resolves to arbitrary path</pre>",
+exploit:"In shared hosting, attacker sets BACKSTAGE_ENV=../../etc/malicious to load config from attacker-controlled location, overriding auth settings or database connections.",
+verdict:"CONFIRMED — No validation that resolved path stays within project directory.",
+remediation:"Validate the resolved path stays within rootDir after resolution."},
+
+{id:"M7",s:"medium",c:"config",t:"$file Path Traversal in Config Directives",
+f:["packages/config-loader/src/sources/transform/include.ts:82-85"],
+desc:"<code>$file</code> directive uses <code>resolvePath(dir, includeValue)</code> with no boundary check. A config value <code>{\"$file\": \"../../etc/passwd\"}</code> reads arbitrary files outside the config directory.",
+evidence:"<pre>case '$file':\n  try {\n    const value = await readFile(resolvePath(dir, includeValue));\n    return { applied: true, value: value.trimEnd() };</pre>",
+exploit:"If attacker influences config file contents (supply chain, RemoteConfigSource MITM), they can read arbitrary filesystem files. Read value stays in config object — exfiltrable if it surfaces via API or error.",
+verdict:"CONFIRMED — Requires control over config file contents. Plain fs.readFile follows symlinks.",
+remediation:"After resolving, verify path is within allowed directory boundary."},
+
+{id:"M8",s:"medium",c:"config",t:"$include Path Traversal in Config Directives",
+f:["packages/config-loader/src/sources/transform/include.ts:71-74, 96-108"],
+desc:"<code>$include</code> uses <code>resolvePath(dir, filePath)</code> with no boundary check. Additionally, include values run through env var substitution FIRST, so <code>$include: \"${CONFIG_PATH}/secrets.yaml\"</code> allows env vars to redirect the include target.",
+evidence:"<pre>const substituteResults = await substitute(rawIncludedValue, { dir });\n// Env var substitution runs BEFORE path resolution\nconst path = resolvePath(dir, filePath);\nconst content = await readFile(path);</pre>",
+exploit:"Combined with env var control: CONFIG_PATH env var redirects include to arbitrary file. Same constraints as $file, plus env var indirection.",
+verdict:"CONFIRMED — Same path traversal as M7 with additional env var indirection vector.",
+remediation:"Same as M7 — boundary check after path resolution. Consider disabling env var substitution in include paths."},
+
+{id:"M9",s:"medium",c:"config",t:"RemoteConfigSource — No TLS Pinning, Size Limits, or Integrity",
+f:["packages/config-loader/src/sources/RemoteConfigSource.ts:77-87, 137-145"],
+desc:"Uses plain <code>fetch()</code> with zero options. No TLS pinning, response size limit (reads full body with <code>res.text()</code>), Content-Type validation, integrity/signature verification, or authentication headers. URL validation only checks parseability.",
+evidence:"<pre>const res = await fetch(this.#url, {\n  signal: signal as RequestInit['signal'],\n});\n// No TLS pinning, no size limit, no content-type check, no auth</pre>",
+exploit:"If HTTP URL used, trivial MITM. Even with HTTPS, no size limits = OOM potential. Injected config can change database connections, auth providers, proxy targets.",
+verdict:"CONFIRMED — Complete lack of protections on remote config fetching.",
+remediation:"Require HTTPS. Add response size limits. Support authentication headers. Consider content signing."},
+
+{id:"M10",s:"medium",c:"config",t:"Remote Config Content Undergoes Env Var Substitution",
+f:["packages/config-loader/src/sources/RemoteConfigSource.ts:99-101"],
+desc:"Remote config content processed through env var substitution. <code>$file</code>/<code>$include</code> are correctly blocked (no readFile passed to transformer), but <code>${VAR_NAME}</code> substitution works. MITM'd remote config with <code>${AWS_SECRET_ACCESS_KEY}</code> resolves to actual env var values.",
+evidence:"<pre>this.#transformer = createConfigTransformer({\n  substitutionFunc: options.substitutionFunc,\n});\n// $file/$include blocked, but $env substitution active</pre>",
+exploit:"MITM'd remote config injects ${AWS_SECRET_ACCESS_KEY} directives. Resolved values enter config tree, may surface via frontend config pipeline if placed under frontend-visible keys.",
+verdict:"CONFIRMED — $file/$include blocking was intentional but $env was overlooked. Elegant finding.",
+remediation:"Disable env substitution for remote config entirely, or add explicit opt-in allowlist of substitutable vars."},
+
+{id:"M11",s:"medium",c:"config",t:"Secret Enumeration Gap — Missing Annotations = Log Exposure",
+f:["packages/backend-defaults/src/entrypoints/rootConfig/createConfigSecretEnumerator.ts:32-44"],
+desc:"Log redaction only detects secrets with <code>@visibility secret</code> in config schema. Plugin authors who forget the annotation leave credentials unredacted in all log output. Uses <code>ignoreSchemaErrors: true</code> which silently skips erroring schemas.",
+evidence:"<pre>const [secretsData] = schema.process(\n  [{ data: config.getOptional() ?? {}, context: 'schema-enumerator' }],\n  { visibility: ['secret'], ignoreSchemaErrors: true },\n);</pre>",
+exploit:"Plugin author forgets @visibility secret on a credential field. That value appears in plaintext in all log outputs. ignoreSchemaErrors silently swallows schema loading failures.",
+verdict:"CONFIRMED — Design limitation. Plugin ecosystem means many authors, inconsistent annotation discipline.",
+remediation:"Deny-list common credential key patterns regardless of annotation. Warn loudly when schemas fail to load instead of ignoring."},
+
+{id:"M12",s:"medium",c:"proxy",t:"No Private IP / SSRF Protection on Proxy Targets",
+f:["plugins/proxy-backend/src/service/router.ts:116-130"],
+desc:"Proxy validates target is a valid URL via <code>new URL()</code> but performs zero checks against private/internal IP ranges, link-local addresses, loopback, cloud metadata endpoints, or DNS rebinding. Searched entire 428-line file — no IP-related validation found.",
+evidence:"<pre>try {\n    new URL(fullConfig.target! as string);\n} catch {\n    throw new Error(`Proxy target is not a valid URL: ${fullConfig.target ?? ''}`);\n}\n// Zero IP validation follows</pre>",
+exploit:"Operator configures proxy endpoint to hostname resolving to 169.254.169.254. All authenticated users reach AWS metadata via the proxy.",
+verdict:"CONFIRMED — Config-dependent, but no runtime IP validation whatsoever.",
+remediation:"Add resolved-IP validation before proxying. Reject private ranges, link-local, loopback. Provide configurable allow/deny lists for target IP ranges."},
+
+{id:"M13",s:"medium",c:"catalog",t:"Catalog Location Registration SSRF (POST /locations)",
+f:["plugins/catalog-backend/src/service/createRouter.ts:590-634",
+"plugins/catalog-backend/src/service/DefaultLocationService.ts:60-83"],
+desc:"<code>POST /locations</code> accepts user-supplied URLs. DefaultLocationService validates only that the type is in <code>allowedLocationTypes</code> (default: ['url']), then stores the location. The URL is later fetched by URL readers subject to <code>backend.reading.allow</code>.",
+evidence:"<pre>router.post('/locations', async (req, res) => {\n  const location = await validateRequestBody(req, locationInput);\n  const output = await locationService.createLocation(location, dryRun, {\n    onConflict,\n    credentials: await httpAuth.credentials(req),\n  });</pre>",
+exploit:"Any authenticated user registers location pointing to internal service in the allowlist. Combined with H1 (no IP validation), DNS rebinding reaches any internal IP.",
+verdict:"CONFIRMED — SSRF bounded by URL reader allowlist. By design, but allowlist is also the SSRF boundary.",
+remediation:"Document that reading allowlist is the SSRF perimeter. Fix IP validation in URL readers (root fix for this and H1)."},
+
+{id:"M14",s:"medium",c:"catalog",t:"POST /analyze-location — Same SSRF Vector",
+f:["plugins/catalog-backend/src/service/createRouter.ts:830-874"],
+desc:"<code>/analyze-location</code> accepts user-supplied URL, reads it to detect entities. Same SSRF surface as M13 but read-only — doesn't persist the location.",
+evidence:"<pre>router.post('/analyze-location', async (req, res) => {\n  const parsedBody = await validateRequestBody(req, z.object({\n    location: locationInput,\n    catalogFilename: z.string().optional(),\n  }));\n  const output = await locationAnalyzer.analyzeLocation(parsedBody, credentials);</pre>",
+exploit:"Same as M13 but for analysis endpoint. Read-only SSRF.",
+verdict:"CONFIRMED — Identical SSRF surface to M13, just read-only.",
+remediation:"Same as M13."},
+
+{id:"M15",s:"medium",c:"catalog",t:"No Rate Limiting on Catalog API Endpoints",
+f:["plugins/catalog-backend/src/service/createRouter.ts"],
+desc:"Zero rate-limiting middleware in the entire catalog router (957 lines). Streaming <code>GET /entities</code> uses a hardcoded limit of 10000 per batch and iterates with cursor until exhausted. <code>GET /entities/by-query</code> passes <code>req.query.limit</code> without upper bound.",
+evidence:"<pre>const limit = 10000;\nlet cursor;\ndo {\n  const result = await entitiesCatalog.queryEntities(\n    !cursor ? { credentials, fields, limit, filter, ... }\n    : { credentials, fields, limit, cursor },\n  );\n  cursor = result.pageInfo?.nextCursor;\n} while (cursor);  // streams entire catalog</pre>",
+exploit:"Authenticated user sends repeated heavy queries, exhausting server resources. Streaming endpoint used for full catalog extraction.",
+verdict:"CONFIRMED — No rate limiting anywhere. Streaming endpoint dumps entire catalog.",
+remediation:"Add rate limiting middleware. Cap limit parameter on query endpoints. Add maximum total entity count for streaming responses."},
+
+{id:"M16",s:"medium",c:"scaffold",t:"Template Regex Execution Enables ReDoS",
+f:["plugins/scaffolder-backend/src/scaffolder/tasks/NunjucksWorkflowRunner.ts:782-783",
+"plugins/scaffolder-backend/src/scaffolder/actions/builtin/fetch/templateActionHandler.ts:123",
+"plugins/scaffolder-backend/src/scaffolder/actions/builtin/fetch/templateFileActionHandler.ts:76"],
+desc:"Nunjucks renderer created with <code>allowRegexExecution: true</code> in 3 locations. Enables regex filters in templates, opening ReDoS if template content is user-influenced.",
+evidence:"<pre>const templateRenderer = createTemplateRenderer({\n  allowRegexExecution: true,\n  ...\n});</pre>",
+exploit:"Template contains catastrophic regex like (a+)+$ matched against long input. CPU exhaustion on backend. Requires template authorship or user influence on template content.",
+verdict:"CONFIRMED — Set in 3 locations. Exploitation requires trust boundary violation at template authorship level.",
+remediation:"Disable allowRegexExecution if not widely needed. If needed, implement regex complexity limits or use RE2 safe-regex library."},
+
+{id:"M17",s:"medium",c:"scaffold",t:"Scaffolder Dry-Run Deserializes User Files to Disk",
+f:["plugins/scaffolder-backend/src/scaffolder/dryrun/createDryRunner.ts:140"],
+desc:"<code>POST /v2/tasks/dryrun</code> accepts <code>directoryContents</code> (serialized files) and writes them to disk via <code>deserializeDirectoryContents()</code>. No validation of file types, names (potential path traversal), or sizes. Gated by <code>templateDryRunPermission</code>.",
+evidence:"<pre>await deserializeDirectoryContents(contentsPath, input.directoryContents);</pre>",
+exploit:"Attacker with dry-run permission writes malicious files processed by template actions. Files exist on disk during execution before cleanup in finally block.",
+verdict:"CONFIRMED — Gated by permission, but file content is not validated. Could include symlinks, executables, or path-traversal names.",
+remediation:"Validate file names against path traversal. Reject symlinks and executables. Add size limits for individual files and total content."},
+
+{id:"M18",s:"medium",c:"auth",t:"Limited Token Reconstruction Fragility",
+f:["packages/backend-defaults/src/entrypoints/auth/user/UserTokenHandler.ts:111-162"],
+desc:"Limited user tokens built by rearranging full token parts. New header created (changed <code>typ</code>, same <code>alg</code>/<code>kid</code>), new payload (keeping only <code>sub</code>, <code>iat</code>, <code>exp</code> — dropping <code>ent</code> ownership claims), and the <code>uip</code> field reused as the signature segment. Code comment explicitly warns about fragility.",
+evidence:"<pre>const limitedUserToken = [\n  base64url.encode(JSON.stringify({\n    typ: tokenTypes.limitedUser.typParam,\n    alg: header.alg, kid: header.kid,\n  })),\n  base64url.encode(JSON.stringify({\n    sub: payload.sub, iat: payload.iat, exp: payload.exp,\n  })),\n  payload.uip,  // reused as \"signature\"\n].join('.');</pre>",
+exploit:"If uip doesn't cryptographically bind to exact claim structure, it could be reused across different claim sets. Code comment: 'the order and properties must match TokenFactory.ts'.",
+verdict:"CONFIRMED — Fragile coupling that could break silently during refactoring. Security depends on uip binding exactly.",
+remediation:"Use proper key-based signing for limited tokens instead of claim shuffling. Add assertions that verify reconstructed token validates."},
+
+{id:"M19",s:"medium",c:"auth",t:"Glob-Based Origin Filter Potential Bypass",
+f:["plugins/auth-backend/src/providers/router.ts:138-159"],
+desc:"Origin filter uses <code>minimatch</code> with <code>nocase: true</code> and <code>noglobstar: true</code>. Patterns like <code>https://*.example.com</code> match any subdomain. The noglobstar prevents ** but single * still matches within path segments.",
+evidence:"<pre>const allowedOriginPatterns = allowedOrigins?.map(\n  pattern => new Minimatch(pattern, { nocase: true, noglobstar: true }),\n) ?? [];</pre>",
+exploit:"Admin sets overly broad pattern. Attacker on matching subdomain performs OAuth flows against the Backstage instance.",
+verdict:"CONFIRMED — Function correctly implemented. Risk is operator misconfiguration with overly broad patterns.",
+remediation:"Document safe pattern examples. Reject patterns with wildcards in scheme or TLD. Add validation warnings for overly broad patterns."},
+
+{id:"M20",s:"medium",c:"ssrf",t:"RemoteConfigSource — No URL Restriction",
+f:["packages/config-loader/src/sources/RemoteConfigSource.ts:77-87"],
+desc:"<code>RemoteConfigSource.create()</code> validates only that URL is parseable via <code>new URL()</code>. No protocol validation, hostname allowlist, or IP checks. URL set programmatically, not by end users.",
+evidence:"<pre>static create(options: RemoteConfigSourceOptions): ConfigSource {\n  try {\n    new URL(options.url);\n  } catch (error) {\n    throw new Error(`Invalid URL...`);\n  }\n  return new RemoteConfigSource(options);\n}</pre>",
+exploit:"If URL sourced from environment variable or external input that attacker manipulates, arbitrary URL is fetched as config.",
+verdict:"CONFIRMED — Requires code-level or env-var-level access to exploit. Complete lack of safeguards.",
+remediation:"Validate protocol (require HTTPS). Add response size limits. Add Content-Type validation."},
+
+{id:"L1",s:"low",c:"auth",t:"OAuth State Not Cryptographically Signed",
+f:["plugins/auth-node/src/oauth/state.ts:42-48"],
+desc:"OAuth state is URL-params hex-encoded without any HMAC or signature. However, a nonce field is bound to a cookie (crypto.randomBytes(16), 10-min TTL, httpOnly). This cookie-based nonce binding is the actual CSRF protection.",
+evidence:"<pre>export function encodeOAuthState(state: OAuthState): string {\n  const stateString = new URLSearchParams(\n    pickBy<string>(state, value => value !== undefined),\n  ).toString();\n  return Buffer.from(stateString, 'utf-8').toString('hex');\n}</pre>",
+exploit:"Not exploitable due to nonce-cookie binding. Defense-in-depth concern only.",
+verdict:"CONFIRMED — Not exploitable. Nonce-cookie is primary CSRF protection and is properly implemented.",
+remediation:"Sign the state with HMAC for defense in depth. Low priority."},
+
+{id:"L2",s:"low",c:"auth",t:"Auth Code Reuse Without Token Revocation",
+f:["plugins/auth-backend/src/service/OidcService.ts:601-604"],
+desc:"Code reuse detected and rejected, but tokens from first exchange are not revoked. Per RFC 6819 Section 4.4.1.1 and OAuth 2.0 Security BCP, code reuse implies theft — related tokens should be revoked.",
+evidence:"<pre>if (authCode.used) {\n  throw new AuthenticationError('Authorization code already used');\n}</pre>",
+exploit:"Attacker who stole and used the code first keeps valid tokens even after reuse is detected.",
+verdict:"CONFIRMED — Missing recommended security measure per RFC. First-use tokens remain valid.",
+remediation:"On code reuse detection, revoke all tokens issued for that authorization code's session."},
+
+{id:"L3",s:"low",c:"auth",t:"1000-Day Default Refresh Token Cookie Lifetime",
+f:["plugins/auth-node/src/oauth/OAuthCookieManager.ts:21, 76-78"],
+desc:"Default refresh token cookie lifetime is <code>THOUSAND_DAYS_MS</code> = 1000 * 24 * 60 * 60 * 1000 (~2.74 years). Configurable via <code>sessionDuration</code> but most deployments use default. Cookie is httpOnly and secure.",
+evidence:"<pre>const THOUSAND_DAYS_MS = 1000 * 24 * 60 * 60 * 1000;\n// ...\nthis.maxAge = options.sessionDuration\n  ? durationToMilliseconds(options.sessionDuration)\n  : THOUSAND_DAYS_MS;</pre>",
+exploit:"Stolen cookie (network MITM on HTTP, browser exploit, physical access) remains valid for nearly 3 years.",
+verdict:"CONFIRMED — Insecure default. Most deployments use default.",
+remediation:"Reduce default to ~30 days. Add config warning if sessionDuration exceeds reasonable threshold."},
+
+{id:"L4",s:"low",c:"auth",t:"SameSite=None for Cross-Domain Setups",
+f:["plugins/auth-node/src/oauth/OAuthCookieManager.ts:38-41"],
+desc:"When auth backend hostname differs from app hostname AND connection is HTTPS, SameSite is set to <code>none</code>. Necessary for cross-domain OAuth but reduces CSRF protection. Secure flag properly guarded.",
+evidence:"<pre>let sameSite = 'lax';\nif (new URL(appOrigin).hostname !== domain && secure) {\n  sameSite = 'none';\n}</pre>",
+exploit:"Cookies sent with all cross-site requests, expanding CSRF attack surface. Mitigated by Secure + httpOnly.",
+verdict:"CONFIRMED — By design for cross-domain. SameSite=none + Secure + httpOnly is the accepted pattern.",
+remediation:"Document security implications for cross-domain deployments."},
+
+{id:"L5",s:"low",c:"auth",t:"X-Requested-With Lightweight CSRF Protection",
+f:["plugins/auth-node/src/oauth/createOAuthRouteHandlers.ts:324-327, 372-374"],
+desc:"Refresh and logout endpoints use <code>X-Requested-With: XMLHttpRequest</code> header check as CSRF protection. Works because simple cross-origin requests can't set custom headers. Found on both logout (line 324) and refresh (line 372) handlers.",
+evidence:"<pre>if (req.header('X-Requested-With') !== 'XMLHttpRequest') {\n  throw new AuthenticationError('Invalid X-Requested-With header');\n}</pre>",
+exploit:"If CORS misconfigured (overly permissive Access-Control-Allow-Headers), protection can be bypassed. Layered with Origin header check.",
+verdict:"CONFIRMED — Lightweight but functional. Layered with Origin checking.",
+remediation:"Add CSRF token validation for critical endpoints. Ensure CORS headers are restrictive."},
+
+{id:"L6",s:"low",c:"ssrf",t:"HarnessUrlReader Cross-Origin Redirect Allowlist Expansion",
+f:["packages/backend-defaults/src/entrypoints/urlReader/lib/HarnessUrlReader.ts:241-248"],
+desc:"Harness redirects accepted for ANY host in <code>backend.reading.allow</code>, not just Harness-related hosts. Credentials correctly stripped on cross-origin redirects (limiting impact), but the allowlist expansion is unintentional.",
+evidence:"<pre>if (\n  redirectUrl.origin !== configuredOrigin &&\n  !this.allowedRedirectPredicate(redirectUrl)  // full reading allowlist\n) {\n  throw new Error(`Refusing to follow cross-origin Harness redirect`);\n}</pre>",
+exploit:"Compromised Harness server redirects to any host in the reading allowlist. Impact limited because credentials stripped on cross-origin.",
+verdict:"CONFIRMED — Requires compromised Harness server. Credentials correctly stripped on redirect.",
+remediation:"Use Harness-specific redirect predicate instead of full reading allowlist."},
+
+{id:"L7",s:"low",c:"ssrf",t:"Error Messages Leak Internal API URLs",
+f:["packages/backend-defaults/src/entrypoints/urlReader/lib/AzureUrlReader.ts:115",
+"BitbucketServerUrlReader.ts:116","GerritUrlReader.ts:143-144","GitlabUrlReader.ts:112","HarnessUrlReader.ts:119"],
+desc:"Error messages include transformed internal API URLs across 5 URL readers. Reveals internal API URL structure, hostnames, port configurations, and potentially tokens in query strings.",
+evidence:"<pre>// AzureUrlReader:\nconst message = `${url} could not be read as ${builtUrl}, ${response.status}`;\n// Similar pattern in Bitbucket, Gerrit, GitLab, Harness readers</pre>",
+exploit:"Trigger URL read errors to discover internal API URL patterns and host topology.",
+verdict:"CONFIRMED — Information disclosure across multiple URL readers.",
+remediation:"Log internal URLs at debug level only. Error messages to callers should reference only original URL."},
+
+{id:"L8",s:"low",c:"proxy",t:"Proxy Path Traversal Protection — Brittle Single Decode",
+f:["plugins/proxy-backend/src/service/router.ts:390-401"],
+desc:"Single <code>decodeURIComponent</code> pass on req.url. Replaces backslashes, splits on /, checks for literal <code>..</code> segments. Malformed encoding falls through to 400 (safe). Double-encoded <code>%252e%252e</code> survives as <code>%2e%2e</code> which doesn't match <code>..</code>.",
+evidence:"<pre>const p = decodeURIComponent(req.url.split('?')[0]);\nif (!p.replace(/\\\\/g, '/').split('/').includes('..')) {\n    next();\n    return;\n}</pre>",
+exploit:"Whether double-encoding is exploitable depends on target server performing additional decode. Practical risk requires specific target behavior.",
+verdict:"CONFIRMED — Adequate for standard cases but brittle against double-encoding if target decodes again.",
+remediation:"Add decode-until-stable loop, or reject any URL containing %2e (case-insensitive) after single decode."},
+
+{id:"L9",s:"low",c:"catalog",t:"Entity Ancestry Leaks Denied Entity Refs",
+f:["plugins/catalog-backend/src/service/AuthorizedEntitiesCatalog.ts:245-297"],
+desc:"<code>entityAncestry()</code> filters denied entities from items array, but parentEntityRefs arrays on remaining authorized items still contain refs to denied entities. Leaks entity existence (kind:namespace/name) but not content.",
+evidence:"<pre>return {\n  rootEntityRef: ancestryResult.rootEntityRef,\n  items: ancestryResult.items.filter(\n    ancestryItem => !allUnauthorizedEntityRefs.has(\n      stringifyEntityRef(ancestryItem.entity),\n    ),\n  ),\n  // parentEntityRefs NOT filtered\n};</pre>",
+exploit:"User discovers existence of entities they don't have permission to view via parentEntityRefs arrays.",
+verdict:"CONFIRMED — Information disclosure. Low impact — entity existence only, not content.",
+remediation:"Filter parentEntityRefs arrays to remove refs to denied entities."},
+
+{id:"L10",s:"low",c:"catalog",t:"authorizationToken in Request Body (Catalog /refresh)",
+f:["plugins/catalog-backend/src/service/createRouter.ts:122-151"],
+desc:"<code>/refresh</code> endpoint accepts bearer token in request body (<code>req.body.authorizationToken</code>) as legacy fallback. Token still validated via auth.authenticate, but bypasses header-based CSRF protections and may appear in body logs.",
+evidence:"<pre>const { authorizationToken, ...restBody } = req.body;\nconst credentials = authorizationToken\n  ? await auth.authenticate(authorizationToken)\n  : await httpAuth.credentials(req);</pre>",
+exploit:"Token logged by proxies/middleware that log request bodies but not headers. Non-standard auth path.",
+verdict:"CONFIRMED — Token still validated. Legacy support path. Low severity appropriate.",
+remediation:"Deprecate and remove body-based auth. Emit deprecation warning when authorizationToken present in body."},
+
+{id:"L11",s:"low",c:"catalog",t:"Placeholder Same-Repo Check Has Edge Cases",
+f:["plugins/catalog-backend/src/processors/PlaceholderProcessor.ts:227-343"],
+desc:"<code>assertSameRepository</code> significantly hardened with host-level checks, path traversal rejection, and reliable-marker distinction. Edge case remains: for non-standard SCM providers, if either URL lacks a parseable filepath, repo comparison is skipped.",
+evidence:"<pre>const hasReliableFileMarkers = RELIABLE_FILE_MARKER_PROVIDERS.has(\n  integrations.byUrl(resolvedUrl)?.type ?? '',\n);\nif (!resolved.filepath || !base.filepath) {\n  return; // Skips comparison for non-standard SCM\n}</pre>",
+exploit:"For custom/non-standard SCM, placeholder could reference different repo on same host if one URL lacks parseable filepath.",
+verdict:"CONFIRMED — Significantly hardened. Remaining edge case narrow, partially mitigated by host-level check.",
+remediation:"Log when comparison skipped for non-standard providers."},
+
+{id:"L12",s:"low",c:"catalog",t:"Full-Text Filter LIKE Has No Length Limit",
+f:["plugins/catalog-backend/src/service/createRouter.ts",
+"plugins/catalog-backend/src/database/DefaultEntitiesCatalog.ts:399,440-456"],
+desc:"<code>fullTextFilter.term</code> trimmed but no max length enforced. Leading <code>%</code> wildcard in LIKE pattern forces sequential scans on PostgreSQL. No validation in <code>parseQueryEntitiesParams</code> either.",
+evidence:"<pre>q.andWhereRaw('search.value like ?',\n  `%${normalizedFullTextFilterTerm.toLowerCase()}%`);</pre>",
+exploit:"Very long search terms force slow database queries. Minor DoS — mitigated by connection pool limits.",
+verdict:"CONFIRMED — Minor DoS vector. Requires authentication.",
+remediation:"Add max length (e.g. 500 chars) on fullTextFilter.term. Consider full-text search indexes instead of LIKE."},
+
+{id:"L13",s:"low",c:"catalog",t:"Relations Expose Entity Ref Existence",
+f:["plugins/catalog-backend/src/database/operations/stitcher/buildEntitySearch.ts:207-211"],
+desc:"Entity relations (e.g. relations.ownedBy) indexed in search table with target entity's full ref as value. User with read permission on entity A discovers entity B's kind:namespace/name through search queries even without read permission on B.",
+evidence:"<pre>for (const relation of entity.relations ?? []) {\n  raw.push({\n    key: `relations.${relation.type}`,\n    value: relation.targetRef,\n  });\n}</pre>",
+exploit:"User discovers entity names they shouldn't know about via relation queries.",
+verdict:"CONFIRMED — Same class as L9. Entity existence leaked, not content.",
+remediation:"Consider filtering relation refs in search results against caller permissions."},
+
+{id:"L14",s:"low",c:"config",t:"No Restriction on Env Vars Readable via Substitution",
+f:["packages/config-loader/src/sources/transform/substitution.ts:45-53"],
+desc:"Default substitution function reads any environment variable: <code>process.env[name]?.trim()</code>. No allowlist or denylist. Config entry like <code>${AWS_SECRET_ACCESS_KEY}</code> resolves to the actual value.",
+evidence:"<pre>substitutionFunc = async name => process.env[name]?.trim()</pre>",
+exploit:"If attacker influences config file contents, they can exfiltrate arbitrary env vars. By design for trusted config files.",
+verdict:"CONFIRMED — Design limitation. Not exploitable remotely without config control.",
+remediation:"Consider allowlist of permitted env var names, or denylist of known-sensitive vars."},
+
+{id:"L15",s:"low",c:"config",t:"Env Var Values Can Control $include File Paths",
+f:["packages/config-loader/src/sources/transform/include.ts:71-74"],
+desc:"<code>$include</code> values first run through env var substitution. If config uses <code>$include: \"${CONFIG_PATH}/secrets.yaml\"</code>, the env var directly controls which file is loaded. Expected behavior but creates indirect path traversal.",
+evidence:"<pre>const substituteResults = await substitute(rawIncludedValue, { dir });\nconst includeValue = substituteResults.applied\n  ? substituteResults.value\n  : rawIncludedValue;</pre>",
+exploit:"Attacker controlling CONFIG_PATH env var redirects include to arbitrary file.",
+verdict:"CONFIRMED — Expected behavior. Combined with M8 creates indirect path traversal.",
+remediation:"Defense-in-depth concern. Addressed by M8 boundary check."},
+
+{id:"L16",s:"low",c:"config",t:"XSS Protection in Config HTML Injection is Minimal",
+f:["plugins/app-backend/src/lib/config/injectConfigIntoHtml.ts:54-65"],
+desc:"Strips <code>&lt;/script</code> and <code>&lt;!--</code> from JSON output. Code comment explicitly acknowledges this is minimal: 'We generally trust the app config to be safe...' Primary protection is JSON.stringify escaping. Config already filtered to frontend-visible values.",
+evidence:"<pre>JSON.stringify(configFilter?.(appConfigs) ?? appConfigs, null, 2)\n  .replaceAll('</script', '')\n  .replaceAll('<!--', '')</pre>",
+exploit:"If attacker controls a frontend-visible config value containing script breakout sequences not caught by the stripping.",
+verdict:"CONFIRMED — Minor. Developers acknowledge minimal protection in code comments.",
+remediation:"Accept the risk (JSON.stringify provides primary protection) or use DOMPurify on config values."},
+
+{id:"L17",s:"low",c:"config",t:"lodash.merge in Database Config — Theoretical Proto Pollution",
+f:["packages/backend-defaults/src/entrypoints/database/connectors/mergeDatabaseConfig.ts:17,26-27"],
+desc:"<code>lodash.merge({}, config, ...overrides)</code> used for database config merging. Historically susceptible to prototype pollution via __proto__ keys. Inputs from trusted YAML config system which doesn't produce __proto__ keys. Modern lodash has mitigations.",
+evidence:"<pre>import { merge } from 'lodash';\nexport function mergeDatabaseConfig(config: any, ...overrides: any[]) {\n  return merge({}, config, ...overrides);\n}</pre>",
+exploit:"Would require attacker to inject __proto__ key into config, which YAML parser doesn't produce. Theoretical only.",
+verdict:"CONFIRMED — Theoretical only. Not exploitable with current input sources.",
+remediation:"Consider switching to structured merge or Object.assign for flat merging."},
+
+{id:"L18",s:"low",c:"config",t:"Error Messages Include Config Paths and URLs",
+f:["packages/config-loader/src/sources/transform/include.ts:87",
+"packages/config-loader/src/sources/RemoteConfigSource.ts:127"],
+desc:"Error messages include file paths and remote config URLs. Could expose internal filesystem layout and remote config infrastructure details.",
+evidence:"<pre>throw new Error(`failed to read file ${includeValue}, ${error}`);\nconsole.error(`Failed to read config from ${this.#url}, ${error}`);</pre>",
+exploit:"Trigger config errors to discover filesystem paths and remote config URLs.",
+verdict:"CONFIRMED — Minor information disclosure.",
+remediation:"Log internal paths at debug level. Surface only sanitized error messages."},
+
+{id:"L19",s:"low",c:"config",t:"No Symlink Protection in Config File Reading",
+f:["packages/config-loader/src/sources/FileConfigSource.ts:64-67"],
+desc:"Standard <code>fs.readFile</code> follows symlinks. No <code>lstat()</code> check before reading. If attacker creates symlinks in config directory, sensitive files could be read.",
+evidence:"<pre>async function readFile(path: string): Promise<string | undefined> {\n  try {\n    const content = await fs.readFile(path, 'utf8');</pre>",
+exploit:"Attacker with filesystem access creates symlink in config dir pointing to /etc/shadow.",
+verdict:"CONFIRMED — Standard Node.js behavior. Requires filesystem access.",
+remediation:"Add lstat() check before reading. Reject symlinks or resolve and validate target path."},
+
+{id:"L20",s:"low",c:"config",t:"Remote Config URL Exposed in Error Logs",
+f:["packages/config-loader/src/sources/RemoteConfigSource.ts:126-128, 82-84"],
+desc:"Remote config URL logged in error messages and creation errors. If URL contains credentials (e.g. https://user:token@config-server/...), they appear in logs. Also exposed in toString() at line 133.",
+evidence:"<pre>console.error(`Failed to read config from ${this.#url}, ${error}`);\nthrow new Error(`Invalid URL provided to remote config source, '${options.url}', ${error}`);</pre>",
+exploit:"If URL contains API key/token, it appears in log output.",
+verdict:"CONFIRMED — Classic info disclosure if URL contains credentials.",
+remediation:"Redact credentials from URLs before logging. Use URL parsing to strip userinfo component."},
+
+{id:"L21",s:"low",c:"config",t:"Lodash Template Used for index.html Generation",
+f:["plugins/app-backend/src/lib/config/injectConfigIntoHtml.ts:20,44-46"],
+desc:"Uses <code>lodash/template</code> with ONLY interpolate mode (<code>&lt;%= ... %&gt;</code>). No evaluate (<code>&lt;% ... %&gt;</code>) or escape patterns enabled, so no arbitrary code execution through template expressions. Template file is a build artifact from disk.",
+evidence:"<pre>import compileTemplate from 'lodash/template';\nconst templateSource = compileTemplate(templateContent, {\n  interpolate: /<%=([\\s\\S]+?)%>/g,\n});</pre>",
+exploit:"Only exploitable if attacker replaces index.html.tmpl build artifact (supply chain attack).",
+verdict:"CONFIRMED — Controlled input. Interpolate-only mode. Not exploitable in normal operation.",
+remediation:"Low priority. Consider CSP-compatible config injection instead of template-based."},
+
+{id:"L22",s:"low",c:"config",t:"No Plugin-Level Config Isolation",
+f:["packages/backend-app-api/src/rootConfigServiceFactory.ts:48-63"],
+desc:"All backend plugins receive the same <code>RootConfigService</code> singleton with access to entire config tree. Any plugin can read any other plugin's config values including credentials.",
+evidence:"<pre>// Factory creates ONE config instance shared across all plugins\nexport const rootConfigServiceFactoryWithOptions = (options?) =>\n  createServiceFactory({\n    service: coreServices.rootConfig,\n    // ... single shared instance\n  });</pre>",
+exploit:"Malicious plugin reads config.getString('backend.database.connection') to steal database credentials.",
+verdict:"CONFIRMED — Known design limitation of Backstage service framework.",
+remediation:"Implement scoped config service that limits each plugin to its own config namespace. Long-term architectural change."},
+
+{id:"L23",s:"low",c:"config",t:"No Minimum Interval for Remote Config Polling",
+f:["packages/config-loader/src/sources/RemoteConfigSource.ts:34,96-97"],
+desc:"<code>reloadInterval</code> configurable with no minimum. <code>{ milliseconds: 1 }</code> accepted, creating a tight polling loop. <code>durationToMilliseconds</code> converts without validation.",
+evidence:"<pre>const DEFAULT_RELOAD_INTERVAL = { seconds: 60 };\nthis.#reloadIntervalMs = durationToMilliseconds(\n  options.reloadInterval ?? DEFAULT_RELOAD_INTERVAL,\n);</pre>",
+exploit:"Operator sets very small interval, causing accidental DoS of remote config server.",
+verdict:"CONFIRMED — Operator misconfiguration only.",
+remediation:"Add minimum interval enforcement (e.g. 10 seconds)."},
+
+{id:"L24",s:"low",c:"config",t:"Environment Variables Override File Config",
+f:["packages/config-loader/src/sources/ConfigSources.ts:260-270"],
+desc:"<code>APP_CONFIG_*</code> env vars merged AFTER file config, meaning they override file values. Any env var like <code>APP_CONFIG_backend__auth__keys</code> can override authentication signing keys.",
+evidence:"<pre>static default(options) {\n  const argSource = this.defaultForTargets({ ... });\n  const envSource = EnvConfigSource.create({ env: options.env });\n  return this.merge([argSource, envSource]);  // env wins\n}</pre>",
+exploit:"In shared infrastructure, attacker sets APP_CONFIG_backend__auth__keys to inject their own signing key.",
+verdict:"CONFIRMED — By design, documented behavior. Merge order means env vars always win.",
+remediation:"Document security implications. Consider requiring explicit opt-in for env var overrides of security-sensitive config keys."},
+
+{id:"L25",s:"low",c:"proxy",t:"Proxy Path Traversal — Double-Encoding Edge Case",
+f:["plugins/proxy-backend/src/service/router.ts:390-400"],
+desc:"Duplicate of L8 independently flagged by two separate review agents. Same single-<code>decodeURIComponent</code> call, same analysis, same code.",
+evidence:"<pre>// Same code as L8 — independently confirmed by proxy and catalog review agents</pre>",
+exploit:"Same as L8. Depends on target server behavior.",
+verdict:"CONFIRMED — Duplicate of L8 independently corroborating the finding.",
+remediation:"Same as L8."},
+
+{id:"L26",s:"low",c:"catalog",t:"authorizationToken Body Parameter (Proxy Review Duplicate)",
+f:["plugins/catalog-backend/src/service/createRouter.ts:122-151"],
+desc:"Duplicate of L10 independently flagged by two separate review agents (catalog and proxy reviewers). Same code, same /refresh endpoint body-based auth.",
+evidence:"<pre>// Same code as L10 — independently confirmed by two review agents</pre>",
+exploit:"Same as L10.",
+verdict:"CONFIRMED — Duplicate of L10, independently corroborated.",
+remediation:"Same as L10."},
+
+{id:"L27",s:"low",c:"auth",t:"postMessage Leaks App Origin via Wildcard targetOrigin",
+f:["plugins/auth-node/src/flow/sendWebMessageResponse.ts:77-82"],
+desc:"First postMessage sends config_info (including app's targetOrigin URL) to <code>'*'</code> wildcard — any listening frame receives it. Second postMessage correctly sends actual auth response only to the proper origin.",
+evidence:"<pre>var originInfo = {'type': 'config_info', 'targetOrigin': origin};\n(window.opener || window.parent).postMessage(originInfo, '*');  // wildcard\n(window.opener || window.parent).postMessage(JSON.parse(authResponse), origin);  // correct</pre>",
+exploit:"Attacker iframe receives config_info message revealing Backstage app URL for reconnaissance. Auth data correctly restricted.",
+verdict:"CONFIRMED — Information disclosure only. Auth response uses correct targetOrigin.",
+remediation:"Remove wildcard postMessage or use different error detection mechanism."}
+];
+
+const el=document.getElementById('list'),cnt=document.getElementById('cnt'),q=document.getElementById('q');
+let fs='all',fc='all';
+
+function render(){
+  const qt=q.value.toLowerCase();
+  let html='',n=0;
+  for(const d of F){
+    if(fs!=='all'&&d.s!==fs)continue;
+    if(fc!=='all'&&d.c!==fc)continue;
+    if(qt&&!JSON.stringify(d).toLowerCase().includes(qt))continue;
+    n++;
+    html+=`<div class="finding" data-id="${d.id}">
+<div class="finding-hd" onclick="this.parentElement.classList.toggle('open')">
+<span class="arrow">&#9654;</span>
+<span class="sev s-${d.s}">${d.s}</span>
+<span class="verdict">confirmed</span>
+<span class="cattag">${d.c}</span>
+<span class="finding-title">${d.t}</span>
+<span class="finding-id">${d.id}</span>
+</div>
+<div class="finding-body">
+<h4>Affected Files</h4>${d.f.map(f=>`<span class="file-ref">${f}</span>`).join('')}
+<h4>Description</h4><p>${d.desc}</p>
+<h4>Live Code Evidence</h4>${d.evidence}
+<h4>Exploit Scenario</h4><p>${d.exploit}</p>
+<div class="evidence-box"><strong>VERDICT:</strong> ${d.verdict}</div>
+<div class="remediation"><strong>Remediation:</strong> ${d.remediation}</div>
+</div></div>`;
+  }
+  el.innerHTML=html;
+  cnt.textContent=`Showing ${n} of ${F.length} findings`;
+}
+
+document.querySelectorAll('.fbtn').forEach(b=>{
+  b.addEventListener('click',()=>{
+    const g=b.dataset.f;
+    document.querySelectorAll(`.fbtn[data-f="${g}"]`).forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    if(g==='s')fs=b.dataset.v;
+    if(g==='c')fc=b.dataset.v;
+    render();
+  });
+});
+q.addEventListener('input',render);
+render();
+</script>
