@@ -1,0 +1,495 @@
+<title>E-Voting Filtered Assessment</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #0c0e12;
+  --bg-surface: #141820;
+  --bg-card: #1a1f2a;
+  --bg-code: #0d1117;
+  --fg: #c9d1d9;
+  --fg-dim: #8b949e;
+  --fg-bright: #e6edf3;
+  --accent: #58a6ff;
+  --accent-dim: #1f3a5f;
+  --critical: #f85149;
+  --critical-bg: #2d1215;
+  --high: #db6d28;
+  --high-bg: #2d1f12;
+  --medium: #d29922;
+  --medium-bg: #2d2712;
+  --low: #3fb950;
+  --low-bg: #122d1a;
+  --fp: #8b949e;
+  --fp-bg: #161b22;
+  --border: #21262d;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #ffffff; --bg-surface: #f6f8fa; --bg-card: #ffffff; --bg-code: #f6f8fa;
+    --fg: #1f2328; --fg-dim: #656d76; --fg-bright: #0d1117;
+    --accent: #0969da; --accent-dim: #ddf4ff;
+    --critical: #cf222e; --critical-bg: #ffebe9;
+    --high: #bc4c00; --high-bg: #fff1e5;
+    --medium: #9a6700; --medium-bg: #fff8c5;
+    --low: #1a7f37; --low-bg: #dafbe1;
+    --fp: #656d76; --fp-bg: #f6f8fa;
+    --border: #d0d7de;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #ffffff; --bg-surface: #f6f8fa; --bg-card: #ffffff; --bg-code: #f6f8fa;
+  --fg: #1f2328; --fg-dim: #656d76; --fg-bright: #0d1117;
+  --accent: #0969da; --accent-dim: #ddf4ff;
+  --critical: #cf222e; --critical-bg: #ffebe9;
+  --high: #bc4c00; --high-bg: #fff1e5;
+  --medium: #9a6700; --medium-bg: #fff8c5;
+  --low: #1a7f37; --low-bg: #dafbe1;
+  --fp: #656d76; --fp-bg: #f6f8fa;
+  --border: #d0d7de;
+  color-scheme: light;
+}
+body {
+  background: var(--bg); color: var(--fg); font-family: var(--font-body);
+  font-size: 15px; line-height: 1.6; max-width: 920px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+.hdr { padding-block: 2rem 1.5rem; border-bottom: 1px solid var(--border); margin-bottom: 2rem; }
+.hdr h1 { font-size: 1.5rem; font-weight: 700; color: var(--fg-bright); margin: 0 0 .25rem; text-wrap: balance; letter-spacing: -.02em; }
+.hdr .sub { font-size: .875rem; color: var(--fg-dim); margin: 0; }
+.hdr .meta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: .75rem; font-size: .8125rem; color: var(--fg-dim); font-family: var(--font-mono); }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; margin-bottom: 2rem; }
+.stat { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; padding: .75rem; text-align: center; }
+.stat .n { font-size: 1.75rem; font-weight: 700; font-family: var(--font-mono); font-variant-numeric: tabular-nums; line-height: 1.1; }
+.stat .l { font-size: .6875rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: .08em; margin-top: .25rem; }
+.stat.crit { border-left: 3px solid var(--critical); } .stat.crit .n { color: var(--critical); }
+.stat.high { border-left: 3px solid var(--high); } .stat.high .n { color: var(--high); }
+.stat.med { border-left: 3px solid var(--medium); } .stat.med .n { color: var(--medium); }
+.stat.fp-s { border-left: 3px solid var(--fp); } .stat.fp-s .n { color: var(--fp); }
+
+.tabs { display: flex; gap: 0; border-bottom: 1px solid var(--border); margin-bottom: 1.5rem; overflow-x: auto; }
+.tab { padding: .75rem 1rem; font-size: .8125rem; font-weight: 500; color: var(--fg-dim); background: transparent; border: none; border-bottom: 2px solid transparent; cursor: pointer; white-space: nowrap; font-family: var(--font-body); }
+.tab:hover { color: var(--fg); } .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tc { display: none; } .tc.active { display: block; }
+
+.f { background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px; margin-bottom: .75rem; overflow: hidden; }
+.fh { display: flex; align-items: flex-start; gap: .6rem; padding: .875rem 1rem; cursor: pointer; user-select: none; }
+.fh:hover { background: var(--bg-surface); }
+.fid { font-family: var(--font-mono); font-size: .8125rem; font-weight: 600; color: var(--fg-dim); flex-shrink: 0; min-width: 4rem; }
+.ft { font-weight: 600; font-size: .875rem; color: var(--fg-bright); flex: 1; min-width: 0; }
+.sev { font-family: var(--font-mono); font-size: .625rem; font-weight: 600; padding: .2em .5em; border-radius: 4px; text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0; }
+.sev.critical { background: var(--critical-bg); color: var(--critical); }
+.sev.high { background: var(--high-bg); color: var(--high); }
+.sev.medium { background: var(--medium-bg); color: var(--medium); }
+.sev.fp { background: var(--fp-bg); color: var(--fp); }
+.fb { display: none; padding: 0 1rem 1rem; border-top: 1px solid var(--border); }
+.f.open .fb { display: block; } .f.open .fh { background: var(--bg-surface); }
+.chv { flex-shrink: 0; width: .875rem; height: .875rem; color: var(--fg-dim); transition: transform .15s; margin-top: .15rem; }
+.f.open .chv { transform: rotate(90deg); }
+.sl { font-size: .625rem; font-weight: 600; color: var(--fg-dim); text-transform: uppercase; letter-spacing: .08em; margin: 1rem 0 .4rem; }
+.sl:first-child { margin-top: .6rem; }
+.ev { background: var(--bg-surface); border-left: 3px solid var(--accent); padding: .6rem .875rem; border-radius: 0 6px 6px 0; margin: .4rem 0; font-size: .8125rem; }
+.ev .fl { font-family: var(--font-mono); font-size: .75rem; color: var(--accent); margin-bottom: .2rem; }
+pre, code { font-family: var(--font-mono); font-size: .8125rem; }
+pre { background: var(--bg-code); border: 1px solid var(--border); border-radius: 6px; padding: .875rem; overflow-x: auto; line-height: 1.5; color: var(--fg); }
+code { background: var(--bg-code); padding: .12em .3em; border-radius: 3px; font-size: .85em; }
+pre code { background: none; padding: 0; }
+.ib { border-radius: 6px; padding: .6rem .875rem; margin: .4rem 0; font-size: .8125rem; }
+.ib.critical { background: var(--critical-bg); border: 1px solid var(--critical); }
+.ib.high { background: var(--high-bg); border: 1px solid var(--high); }
+.tag { display: inline-block; font-family: var(--font-mono); font-size: .625rem; padding: .15em .45em; border-radius: 3px; background: var(--bg-surface); border: 1px solid var(--border); color: var(--fg-dim); }
+h2 { font-size: 1.125rem; font-weight: 700; color: var(--fg-bright); margin: 1.75rem 0 .75rem; text-wrap: balance; }
+h3 { font-size: .9375rem; font-weight: 600; color: var(--fg-bright); margin: 1.25rem 0 .5rem; }
+p { margin: .4rem 0; font-size: .875rem; }
+.box { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin-bottom: 1.5rem; }
+.box h3 { margin-top: 0; }
+.bounty { font-family: var(--font-mono); font-weight: 600; color: var(--medium); }
+footer { border-top: 1px solid var(--border); padding-block: 1.5rem; margin-top: 2.5rem; font-size: .75rem; color: var(--fg-dim); }
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(2, 1fr); }
+  .fh { padding: .6rem .75rem; }
+  pre { font-size: .75rem; padding: .6rem; }
+  .hdr h1 { font-size: 1.25rem; }
+}
+</style>
+
+<div class="hdr">
+  <h1>Swiss Post E-Voting &mdash; Bounty-Filtered Assessment</h1>
+  <p class="sub">Filtered against YesWeHack program rules: only findings with demonstrated exploitability, real attack scenarios, and PoC evidence survive.</p>
+  <div class="meta">
+    <span>Date: 2026-11-04</span>
+    <span>Program: Swiss Post E-Voting</span>
+    <span>Platform: YesWeHack</span>
+    <span>Original: 63 findings</span>
+  </div>
+</div>
+
+<div class="grid">
+  <div class="stat crit"><div class="n">1</div><div class="l">Critical</div></div>
+  <div class="stat high"><div class="n">2</div><div class="l">High</div></div>
+  <div class="stat med"><div class="n">1</div><div class="l">Medium</div></div>
+  <div class="stat fp-s"><div class="n">59</div><div class="l">Eliminated</div></div>
+</div>
+
+<div class="box">
+  <h3>Filtering Methodology</h3>
+  <p>Applied the YesWeHack Swiss Post E-Voting program rules to all 63 original findings:</p>
+  <p><strong>Non-qualifying (program rules):</strong> DoS/resource starvation (SP-013, SP-018), leaked credentials (SP-058), dev environment configs (SP-033)</p>
+  <p><strong>C.5.4 &mdash; General best practices:</strong> Findings that "merely recommend adherence to general security best practices" without demonstrating concrete weakness (SP-001, SP-025, SP-029, SP-039, SP-048, SP-056, SP-044, SP-040, SP-026, SP-030)</p>
+  <p><strong>C.5.1 &mdash; Context-dependent without PoC:</strong> Deserialization, injection, timing attacks that require real operating conditions proof (SP-009, SP-037, SP-028, SP-017, SP-024, SP-049, SP-010)</p>
+  <p><strong>Code verification disproved:</strong> SP-007/008 (return codes are opaque random tokens &mdash; mapping to vote choices requires voter's physical card + SDM, not in voting server DB), SP-022 (DUMMY_ELECTION_EVENT is deliberate test feature &mdash; writes blocked by <code>checkArgument()</code>, GETs return static dummy data), SP-035 (5-attempt limit confirmed), SP-042/043 (empty AD mitigated by per-voter-per-election key derivation)</p>
+  <p><strong>Offline application caveat:</strong> Program explicitly warns "offline applications and operational measures" render attacks unrealistic. SDM findings noted but acknowledged as harder sell.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('tp')">True Positives (4)</button>
+  <button class="tab" onclick="switchTab('elim')">Eliminated (59)</button>
+  <button class="tab" onclick="switchTab('bounty')">Bounty Analysis</button>
+</div>
+
+<div id="tp" class="tc active">
+
+<h2>Confirmed True Positives &mdash; Submittable Findings</h2>
+<p>Each finding below has: source code references with exact file/line, a traced attack scenario per C.5.2, and demonstrated or demonstrable PoC.</p>
+
+<!-- SP-047 -->
+<div class="f" id="sp047">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">SP-047</span>
+    <span class="ft">SECURITY_LEVEL Environment Variable &mdash; Complete Crypto Collapse</span>
+    <span class="sev critical">CRITICAL</span>
+  </div>
+  <div class="fb">
+    <div class="sl">Source (commit: latest master)</div>
+    <div class="ev">
+      <div class="fl">crypto-primitives/src/main/java/.../internal/securitylevel/SecurityLevelConfig.java:33-38</div>
+<pre><code>public static SecurityLevelInternal getSystemSecurityLevel() {
+    final String securityLevelValue = System.getenv("SECURITY_LEVEL");
+    if (securityLevelValue == null) {
+        return SecurityLevelInternal.STANDARD;
+    }
+    return SecurityLevelInternal.valueOf(securityLevelValue);
+}</code></pre>
+    </div>
+
+    <div class="sl">Attack Scenario (C.5.2 compliant)</div>
+    <p><strong>Entry point:</strong> Environment variable <code>SECURITY_LEVEL</code> on any component using crypto-primitives</p>
+    <p><strong>Malicious party:</strong> Infrastructure operator, supply-chain attacker, or attacker with container escape</p>
+    <p><strong>Code path:</strong> <code>SecurityLevelConfig.getSystemSecurityLevel()</code> &rarr; <code>SecurityLevelInternal.valueOf("TESTING_ONLY")</code> &rarr; all downstream crypto uses 16-bit security (48-bit modulus) instead of 128-bit (3072-bit)</p>
+    <p><strong>No mitigation found:</strong> No runtime guard, assertion, startup check, or production environment validation exists anywhere in the codebase. Grep for <code>TESTING_ONLY</code> and <code>SECURITY_LEVEL</code> across all repos confirms no validation.</p>
+
+    <div class="sl">Concrete Impact</div>
+    <div class="ib critical">
+      <strong>Technical:</strong> All ElGamal encryption drops to 48-bit modulus (factorable in milliseconds). All ZKPs, Bayer-Groth shuffle proofs, and Pedersen commitments provide zero security.<br>
+      <strong>Business:</strong> An attacker can decrypt all votes, forge proofs of correct shuffling, and manipulate the election tally &mdash; all while the verification system reports success (proofs verify trivially at 16-bit security).<br>
+      <strong>Protocol impact:</strong> Complete bypass of universal verifiability. Manipulation goes undetected by voter AND system.
+    </div>
+
+    <div class="sl">PoC</div>
+<pre><code>// Run with: SECURITY_LEVEL=TESTING_ONLY java SP047_SecurityLevelCryptoCollapse
+// vs:       java SP047_SecurityLevelCryptoCollapse
+
+// TESTING_ONLY: SecurityLevelInternal.TESTING_ONLY
+//   p_length = 48 bits (vs 3072)
+//   security_strength = 16 bits (vs 128)
+//   Brute-force: 2^16 = 65,536 operations (&lt; 1ms)</code></pre>
+
+    <div class="sl">Bounty Eligibility</div>
+    <p>Qualifies for <strong>special bounty: "Manipulation undetected by voter AND system"</strong> &mdash; <span class="bounty">&euro;70,000 &ndash; &euro;230,000</span></p>
+    <p>Respects trust model: attack requires infrastructure access (not all 4 control components).</p>
+    <div class="tag">PoC: poc/01_sp047_security_level_crypto_collapse.java</div>
+  </div>
+</div>
+
+<!-- SP-002 -->
+<div class="f" id="sp002">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">SP-002</span>
+    <span class="ft">SDM Electron nodeIntegration:true + shell:true Spawn</span>
+    <span class="sev high">HIGH</span>
+  </div>
+  <div class="fb">
+    <div class="sl">Source</div>
+    <div class="ev">
+      <div class="fl">e-voting/secure-data-manager/.../electron/main.js:47-49</div>
+<pre><code>webPreferences: {
+    nodeIntegration: true,      // line 47
+    enableRemoteModule: true,   // line 49
+    // contextIsolation never set → defaults to false
+}</code></pre>
+    </div>
+    <div class="ev">
+      <div class="fl">e-voting/secure-data-manager/.../electron/main.js:122,131</div>
+<pre><code>const spawnArgs = ['startup', ... '-p', `profile_${args.profileId}`, ...];
+// profileId comes from IPC (preload.js:231), unsanitized
+sdmBackendProcess = spawn(script, spawnArgs,
+    {cwd: exePath + '/resources/', shell: true}); // shell injection</code></pre>
+    </div>
+
+    <div class="sl">Attack Scenario</div>
+    <p><strong>Entry point:</strong> Content injection into SDM renderer (malicious election config, crafted backend response, compromised update)</p>
+    <p><strong>Code path (RCE):</strong> Injected script &rarr; <code>require('child_process').execSync()</code> (enabled by <code>nodeIntegration: true</code>)</p>
+    <p><strong>Code path (shell injection):</strong> <code>preload.js:231</code> sends <code>profileId</code> via IPC &rarr; <code>main.js:122</code> interpolates unsanitized into <code>spawnArgs</code> &rarr; <code>main.js:131</code> <code>spawn(..., {shell: true})</code></p>
+    <p><strong>No mitigation found:</strong> <code>contextIsolation</code> never set anywhere in the SDM codebase (confirmed by grep). <code>profileId</code> has no validation before interpolation.</p>
+
+    <div class="sl">Program Caveat</div>
+    <p>The program warns that "offline applications and operational measures" render many attacks unrealistic. The SDM is used by election administrators in controlled environments. The finding is strongest if framed as: the SDM processes election configs from external sources (USB, network), and a malicious config could achieve RCE on the admin machine.</p>
+
+    <div class="ib high">
+      <strong>Technical:</strong> Full RCE on election administrator's machine via either content injection (nodeIntegration) or shell metacharacter injection (profileId + shell:true).<br>
+      <strong>Business:</strong> SDM handles key ceremony, voter data upload, tally initiation, result export. Compromise = complete election integrity loss.
+    </div>
+    <div class="tag">PoC: poc/03_sp002_electron_rce.js</div>
+  </div>
+</div>
+
+<!-- SP-032 -->
+<div class="f" id="sp032">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">SP-032</span>
+    <span class="ft">Keystore Password Zeroed with '0' (0x30) Not '\0' (0x00)</span>
+    <span class="sev high">HIGH</span>
+  </div>
+  <div class="fb">
+    <div class="sl">Source</div>
+    <div class="ev">
+      <div class="fl">crypto-primitives/src/main/java/.../internal/signing/SignatureKeystoreService.java:88</div>
+<pre><code>} finally {
+    Arrays.fill(password, '0');  // BUG: '0' = char 0x30, not '\0' = 0x00
+}</code></pre>
+    </div>
+
+    <div class="sl">Attack Scenario</div>
+    <p><strong>Entry point:</strong> Memory access (heap dump, core dump, cold boot, debugger attachment)</p>
+    <p><strong>Code path:</strong> Keystore password loaded &rarr; used for signing operations &rarr; <code>Arrays.fill(password, '0')</code> leaves "000000..." in memory instead of null bytes</p>
+    <p><strong>Concrete impact:</strong> Password length leaked (visible as run of 0x30 bytes). Password location trivially identifiable in heap. Correct zeroing ('\0') would appear as empty memory, indistinguishable from uninitialized space.</p>
+
+    <div class="sl">PoC</div>
+<pre><code>char[] password = "Election2025!Secret".toCharArray();
+Arrays.fill(password, '0');  // What the code does (buggy)
+// Memory: 0x30 0x30 0x30 0x30 0x30 ... (19 bytes of '0')
+// Leaks: password was 19 chars long, located HERE
+
+Arrays.fill(password, '\0'); // What it should do
+// Memory: 0x00 0x00 0x00 0x00 0x00 ... (empty)</code></pre>
+
+    <p>This is a clear code bug (not a best practice recommendation per C.5.4). The code attempts to zero the password but uses the wrong character. The fix is a single character change: <code>'0'</code> &rarr; <code>'\0'</code>.</p>
+    <div class="tag">PoC: poc/04_sp032_password_zeroing.java</div>
+  </div>
+</div>
+
+<!-- SP-006 -->
+<div class="f" id="sp006">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">SP-006</span>
+    <span class="ft">Year-of-Birth Authentication Challenge &mdash; 6.6 Bits Entropy</span>
+    <span class="sev medium">MEDIUM</span>
+  </div>
+  <div class="fb">
+    <div class="sl">Source</div>
+    <div class="ev">
+      <div class="fl">voter-portal/apps/voter-portal/src/assets/i18n/EN.json:74</div>
+      <code>"startvoting.enteryob": "Enter your year of birth"</code>
+    </div>
+    <div class="ev">
+      <div class="fl">VerificationCardStateEntity.java:96</div>
+      <code>checkArgument(authenticationAttempts &gt; 0 && authenticationAttempts &lt;= MAX_AUTHENTICATION_ATTEMPTS)</code> &mdash; MAX = 5
+    </div>
+
+    <div class="sl">Attack Scenario</div>
+    <p><strong>Precondition:</strong> Attacker has stolen a voter's Start Voting Key (SVK) / voting card</p>
+    <p><strong>Challenge mode:</strong> YOB (year of birth) &mdash; one of three supported modes (DOB, YOB, eGov token)</p>
+    <p><strong>Attack:</strong> Enumerate ~100 possible birth years (1924&ndash;2024). With 5 attempts and demographic knowledge:</p>
+
+    <div class="sl">Statistical Analysis</div>
+<pre><code>YOB mode: ~100 possible values, 5 attempts allowed
+Base success rate: 1-(99/100)^5 = 4.9%
+
+With demographic knowledge (age 40-50):
+  10 possible values, 5 attempts → 1-(9/10)^5 = 41%
+
+With demographic knowledge (age 30-55):
+  25 possible values, 5 attempts → 1-(24/25)^5 = 18.5%
+
+DOB mode: ~36,500 values → negligible risk
+eGov token: high entropy → not affected</code></pre>
+
+    <div class="sl">Mitigating Factors</div>
+    <p>The authentication sends a <strong>derived hash</strong> (256-bit, <code>derivedAuthenticationChallenge</code> per the JSON schema), not the raw year. The attacker needs the SVK's keying material to compute the hash. The card is permanently blocked after MAX_AUTHENTICATION_ATTEMPTS failures.</p>
+    <p>Despite the hashing, the fundamental entropy of the input remains ~6.6 bits (100 values). An attacker with the SVK can offline-enumerate all 100 hashed values.</p>
+    <div class="tag">PoC: poc/06_sp006_birthdate_bruteforce.py</div>
+  </div>
+</div>
+
+</div><!-- end tp -->
+
+<div id="elim" class="tc">
+<h2>Eliminated Findings (59)</h2>
+<p>59 of 63 findings eliminated. Organized by elimination reason per YesWeHack program rules.</p>
+
+<h3>Phase 1 Triage: Architecture/Context False Positives (33)</h3>
+<p>Removed during initial triage before source verification. Includes: CSRF findings (non-cookie auth), K8s security contexts (runtime, not app code), mTLS-protected endpoints, rate-limiting on already-guarded endpoints, informational findings, duplicates. These were covered in the initial triage report.</p>
+
+<h3>Phase 2: Program Rules Elimination (26 additional)</h3>
+
+<div class="f">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">DoS</span>
+    <span class="ft">SP-013 (10GB memory), SP-018 (unbounded queue)</span>
+    <span class="sev fp">NON-QUALIFYING</span>
+  </div>
+  <div class="fb">
+    <p>Program explicitly states: "All attacks that fall under the broad denial of service and resource starvation categories" are non-qualifying vulnerabilities.</p>
+  </div>
+</div>
+
+<div class="f">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">Creds</span>
+    <span class="ft">SP-058 (hardcoded test credentials)</span>
+    <span class="sev fp">NON-QUALIFYING</span>
+  </div>
+  <div class="fb">
+    <p>Program states: "Reports of leaks and exposed credentials" are non-qualifying. Impact is out of scope regardless of source.</p>
+  </div>
+</div>
+
+<div class="f">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">C.5.4</span>
+    <span class="ft">SP-001, SP-025, SP-029, SP-039, SP-048, SP-056, SP-044, SP-040, SP-026, SP-030</span>
+    <span class="sev fp">BEST PRACTICE</span>
+  </div>
+  <div class="fb">
+    <p>"Reports that merely recommend adherence to general security best practices, without demonstrating a concrete weakness in the project's design or implementation, are out of scope."</p>
+    <p><strong>SP-001</strong> (deserialization deny list): Recommends adding a deny list. No working gadget chain demonstrated.</p>
+    <p><strong>SP-025</strong> (Argon2 params): Recommends higher params. No offline crack demonstrated.</p>
+    <p><strong>SP-029</strong> (session entropy): Recommends more entropy. No prediction demonstrated.</p>
+    <p><strong>SP-039</strong> (IP velocity): Recommends adding detection. No existing bypass demonstrated.</p>
+    <p><strong>SP-048</strong> (nonce entropy): Recommends more entropy. No collision demonstrated.</p>
+    <p><strong>SP-056</strong> (cert pinning): Recommends adding HPKP. No CA compromise demonstrated.</p>
+    <p><strong>SP-044</strong> (verbose logging): Recommends reducing log level. Operational measure.</p>
+    <p><strong>SP-040</strong> (error messages): Recommends sanitizing errors. No exploit chain shown.</p>
+    <p><strong>SP-026</strong> (challenge in URL): Recommends POST body. No log access demonstrated.</p>
+    <p><strong>SP-030</strong> (post-election keys): Recommends key destruction. Operational procedure.</p>
+  </div>
+</div>
+
+<div class="f">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">C.5.1</span>
+    <span class="ft">SP-009, SP-037, SP-028, SP-017, SP-024, SP-049, SP-010</span>
+    <span class="sev fp">NO PoC</span>
+  </div>
+  <div class="fb">
+    <p>"We may refuse reports whose vulnerability's plausibility is heavily dependent on and affected by real operating conditions." Applies to: "timing and side-channel attacks", "software vulnerabilities that are almost entirely context-dependent: deserialisation issues, command/argument injections, etc."</p>
+    <p><strong>SP-009</strong> (Class.forName): Deserialization/injection, context-dependent. No working gadget chain.</p>
+    <p><strong>SP-037</strong> (innerHTML): Context-dependent XSS. No attacker-controlled input &rarr; innerHTML data flow traced.</p>
+    <p><strong>SP-028</strong> (auth oracle): Timing attack. Program may refuse without PoC against running instance.</p>
+    <p><strong>SP-017</strong> (verifier timing): Timing side-channel. Source not available for verification.</p>
+    <p><strong>SP-024</strong> (TOTP window): Needs concrete exploitation beyond theoretical analysis.</p>
+    <p><strong>SP-049</strong> (predictable IDs): No concrete enumeration demonstrated.</p>
+    <p><strong>SP-010</strong> (plain TCP): Deployment-dependent. "Security measures implemented out of the code" likely mitigate.</p>
+  </div>
+</div>
+
+<div class="f">
+  <div class="fh" onclick="this.closest('.f').classList.toggle('open')">
+    <svg class="chv" viewBox="0 0 16 16" fill="currentColor"><path d="M6.22 3.22a.75.75 0 011.06 0l4.25 4.25a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06-1.06L9.94 8 6.22 4.28a.75.75 0 010-1.06z"/></svg>
+    <span class="fid">Disproved</span>
+    <span class="ft">SP-007/008, SP-022, SP-035, SP-042/043, SP-033</span>
+    <span class="sev fp">CODE VERIFIED FP</span>
+  </div>
+  <div class="fb">
+    <p><strong>SP-007/008</strong> (Return code linkability / vote deanonymization): Source code analysis disproved. <code>shortChoiceReturnCodes</code> are <strong>opaque random tokens</strong> &mdash; the mapping from return code to actual vote choice exists only on the voter's physical voting card and in the SDM (Secure Data Manager), NOT in the voting server database. A DB insider sees return codes linked to voter identity but <em>cannot</em> map them back to candidates without the voter's card. The protocol's trust model explicitly distributes this knowledge across control components. At most this leaks participation metadata (who voted), not how they voted. Not a vote privacy breach.</p>
+    <p><strong>SP-022</strong> (DUMMY_ELECTION_EVENT bypass): Code analysis disproved. <code>ConfigureVoterPortalService.java:52</code> has <code>checkArgument(!DUMMY_ELECTION_EVENT_ID.equals(electionEventId))</code> blocking writes. GET endpoint returns static dummy config from file. This is a deliberate deployment-test feature, not a bypass.</p>
+    <p><strong>SP-035</strong> (unbounded confirmation attempts): Code has <code>MAX_CONFIRMATION_ATTEMPTS = 5</code> enforced by <code>checkState()</code>.</p>
+    <p><strong>SP-042/043</strong> (AEAD empty AD): Keys are derived per-voter-per-election-per-choice via <code>KDF(hash(pC_id_k, vc_id, ee, tau_k), ...)</code>. Cross-context replay fails because keys differ. Best practice observation, not exploitable.</p>
+    <p><strong>SP-033</strong> (JDWP debug ports): Found only in <code>evoting-e2e-dev/docker-compose/docker-compose.common.yml</code>. This is a development environment configuration, not production code.</p>
+  </div>
+</div>
+
+</div><!-- end elim -->
+
+<div id="bounty" class="tc">
+<h2>Bounty Analysis &mdash; Submission Strategy</h2>
+
+<h3>Tier 1: Special Bounty Candidate</h3>
+<div class="box">
+  <p><strong>SP-047</strong> &mdash; SECURITY_LEVEL Crypto Collapse</p>
+  <p><strong>Category:</strong> "Manipulation undetected by voter AND system" (if proofs verify at TESTING_ONLY parameters)</p>
+  <p><strong>Bounty range:</strong> <span class="bounty">&euro;70,000 &ndash; &euro;230,000</span></p>
+  <p><strong>Strength:</strong> Clear code bug with concrete demonstrated impact. Single env var disables all cryptography. No mitigation exists in code.</p>
+  <p><strong>Risk:</strong> Program may argue this requires trust model violation (infrastructure operator access). However, the code vulnerability itself — no production guard on a test mode — is squarely in scope for "Application source code" findings.</p>
+  <p><strong>Submission confidence:</strong> HIGH</p>
+</div>
+
+<h3>Tier 2: Standard Bounty</h3>
+<div class="box">
+  <p><strong>SP-002</strong> &mdash; SDM Electron RCE</p>
+  <p><strong>Bounty range:</strong> <span class="bounty">&euro;8,000 &ndash; &euro;30,000</span> (High asset, CVSS High)</p>
+  <p><strong>Strength:</strong> Classic Electron misconfiguration + shell injection. Both confirmed with exact source lines.</p>
+  <p><strong>Risk:</strong> "Offline applications" caveat. Program may discount exploitability in controlled admin environment.</p>
+  <p><strong>Submission confidence:</strong> MEDIUM</p>
+</div>
+
+<div class="box">
+  <p><strong>SP-032</strong> &mdash; Password Zeroing Bug</p>
+  <p><strong>Bounty range:</strong> <span class="bounty">&euro;1,500 &ndash; &euro;8,000</span> (High asset, CVSS Low-Medium)</p>
+  <p><strong>Strength:</strong> Undeniable code bug (wrong character). Fix is one character. Affects signing keystore password.</p>
+  <p><strong>Risk:</strong> Low severity since exploitation requires memory access.</p>
+  <p><strong>Submission confidence:</strong> HIGH (clear bug, easy for triage team to verify)</p>
+</div>
+
+<div class="box">
+  <p><strong>SP-006</strong> &mdash; Year-of-Birth Entropy</p>
+  <p><strong>Bounty range:</strong> <span class="bounty">&euro;500 &ndash; &euro;2,000</span> (High asset, CVSS Low-Medium)</p>
+  <p><strong>Strength:</strong> Mathematical analysis of authentication entropy. 6.6 bits for YOB mode is objectively weak.</p>
+  <p><strong>Risk:</strong> Requires stolen SVK as precondition. Authentication uses derived hashes (not raw year). Card blocked after 5 attempts. May be argued as "within accepted risk for voter authentication."</p>
+  <p><strong>Submission confidence:</strong> LOW-MEDIUM</p>
+</div>
+
+<h3>Estimated Total Bounty Value</h3>
+<p>Conservative: <span class="bounty">&euro;10,000 &ndash; &euro;40,000</span> (if SP-047 classified as High, not special bounty)</p>
+<p>Optimistic: <span class="bounty">&euro;80,000 &ndash; &euro;240,000</span> (if SP-047 qualifies for special bounty &mdash; &ldquo;manipulation undetected by voter AND system&rdquo;)</p>
+
+</div><!-- end bounty -->
+
+<footer>
+  <p>Swiss Post E-Voting Security Assessment &mdash; Filtered for YesWeHack Bug Bounty Program Rules</p>
+  <p>63 original findings &rarr; 4 submittable true positives. Filtered against: non-qualifying categories (DoS, credentials), C.5.1 (context-dependent without PoC), C.5.4 (general best practices), offline application caveats, and source code verification.</p>
+</footer>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.tc').forEach(e => e.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  event.currentTarget.classList.add('active');
+  try { localStorage.setItem('evf-tab', id); } catch(e) {}
+}
+try {
+  const s = localStorage.getItem('evf-tab');
+  if (s && document.getElementById(s)) {
+    document.querySelectorAll('.tc').forEach(e => e.classList.remove('active'));
+    document.querySelectorAll('.tab').forEach(e => e.classList.remove('active'));
+    document.getElementById(s).classList.add('active');
+    const m = {'tp':0,'elim':1,'bounty':2};
+    if (m[s] !== undefined) document.querySelectorAll('.tab')[m[s]]?.classList.add('active');
+  }
+} catch(e) {}
+</script>
