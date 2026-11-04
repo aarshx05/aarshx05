@@ -1,0 +1,357 @@
+<title>E-Voting Deep Sweep Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  /* Security audit report — monospace-accented technical layout */
+  :root {
+    --bg: #fafaf9; --fg: #1c1917; --fg-muted: #57534e;
+    --surface: #ffffff; --border: #e7e5e4;
+    --accent: #b91c1c; --accent-bg: #fef2f2;
+    --code-bg: #f5f5f4; --code-fg: #292524;
+    --green: #166534; --green-bg: #f0fdf4;
+    --amber: #92400e; --amber-bg: #fffbeb;
+    --tag-bg: #fef2f2; --tag-fg: #991b1b;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0a09; --fg: #e7e5e4; --fg-muted: #a8a29e;
+      --surface: #1c1917; --border: #292524;
+      --accent: #f87171; --accent-bg: #1a0a0a;
+      --code-bg: #1c1917; --code-fg: #d6d3d1;
+      --green: #4ade80; --green-bg: #052e16;
+      --amber: #fbbf24; --amber-bg: #1a1400;
+      --tag-bg: #2a0a0a; --tag-fg: #fca5a5;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0a09; --fg: #e7e5e4; --fg-muted: #a8a29e;
+    --surface: #1c1917; --border: #292524;
+    --accent: #f87171; --accent-bg: #1a0a0a;
+    --code-bg: #1c1917; --code-fg: #d6d3d1;
+    --green: #4ade80; --green-bg: #052e16;
+    --amber: #fbbf24; --amber-bg: #1a1400;
+    --tag-bg: #2a0a0a; --tag-fg: #fca5a5;
+    color-scheme: dark;
+  }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.6; max-width: 860px; margin: 0 auto;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 2rem 4rem;
+  }
+  h1 { font-size: 1.75rem; font-weight: 700; margin: 0 0 0.25rem; line-height: 1.2; text-wrap: balance; }
+  h2 { font-size: 1.25rem; font-weight: 700; margin: 2.5rem 0 1rem; border-bottom: 2px solid var(--border); padding-bottom: 0.5rem; text-wrap: balance; }
+  h3 { font-size: 1.05rem; font-weight: 600; margin: 1.5rem 0 0.5rem; }
+  .subtitle { color: var(--fg-muted); font-size: 0.95rem; margin-bottom: 2rem; }
+  code, .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.85em; }
+  .inline-code { background: var(--code-bg); color: var(--code-fg); padding: 0.15em 0.4em; border-radius: 3px; }
+  pre { background: var(--code-bg); color: var(--code-fg); padding: 1rem; border-radius: 6px; overflow-x: auto; font-family: 'IBM Plex Mono', monospace; font-size: 0.82rem; line-height: 1.5; margin: 1rem 0; }
+  .finding { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1rem 0; border-left: 4px solid var(--accent); }
+  .finding-eliminated { border-left-color: var(--green); }
+  .severity { display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; padding: 0.15em 0.6em; border-radius: 3px; font-family: 'IBM Plex Mono', monospace; }
+  .sev-high { background: var(--tag-bg); color: var(--tag-fg); }
+  .sev-medium { background: var(--amber-bg); color: var(--amber); }
+  .sev-low { background: var(--green-bg); color: var(--green); }
+  .sev-safe { background: var(--green-bg); color: var(--green); }
+  .file-ref { color: var(--fg-muted); font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; word-break: break-all; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.5rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border); }
+  th { font-weight: 600; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--fg-muted); }
+  .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin: 1.5rem 0; }
+  .toc ul { margin: 0; padding-left: 1.2em; }
+  .toc li { margin: 0.3rem 0; }
+  .toc a { color: var(--accent); text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+  .verdict-box { background: var(--accent-bg); border: 1px solid var(--accent); border-radius: 8px; padding: 1.25rem; margin: 1.5rem 0; }
+  .verdict-title { font-weight: 700; color: var(--accent); margin-bottom: 0.5rem; }
+  .arrow { color: var(--accent); font-weight: 700; }
+  .safe-box { background: var(--green-bg); border: 1px solid var(--green); border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+  .safe-label { font-weight: 600; color: var(--green); }
+  ul, ol { padding-left: 1.4em; }
+  li { margin: 0.3rem 0; }
+  a { color: var(--accent); }
+</style>
+
+<h1>Swiss Post E-Voting: Deep Codebase Sweep</h1>
+<p class="subtitle">Security Assessment &mdash; evotingBounty + evoting-e2e-dev &mdash; November 2026</p>
+
+<nav class="toc">
+  <strong>Contents</strong>
+  <ul>
+    <li><a href="#executive">Executive Summary</a></li>
+    <li><a href="#finding1">Finding: Inter-Service Signature URL Omission</a></li>
+    <li><a href="#finding2">Finding: ElGamalPublicKey Missing Group Membership</a></li>
+    <li><a href="#eliminated">Areas Verified Safe</a></li>
+    <li><a href="#bounty">Bounty Eligibility Assessment</a></li>
+    <li><a href="#methodology">Methodology &amp; Coverage</a></li>
+  </ul>
+</nav>
+
+<h2 id="executive">Executive Summary</h2>
+<p>A comprehensive sweep of the Swiss Post e-voting codebase (~66MB, 1,369+ Java files, JavaScript crypto libraries, control components, and DevOps configurations) identified <strong>one concrete code-level vulnerability</strong> in the inter-service request authentication mechanism and <strong>one cryptographic design concern</strong> in the ElGamal key deserialization path.</p>
+
+<p>The primary finding &mdash; <strong>URL omission from inter-service request signatures</strong> &mdash; is a real, demonstrable bug with a working PoC. All other attack surfaces examined (SQL injection, XSS, deserialization, RNG, vote encryption, ZKP verification, mixnet, certificate validation) were found to be properly implemented.</p>
+
+<h2 id="finding1">Finding: Inter-Service Signature URL Omission</h2>
+
+<div class="finding">
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+    <span class="severity sev-high">HIGH</span>
+    <strong>Cross-Endpoint Signature Replay Attack</strong>
+  </div>
+
+  <h3>Vulnerability</h3>
+  <p><code class="inline-code">SignedRequestContent.getBytes()</code> computes the signature hash over <code class="inline-code">method + body + originator</code> but <strong>never includes the URL</strong>, even though the URL is passed to the constructor and stored as a field. Both the signing path (<code class="inline-code">RequestSigner.sign()</code>) and the verification path (<code class="inline-code">RequestVerifier.verifySignature()</code>) use this method.</p>
+
+  <p class="file-ref">SignedRequestContent.java:59-68 &bull; RequestSigner.java:26 &bull; RequestVerifier.java:29</p>
+
+  <h3>Affected Code</h3>
+<pre>// SignedRequestContent.java — URL stored but NEVER used in getBytes()
+public SignedRequestContent(String url, String method, String body, String originator) {
+    this.url = url;       // &lt;-- stored
+    this.method = method;
+    this.body = body;
+    this.originator = originator;
+}
+
+public byte[] getBytes() {
+    StringBuilder sb = new StringBuilder();
+    if (StringUtils.isEmpty(body)) {
+        return sb.append(method).append(originator)       // &lt;-- NO URL
+                 .toString().getBytes(UTF_8);
+    } else {
+        return sb.append(method).append(body)             // &lt;-- NO URL
+                 .append(originator).toString().getBytes(UTF_8);
+    }
+}</pre>
+
+  <h3>Impact Analysis</h3>
+  <p><strong>GET requests:</strong> All signed GET requests from the same <code class="inline-code">NodeIdentifier</code> produce <em>identical signatures</em> because GET has no body. The signature is simply <code class="inline-code">RSA_Sign(SHA256("GET" + nodeIdentifier))</code>. Capturing one signed GET gives a universal credential for every secured GET endpoint.</p>
+
+  <p><strong>POST/PUT requests:</strong> The body IS included, so cross-endpoint replay requires matching body content. Still allows replaying a provisioning POST to one service's <code class="inline-code">tenantdata</code> endpoint against another service's <code class="inline-code">tenantdata</code> endpoint.</p>
+
+  <p><strong>No replay protection:</strong> No nonce or timestamp is included in the signature. Captured signatures never expire.</p>
+
+  <h3>Affected Services</h3>
+  <p>All 9 voting server services apply <code class="inline-code">SignedRequestFilter</code> for URLs matching <code class="inline-code">.*secured.*|.*platformdata.*|.*tenantdata.*</code>:</p>
+  <table>
+    <tr><th>Service</th><th>Secured GET Endpoints</th></tr>
+    <tr><td>election-information</td><td><code class="inline-code">secured/.../ballotbox/{id}</code> (export encrypted ballot box)</td></tr>
+    <tr><td>voting-workflow</td><td><code class="inline-code">secured/.../votingcards/states/inactive</code> (voting card states)</td></tr>
+    <tr><td>orchestrator</td><td><code class="inline-code">mixdec/secured/.../ballotbox/{id}</code> (mixdec ballot box)</td></tr>
+    <tr><td>voter-material</td><td><code class="inline-code">secured/.../votingcards/query</code> (voter information)</td></tr>
+    <tr><td colspan="2" style="color:var(--fg-muted);">+ authentication, certificate-registry, vote-verification, extended-authentication, api-gateway (platformdata/tenantdata endpoints)</td></tr>
+  </table>
+
+  <h3>Concrete Attack Scenario</h3>
+<pre>ATTACKER MODEL: Network position between internal services
+(Per Swiss Post attacker model: "Attacker can read, modify,
+ replay messages sent between components of the system")
+
+1. MITM between Orchestrator and any service
+2. Capture ONE legitimate signed GET request:
+   GET /orchestrator/mixdec/secured/tenant/T/electionevent/E/ballotbox/B
+   Headers:
+     Originator: ORCHESTRATOR
+     Signature: &lt;base64-signature&gt;
+
+3. Replay to election-information:
+   GET /election-information/secured/tenant/T/electionevent/E/ballotbox/B2
+   Headers:
+     Originator: ORCHESTRATOR          (same)
+     Signature: &lt;base64-signature&gt;     (same &mdash; URL not in signature)
+
+4. SignedRequestFilter passes because:
+   hash("GET" + "ORCHESTRATOR") matches on BOTH endpoints
+
+5. Request proceeds to export encrypted ballot box data</pre>
+
+  <h3>PoC</h3>
+  <p>Working PoC at <code class="inline-code">evoting-audit/poc/cross-endpoint-signature-replay-poc.py</code> demonstrates that <code class="inline-code">getBytes()</code> produces identical output regardless of URL for the same method and originator.</p>
+
+  <h3>Recommended Fix</h3>
+<pre>public byte[] getBytes() {
+    StringBuilder sb = new StringBuilder();
+    sb.append(url);           // ADD: bind signature to endpoint
+    sb.append(method);
+    if (!StringUtils.isEmpty(body)) {
+        sb.append(body);
+    }
+    sb.append(originator);
+    sb.append(nonce);         // ADD: replay protection
+    return sb.toString().getBytes(StandardCharsets.UTF_8);
+}</pre>
+</div>
+
+<h2 id="finding2">Finding: ElGamalPublicKey Missing Group Membership Check</h2>
+
+<div class="finding" style="border-left-color: var(--amber);">
+  <div style="display:flex;align-items:center;gap:0.75rem;margin-bottom:0.75rem;flex-wrap:wrap;">
+    <span class="severity sev-medium">MEDIUM</span>
+    <strong>Missing Subgroup Membership Validation on Deserialization</strong>
+  </div>
+
+  <p><code class="inline-code">ElGamalPublicKey</code> (in the legacy <code class="inline-code">cryptolib</code>) skips group membership checks when constructing from deserialized elements. The constructor validates that values are in <code class="inline-code">[1, p-1]</code> but does <strong>not</strong> verify <code class="inline-code">v^q mod p == 1</code> (actual subgroup membership).</p>
+
+  <p class="file-ref">ElGamalPublicKey.java:42-43 &bull; ZpGroupElement.java:85-93</p>
+
+<pre>// ElGamalPublicKey.java — documented performance shortcut
+/**
+ * Note: For performance reasons, a group membership check is not performed
+ * for any Zp group element in the specified list. Therefore, this membership
+ * should be ensured prior to specifying the list as input to this constructor.
+ */
+public ElGamalPublicKey(List&lt;ZpGroupElement&gt; elements, ZpSubgroup zpSubgroup)
+
+// ZpGroupElement.java — validates range but NOT subgroup membership
+private static void validateInput(BigInteger value, BigInteger p, BigInteger q) {
+    Validate.inRange(value, BigInteger.ONE, pMinusOne, ...);
+    // MISSING: value.modPow(q, p).equals(BigInteger.ONE)
+}</pre>
+
+  <h3>Impact Assessment</h3>
+  <p>If an attacker can inject a malicious public key element that is in <code class="inline-code">[1, p-1]</code> but NOT in the subgroup of order q, small-subgroup attacks could potentially leak information about secret exponents. However:</p>
+  <ul>
+    <li>The comment states membership "should be ensured prior" &mdash; callers may validate externally</li>
+    <li>The newer <code class="inline-code">crypto-primitives</code> library (used by control components) has separate <code class="inline-code">GqElement</code> with proper factory methods</li>
+    <li>Injecting a malicious public key requires compromising the key provisioning chain, which is signed by the admin board</li>
+  </ul>
+  <p>This is a defense-in-depth concern rather than a directly exploitable vulnerability with the current architecture.</p>
+</div>
+
+<h2 id="eliminated">Areas Verified Safe</h2>
+
+<div class="safe-box">
+  <span class="safe-label">All major attack surfaces examined and found properly implemented:</span>
+</div>
+
+<table>
+  <tr><th>Attack Surface</th><th>Finding</th><th>Status</th></tr>
+  <tr>
+    <td>SQL Injection</td>
+    <td>All queries use JPA parameterized queries (<code class="inline-code">setParameter</code>)</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>XSS</td>
+    <td>ESAPI + Jsoup sanitizer uses reject pattern (not clean-and-pass)</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Deserialization</td>
+    <td>MsgPack uses enum-based class allowlist (only 2 classes)</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>RNG</td>
+    <td>All crypto uses <code class="inline-code">SecureRandom</code> / <code class="inline-code">RandomService</code></td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Vote Encryption</td>
+    <td>Proper ElGamal with fresh randomness per vote</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>ZKP Verification</td>
+    <td>Exponentiation + plaintext equality proofs verified on control components</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Mixnet</td>
+    <td>Bayer-Groth verifiable shuffle + verifiable decryption with proofs</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Certificate Validation</td>
+    <td>Full chain validation via <code class="inline-code">X509CertificateChainValidator</code></td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Auth Token</td>
+    <td>Signature covers all fields; validated against cert from DB</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Extended Auth</td>
+    <td>Pessimistic locking, PBKDF, constant-time comparison, 5-attempt limit</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Double Voting</td>
+    <td>Database constraints + state machine with transaction isolation</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Return Codes</td>
+    <td>Opaque random tokens; mapping requires physical card + SDM</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Private Keys</td>
+    <td>All found keys/certs are in test/resources directories only</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+  <tr>
+    <td>Debug Ports</td>
+    <td>JDWP ports in docker-compose are e2e-dev environment only</td>
+    <td><span class="severity sev-safe">SAFE</span></td>
+  </tr>
+</table>
+
+<h2 id="bounty">Bounty Eligibility Assessment</h2>
+
+<div class="verdict-box">
+  <div class="verdict-title">Assessment: Borderline Bounty-Worthy</div>
+  <p>The URL omission finding is a <strong>real code bug</strong> with a <strong>working PoC</strong> in a <strong>security-critical authentication mechanism</strong>. It is explicitly within the attacker model (network position between components). However, its direct impact on the special bounty categories is limited:</p>
+</div>
+
+<h3>For Special Bounties</h3>
+<table>
+  <tr><th>Category</th><th>Bounty</th><th>Does This Finding Qualify?</th></tr>
+  <tr>
+    <td>Individual vote manipulation</td>
+    <td>&euro;70k&ndash;230k</td>
+    <td><strong>No.</strong> Cross-endpoint GET replay cannot directly manipulate votes (POST body would need to match a valid vote structure)</td>
+  </tr>
+  <tr>
+    <td>Voting privacy on server</td>
+    <td>&euro;40k&ndash;50k</td>
+    <td><strong>No.</strong> Exported ballot box data is encrypted; decryption requires control component private keys</td>
+  </tr>
+</table>
+
+<h3>For Standard Bounties</h3>
+<ul>
+  <li><strong>NOT "general best practices" (C.5.4)</strong> &mdash; this is a concrete code bug, not a missing header or config hardening</li>
+  <li><strong>NOT DoS/resource starvation</strong> &mdash; this is an authentication bypass</li>
+  <li><strong>Demonstrable with PoC</strong> &mdash; working Python script proves identical signatures across endpoints</li>
+  <li><strong>Within attacker model</strong> &mdash; network position between internal components is explicitly modeled</li>
+  <li><strong>Limitation:</strong> Direct concrete impact on election integrity/privacy requires chaining with another vulnerability</li>
+</ul>
+
+<h3>Recommendation</h3>
+<p>Submit the URL omission finding as a <strong>standard severity</strong> report. Frame it as an inter-service authentication bypass that weakens a defense-in-depth layer. The concrete PoC demonstrates the bug is real, even if the direct impact requires chaining. The lack of replay protection (no nonce/timestamp) compounds the severity.</p>
+
+<h2 id="methodology">Methodology &amp; Coverage</h2>
+
+<h3>Repositories Analyzed</h3>
+<table>
+  <tr><th>Repo</th><th>Size</th><th>Key Components</th></tr>
+  <tr><td>evotingBounty</td><td>~66MB</td><td>voting-server (1028 Java), cryptolib (256 Java), control-components (85 Java), voting-client-js, cryptolib-js, voter-portal, SDM, domain</td></tr>
+  <tr><td>evoting-e2e-dev</td><td>~11MB</td><td>Docker configs, test infrastructure</td></tr>
+</table>
+
+<h3>Sweep Approach</h3>
+<ol>
+  <li><strong>Inter-service authentication</strong>: Traced the full sign &rarr; transmit &rarr; verify chain for the <code class="inline-code">SignedRequestFilter</code> across all 9 services</li>
+  <li><strong>Cryptographic primitives</strong>: Reviewed ElGamal implementation, ZKP generation/verification, group element validation, key derivation</li>
+  <li><strong>Vote lifecycle</strong>: Traced vote creation (client JS) &rarr; submission &rarr; validation &rarr; storage &rarr; choice codes &rarr; confirmation &rarr; mixnet &rarr; tally</li>
+  <li><strong>Input validation</strong>: Checked all database queries, XSS sanitization, deserialization paths, parameter validation</li>
+  <li><strong>Authentication</strong>: Reviewed extended auth (credential handling, attempt limiting, locking), certificate chain validation, auth token signature</li>
+  <li><strong>Infrastructure</strong>: Checked Docker configs, exposed ports, hardcoded credentials, private key locations</li>
+  <li><strong>Client-side</strong>: Reviewed vote encryption, proof generation, key handling in voting-client-js and cryptolib-js</li>
+</ol>
