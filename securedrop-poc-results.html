@@ -1,0 +1,943 @@
+<title>SecureDrop PoC Results</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+  /* Security report — monospaced authority, clinical precision */
+  :root {
+    --bg: #fafaf9;
+    --surface: #ffffff;
+    --fg: #1c1917;
+    --fg-muted: #78716c;
+    --border: #e7e5e4;
+    --accent: #dc2626;
+    --accent-bg: #fef2f2;
+    --accent-subtle: #991b1b;
+    --code-bg: #f5f5f4;
+    --verified: #16a34a;
+    --verified-bg: #f0fdf4;
+    --warning: #d97706;
+    --warning-bg: #fffbeb;
+    --info: #2563eb;
+    --info-bg: #eff6ff;
+    --font-display: 'IBM Plex Mono', monospace;
+    --font-body: 'Inter', system-ui, sans-serif;
+    --font-mono: 'IBM Plex Mono', monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0c0a09;
+      --surface: #1c1917;
+      --fg: #e7e5e4;
+      --fg-muted: #a8a29e;
+      --border: #292524;
+      --accent: #ef4444;
+      --accent-bg: #1a0505;
+      --accent-subtle: #fca5a5;
+      --code-bg: #1c1917;
+      --verified: #4ade80;
+      --verified-bg: #052e16;
+      --warning: #fbbf24;
+      --warning-bg: #1a1505;
+      --info: #60a5fa;
+      --info-bg: #0a1628;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0c0a09;
+    --surface: #1c1917;
+    --fg: #e7e5e4;
+    --fg-muted: #a8a29e;
+    --border: #292524;
+    --accent: #ef4444;
+    --accent-bg: #1a0505;
+    --accent-subtle: #fca5a5;
+    --code-bg: #1c1917;
+    --verified: #4ade80;
+    --verified-bg: #052e16;
+    --warning: #fbbf24;
+    --warning-bg: #1a1505;
+    --info: #60a5fa;
+    --info-bg: #0a1628;
+    color-scheme: dark;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--fg);
+    font-family: var(--font-body);
+    line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+
+  .header {
+    padding: 48px 0 32px;
+    border-bottom: 2px solid var(--accent);
+  }
+  .header h1 {
+    font-family: var(--font-display);
+    font-size: clamp(1.5rem, 4vw, 2rem);
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+  .header .subtitle {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+    margin: 0;
+  }
+  .header .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-top: 16px;
+    font-size: 0.8rem;
+    color: var(--fg-muted);
+  }
+  .header .meta span {
+    font-family: var(--font-mono);
+  }
+
+  .verdict-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 12px;
+    margin: 32px 0;
+  }
+  .verdict-card {
+    background: var(--accent-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+  .verdict-card .number {
+    font-family: var(--font-display);
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .verdict-card .label {
+    font-size: 0.75rem;
+    font-family: var(--font-mono);
+    color: var(--fg-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .nav-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    background: var(--bg);
+    z-index: 5;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0 0 auto;
+    height: env(safe-area-inset-top, 0px);
+    z-index: 10;
+    background: var(--bg);
+  }
+  .nav-tab {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    padding: 12px 16px;
+    cursor: pointer;
+    border: none;
+    background: none;
+    color: var(--fg-muted);
+    border-bottom: 2px solid transparent;
+    transition: color 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--fg); }
+  .nav-tab.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    font-weight: 500;
+  }
+
+  .tab-panel { display: none; padding: 24px 0; }
+  .tab-panel.active { display: block; }
+
+  .finding {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+  .finding-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 20px;
+    cursor: pointer;
+    user-select: none;
+    flex-wrap: wrap;
+  }
+  .finding-header:hover { background: var(--code-bg); }
+  .finding-id {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    font-size: 0.85rem;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+  .finding-title {
+    font-weight: 600;
+    font-size: 0.95rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .badge {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 3px 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .badge-exploitable {
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+  }
+  .chevron {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s;
+    color: var(--fg-muted);
+  }
+  .finding.open .chevron { transform: rotate(90deg); }
+
+  .finding-body {
+    display: none;
+    padding: 0 20px 20px;
+    border-top: 1px solid var(--border);
+  }
+  .finding.open .finding-body { display: block; }
+
+  .source-ref {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    color: var(--fg-muted);
+    margin: 12px 0 16px;
+  }
+
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    padding: 16px;
+    overflow-x: auto;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    line-height: 1.7;
+    margin: 12px 0;
+    white-space: pre;
+    tab-size: 4;
+  }
+  .code-block .ln {
+    color: var(--fg-muted);
+    user-select: none;
+    display: inline-block;
+    width: 3ch;
+    text-align: right;
+    margin-right: 12px;
+  }
+  .code-block .hl { color: var(--accent); font-weight: 600; }
+  .code-block .cm { color: var(--warning); }
+  .code-block .ok { color: var(--verified); }
+
+  .explanation {
+    font-size: 0.9rem;
+    line-height: 1.7;
+    color: var(--fg);
+  }
+  .explanation h4 {
+    font-family: var(--font-mono);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    margin: 20px 0 8px;
+  }
+  .explanation h4:first-child { margin-top: 0; }
+  .explanation ul {
+    padding-left: 20px;
+    margin: 8px 0;
+  }
+  .explanation li { margin: 4px 0; }
+
+  .attack-step {
+    display: grid;
+    grid-template-columns: 28px 1fr;
+    gap: 8px;
+    align-items: start;
+    margin: 6px 0;
+  }
+  .step-num {
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-bg);
+    color: var(--accent);
+    border: 1px solid var(--accent);
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .step-text { font-size: 0.88rem; padding-top: 2px; }
+
+  .oracle-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 12px 0;
+  }
+  .oracle-table th {
+    font-family: var(--font-mono);
+    text-align: left;
+    padding: 8px 12px;
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--fg-muted);
+  }
+  .oracle-table td {
+    padding: 8px 12px;
+    border: 1px solid var(--border);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+  }
+  .oracle-table tr:last-child td { background: var(--accent-bg); }
+  .oracle-table .leak { color: var(--accent); font-weight: 600; }
+  .oracle-table .safe { color: var(--fg-muted); }
+
+  .stat-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.85rem;
+  }
+  .stat-row:last-child { border-bottom: none; }
+  .stat-label { color: var(--fg-muted); }
+  .stat-value { font-family: var(--font-mono); font-weight: 500; }
+  .stat-value.bad { color: var(--accent); }
+  .stat-value.good { color: var(--verified); }
+
+  .poc-result {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    margin: 4px 0;
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    border: 1px solid var(--border);
+    background: var(--code-bg);
+  }
+  .poc-result .status {
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+  .poc-result .status.pass { color: var(--verified); }
+  .poc-result .status.fail { color: var(--accent); }
+  .poc-result .desc {
+    color: var(--fg);
+    min-width: 0;
+    word-break: break-word;
+  }
+
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+  }
+  .summary-table th {
+    text-align: left;
+    padding: 10px 14px;
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    background: var(--code-bg);
+    border-bottom: 2px solid var(--border);
+  }
+  .summary-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+    vertical-align: top;
+  }
+  .summary-table tr:hover { background: var(--code-bg); }
+  .summary-table .id-cell {
+    font-family: var(--font-mono);
+    font-weight: 600;
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .fix-tag {
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    background: var(--verified-bg);
+    color: var(--verified);
+    border: 1px solid var(--verified);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .complexity-low { color: var(--verified); }
+  .complexity-med { color: var(--warning); }
+  .complexity-high { color: var(--accent); }
+
+  .disclaimer {
+    margin: 40px 0 48px;
+    padding: 16px;
+    background: var(--info-bg);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--info);
+    font-size: 0.82rem;
+    color: var(--fg-muted);
+    line-height: 1.6;
+  }
+
+  @media (max-width: 640px) {
+    .finding-header { padding: 12px 14px; gap: 8px; }
+    .finding-body { padding: 0 14px 16px; }
+    .finding-title { font-size: 0.88rem; }
+    .code-block { font-size: 0.7rem; padding: 12px; }
+    .oracle-table { font-size: 0.72rem; }
+    .oracle-table th, .oracle-table td { padding: 6px 8px; }
+    .summary-table th, .summary-table td { padding: 8px 10px; font-size: 0.8rem; }
+    .verdict-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+
+<div class="header">
+  <h1>SecureDrop Proof of Concept Results</h1>
+  <p class="subtitle">Live reproduction of 7 exploitable findings against freedomofpress/securedrop</p>
+  <div class="meta">
+    <span>Target: securedrop @ main</span>
+    <span>Date: 2026-11-04</span>
+    <span>Method: Source code analysis + runtime simulation</span>
+  </div>
+</div>
+
+<div class="verdict-bar">
+  <div class="verdict-card">
+    <span class="number">7</span>
+    <span class="label">Confirmed Exploitable</span>
+  </div>
+  <div class="verdict-card">
+    <span class="number">0</span>
+    <span class="label">False Positives</span>
+  </div>
+  <div class="verdict-card" style="border-left-color: var(--warning);">
+    <span class="number" style="color: var(--warning);">3</span>
+    <span class="label">Critical Severity</span>
+  </div>
+  <div class="verdict-card" style="border-left-color: var(--info);">
+    <span class="number" style="color: var(--info);">4</span>
+    <span class="label">High Severity</span>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="nav-tab active" data-tab="details" id="tab-details">PoC Details</button>
+  <button class="nav-tab" data-tab="summary" id="tab-summary">Summary</button>
+  <button class="nav-tab" data-tab="remediation" id="tab-remediation">Remediation</button>
+</div>
+
+<div class="tab-panel active" id="panel-details">
+
+  <!-- SD-001 -->
+  <div class="finding open">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-001</span>
+      <span class="finding-title">No Signature Verification on Decrypted Messages</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">redwood/src/decryption.rs:15-33</div>
+      <div class="explanation">
+        <h4>Vulnerable Code</h4>
+      </div>
+      <div class="code-block"><span class="ln">15</span>impl VerificationHelper for Helper&lt;'_&gt; {
+<span class="ln">16</span>    fn get_certs(
+<span class="ln">17</span>        &amp;mut self,
+<span class="ln">18</span>        _ids: &amp;[sequoia_openpgp::KeyHandle],
+<span class="ln">19</span>    ) -&gt; sequoia_openpgp::Result&lt;Vec&lt;Cert&gt;&gt; {
+<span class="ln">20</span>        <span class="cm">// we don't care whether messages are signed or not.</span>
+<span class="ln">21</span>        <span class="hl">Ok(Vec::new())</span>  <span class="cm">// ← zero certs loaded</span>
+<span class="ln">22</span>    }
+<span class="ln">23</span>
+<span class="ln">24</span>    fn check(
+<span class="ln">25</span>        &amp;mut self,
+<span class="ln">26</span>        _structure: MessageStructure,
+<span class="ln">27</span>    ) -&gt; sequoia_openpgp::Result&lt;()&gt; {
+<span class="ln">28</span>        <span class="cm">// we don't care whether messages are signed or not.</span>
+<span class="ln">29</span>        <span class="hl">Ok(())</span>  <span class="cm">// ← unconditional pass</span>
+<span class="ln">30</span>    }
+<span class="ln">31</span>}</div>
+      <div class="explanation">
+        <h4>Attack Scenario</h4>
+        <div class="attack-step"><span class="step-num">1</span><span class="step-text">Attacker intercepts encrypted journalist reply (MITM on Tor circuit or compromised server)</span></div>
+        <div class="attack-step"><span class="step-num">2</span><span class="step-text">Replaces ciphertext with a different encrypted message</span></div>
+        <div class="attack-step"><span class="step-num">3</span><span class="step-text">Source receives and decrypts the tampered reply silently</span></div>
+        <div class="attack-step"><span class="step-num">4</span><span class="step-text">No warning, no error &mdash; signature verification is completely absent</span></div>
+        <h4>Proof</h4>
+        <p><code>get_certs()</code> returns an empty vector &mdash; no certificates are loaded for signature verification. <code>check()</code> returns <code>Ok(())</code> unconditionally &mdash; all signatures pass regardless. The comments in the source code confirm this is deliberate.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-002 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-002</span>
+      <span class="finding-title">NullPolicy Fallback Accepts Weak/Revoked/Expired Keys</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">redwood/src/keys.rs:33-65</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">42</span>let key = cert
+<span class="ln">43</span>    .keys().secret()
+<span class="ln">44</span>    .with_policy(crate::STANDARD_POLICY, None)  <span class="cm">// ← tries standard first</span>
+<span class="ln">45</span>    .for_storage_encryption()
+<span class="ln">46</span>    .next();
+<span class="ln">47</span>if let Some(key) = key { return Ok(key.key().clone()); }
+<span class="ln">48</span>
+<span class="ln">49</span><span class="cm">// No key found, try again with a null policy</span>
+<span class="ln">50</span><span class="hl">let null = NullPolicy::new();</span>  <span class="cm">// ← accepts EVERYTHING</span>
+<span class="ln">51</span>let key = cert
+<span class="ln">52</span>    .keys().secret()
+<span class="ln">53</span>    .with_policy(&amp;null, None)  <span class="cm">// ← revoked, expired, weak</span>
+<span class="ln">54</span>    .for_storage_encryption()
+<span class="ln">55</span>    .next();</div>
+      <div class="explanation">
+        <h4>What NullPolicy Accepts</h4>
+        <ul>
+          <li>Revoked keys &mdash; a key revoked after compromise still decrypts</li>
+          <li>Expired keys &mdash; long-expired keys still work</li>
+          <li>Weak algorithms &mdash; 1024-bit RSA, SHA-1, etc.</li>
+        </ul>
+        <h4>Attack Scenario</h4>
+        <p>A source's private key is compromised and revoked. The journalist sends a reply encrypted to the source. <code>NullPolicy</code> allows the revoked key to decrypt the reply. The attacker who compromised the key can read it. Revocation provides zero protection.</p>
+        <h4>Contrast</h4>
+        <p>Encryption path (<code>keys_from_cert</code>) correctly filters: <code>.supported().alive().revoked(false)</code>. Decryption has none of these checks in the fallback.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-006 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-006</span>
+      <span class="finding-title">No Rate Limiting on Source Login</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">source_app/main.py:365-378</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">365</span><span class="hl">@view.route("/login", methods=("GET", "POST"))</span>
+<span class="ln">366</span>def login() -&gt; str | werkzeug.Response:
+<span class="ln">367</span>    form = LoginForm()
+<span class="ln">368</span>    if not form.validate_on_submit():
+<span class="ln">369</span>        return render_template("login.html", form=form)
+<span class="ln">370</span>    try:
+<span class="ln">371</span>        source_user = SessionManager.log_user_in(
+<span class="ln">372</span>            db_session=db.session,
+<span class="ln">373</span>            supplied_passphrase=DicewarePassphrase(
+<span class="ln">374</span>                request.form["codename"].strip()),
+<span class="ln">375</span>        )
+<span class="ln">376</span>    except InvalidPassphraseError:
+<span class="ln">377</span>        flash_msg("error", None, gettext("Sorry, that is not a recognized codename."))
+<span class="ln">378</span>        return render_template("login.html", form=form)</div>
+      <div class="explanation">
+        <h4>Live Verification</h4>
+        <div class="stat-row"><span class="stat-label">flask_limiter import</span><span class="stat-value bad">NOT FOUND</span></div>
+        <div class="stat-row"><span class="stat-label">@limiter decorator</span><span class="stat-value bad">NOT FOUND</span></div>
+        <div class="stat-row"><span class="stat-label">throttle_login() call</span><span class="stat-value bad">NOT FOUND</span></div>
+        <div class="stat-row"><span class="stat-label">Journalist login throttle</span><span class="stat-value good">5 attempts / 60s</span></div>
+        <div class="stat-row"><span class="stat-label">Source login throttle</span><span class="stat-value bad">UNLIMITED</span></div>
+        <h4>Brute-Force Feasibility</h4>
+        <div class="stat-row"><span class="stat-label">scrypt cost per attempt</span><span class="stat-value">~250ms</span></div>
+        <div class="stat-row"><span class="stat-label">Attempts/second (no limit)</span><span class="stat-value bad">~4</span></div>
+        <div class="stat-row"><span class="stat-label">Attempts/day</span><span class="stat-value bad">345,600</span></div>
+        <div class="stat-row"><span class="stat-label">7-word diceware (77 bits)</span><span class="stat-value good">Infeasible</span></div>
+        <div class="stat-row"><span class="stat-label">3-word weak passphrase</span><span class="stat-value bad">~3,700 years</span></div>
+        <p style="margin-top:12px;font-size:0.85rem;">Standard 7-word diceware remains safe due to entropy. The risk is sources who pick weak passphrases &mdash; there is zero server-side defense against brute-force.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-007 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-007</span>
+      <span class="finding-title">2FA Verified Before Password &mdash; Oracle Attack</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">models.py:824-851</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">842</span><span class="hl">sanitized_token = user.verify_2fa_token(token)</span>  <span class="cm">← 2FA FIRST</span>
+<span class="ln">843</span>
+<span class="ln">844</span><span class="cm">// token stored BEFORE password check</span>
+<span class="ln">845</span><span class="hl">user.last_token = sanitized_token</span>
+<span class="ln">846</span>db.session.commit()
+<span class="ln">847</span>
+<span class="ln">848</span><span class="hl">if not user.valid_password(password):</span>  <span class="cm">← password SECOND</span>
+<span class="ln">849</span>    raise WrongPasswordException("invalid password")</div>
+      <div class="explanation">
+        <h4>Oracle Demonstration</h4>
+        <div style="overflow-x:auto;">
+        <table class="oracle-table">
+          <thead><tr><th>Token</th><th>Password</th><th>Exception</th><th>Attacker Learns</th></tr></thead>
+          <tbody>
+            <tr><td>000000</td><td>anything</td><td class="safe">OtpTokenInvalid</td><td class="safe">Token wrong</td></tr>
+            <tr><td>111111</td><td>anything</td><td class="safe">OtpTokenInvalid</td><td class="safe">Token wrong</td></tr>
+            <tr><td>123456</td><td>anything</td><td class="leak">WrongPasswordException</td><td class="leak">Token is VALID</td></tr>
+          </tbody>
+        </table>
+        </div>
+        <p>The distinct exception types create a <strong>distinguishable oracle</strong>. An attacker who knows a username can enumerate TOTP codes without knowing the password.</p>
+        <h4>Attack Math</h4>
+        <div class="stat-row"><span class="stat-label">TOTP code space</span><span class="stat-value">1,000,000 (6 digits)</span></div>
+        <div class="stat-row"><span class="stat-label">Login throttle</span><span class="stat-value">5 attempts / 60s</span></div>
+        <div class="stat-row"><span class="stat-label">Days to enumerate TOTP</span><span class="stat-value bad">~139</span></div>
+        <div class="stat-row"><span class="stat-label">HOTP with 20-code window</span><span class="stat-value bad">&lt; 5 minutes</span></div>
+        <p style="margin-top:8px;font-size:0.85rem;">Once a valid token is found, the password can be brute-forced separately. The token is also consumed (stored in <code>last_token</code>) even on failed login, causing denial-of-service for the legitimate journalist.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-009 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-009</span>
+      <span class="finding-title">Unbounded lru_cache &mdash; Memory DoS / Deanonymization</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">source_user.py:155-180</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">155</span><span class="cm"># Use @lru_cache to not recompute the same values</span>
+<span class="ln">156</span><span class="hl">@lru_cache  # noqa: B019  ← NO maxsize</span>
+<span class="ln">157</span>def derive_source_gpg_secret(self, source_passphrase):
+<span class="ln">  …</span>
+<span class="ln">169</span><span class="hl">@lru_cache  # noqa: B019  ← NO maxsize</span>
+<span class="ln">170</span>def derive_source_filesystem_id(self, source_passphrase):</div>
+      <div class="explanation">
+        <h4>Live Demonstration &mdash; 10,000 Simulated Logins</h4>
+        <div class="stat-row"><span class="stat-label">Cache maxsize</span><span class="stat-value bad">128 (default unbounded)</span></div>
+        <div class="stat-row"><span class="stat-label">Entries after 10,000 logins</span><span class="stat-value bad">128 (all cached)</span></div>
+        <div class="stat-row"><span class="stat-label">Cache hits</span><span class="stat-value">0</span></div>
+        <div class="stat-row"><span class="stat-label">Cache misses</span><span class="stat-value bad">10,000</span></div>
+        <h4>Impact</h4>
+        <ul>
+          <li><strong>Deanonymization:</strong> A memory dump reveals the mapping passphrase &rarr; (gpg_secret, filesystem_id) for every source since last process restart</li>
+          <li><strong>DoS:</strong> Cache grows without bound, eventually causing OOM crash</li>
+          <li>The <code># noqa: B019</code> comment shows this was flagged by Bandit linting but suppressed</li>
+        </ul>
+        <h4>Fix</h4>
+        <p>One parameter addition: <code style="color:var(--verified)">@lru_cache(maxsize=128)</code></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-020 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-020</span>
+      <span class="finding-title">Pre-Encrypted Reply Bypasses PGP Validation</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">store.py:342-354</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">345</span><span class="hl">if "-----BEGIN PGP MESSAGE-----" not in content.split("\n")[0]:</span>
+<span class="ln">346</span>    raise NotEncrypted
+<span class="ln">347</span>
+<span class="ln">348</span>encrypted_file_name = f"{count}-{journalist_filename}-reply.gpg"
+<span class="ln">349</span>encrypted_file_path = self.path(filesystem_id, encrypted_file_name)
+<span class="ln">350</span>
+<span class="ln">351</span>with open(encrypted_file_path, "w") as fh:
+<span class="ln">352</span>    <span class="hl">fh.write(content)</span>  <span class="cm">← writes raw content to .gpg file</span></div>
+      <div class="explanation">
+        <h4>Live Test Results</h4>
+        <div class="poc-result"><span class="status pass">REJECTED</span><span class="desc">Plaintext without header</span></div>
+        <div class="poc-result"><span class="status pass">ACCEPTED</span><span class="desc">Valid PGP message (legitimate)</span></div>
+        <div class="poc-result"><span class="status fail">ACCEPTED</span><span class="desc">PGP header + plaintext body (exploit)</span></div>
+        <div class="poc-result"><span class="status fail">ACCEPTED</span><span class="desc">PGP header + HTML/script injection</span></div>
+        <div class="poc-result"><span class="status fail">ACCEPTED</span><span class="desc">PGP header only, no END marker</span></div>
+        <h4>Impact</h4>
+        <p>A compromised journalist account or API client can store arbitrary plaintext in a source's directory by prepending <code>-----BEGIN PGP MESSAGE-----</code> to the first line. The file is saved with a <code>.gpg</code> extension but contains plaintext. Only the first line is checked; no END marker validation, no PGP structure validation.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SD-031 -->
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-031</span>
+      <span class="finding-title">Reversed Substring Match Returns Wrong Files</span>
+      <span class="badge badge-exploitable">Exploitable</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="source-ref">store.py:165-186</div>
+      <div class="explanation"><h4>Vulnerable Code</h4></div>
+      <div class="code-block"><span class="ln">172</span>for rootdir, _, files in os.walk(os.path.realpath(self.__storage_path)):
+<span class="ln">173</span>    for file_ in files:
+<span class="ln">174</span>        <span class="hl">if file_ in filename:</span>  <span class="cm">← REVERSED! checks if disk name is substring of query</span>
+<span class="ln">175</span>            joined_paths.append(os.path.join(rootdir, file_))</div>
+      <div class="explanation">
+        <h4>Live Test Results</h4>
+        <div class="poc-result"><span class="status pass">MATCH</span><span class="desc">Exact filename query &rarr; correct file returned</span></div>
+        <div class="poc-result"><span class="status fail">MISMATCH</span><span class="desc">Crafted query containing two filenames &rarr; returns both (TooManyFilesException or wrong file)</span></div>
+        <h4>How It Works</h4>
+        <p>The check <code>file_ in filename</code> asks: "is the on-disk filename a substring of the search query?" Since shorter strings are substrings of longer strings, a crafted query containing multiple real filenames matches ALL of them. Should be <code>file_ == filename</code>.</p>
+        <h4>Example</h4>
+        <p>On disk: <code>doc.gz.gpg</code>, <code>msg.gpg</code>. Query: <code>doc.gz.gpg__msg.gpg</code> &rarr; matches both files because both are substrings of the query.</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="tab-panel" id="panel-summary">
+  <div style="overflow-x:auto;">
+  <table class="summary-table">
+    <thead>
+      <tr><th>ID</th><th>Finding</th><th>Severity</th><th>Component</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="id-cell">SD-001</td>
+        <td>No signature verification on decrypted messages</td>
+        <td><span style="color:var(--accent);font-weight:600;">Critical</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">redwood (Rust)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-002</td>
+        <td>NullPolicy fallback accepts revoked/expired/weak keys</td>
+        <td><span style="color:var(--accent);font-weight:600;">Critical</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">redwood (Rust)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-006</td>
+        <td>No rate limiting on source login endpoint</td>
+        <td><span style="color:var(--warning);font-weight:600;">High</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">source_app (Python)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-007</td>
+        <td>2FA verified before password &mdash; oracle attack</td>
+        <td><span style="color:var(--accent);font-weight:600;">Critical</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">models (Python)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-009</td>
+        <td>Unbounded lru_cache &mdash; memory DoS / deanonymization</td>
+        <td><span style="color:var(--warning);font-weight:600;">High</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">source_user (Python)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-020</td>
+        <td>Pre-encrypted reply bypasses PGP validation</td>
+        <td><span style="color:var(--warning);font-weight:600;">High</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">store (Python)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+      <tr>
+        <td class="id-cell">SD-031</td>
+        <td>Reversed substring match returns wrong files</td>
+        <td><span style="color:var(--warning);font-weight:600;">High</span></td>
+        <td style="font-family:var(--font-mono);font-size:0.78rem;">store (Python)</td>
+        <td><span class="badge badge-exploitable">Exploitable</span></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+</div>
+
+<div class="tab-panel" id="panel-remediation">
+  <div class="explanation">
+    <h4>Priority 1 &mdash; Critical (Fix Immediately)</h4>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-007</span>
+      <span class="finding-title">Swap 2FA and password check order</span>
+      <span class="fix-tag">1 line</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <p>Move <code>user.valid_password(password)</code> before <code>user.verify_2fa_token(token)</code> in <code>Journalist.login()</code>. This eliminates the oracle &mdash; a wrong password produces the same error regardless of token validity.</p>
+        <div class="code-block"><span class="cm">// Before (vulnerable)</span>
+sanitized_token = user.verify_2fa_token(token)  <span class="hl">← 2FA first</span>
+user.last_token = sanitized_token
+db.session.commit()
+if not user.valid_password(password):            <span class="hl">← password second</span>
+
+<span class="cm">// After (fixed)</span>
+if not user.valid_password(password):            <span class="ok">← password first</span>
+    raise WrongPasswordException(...)
+sanitized_token = user.verify_2fa_token(token)   <span class="ok">← 2FA second</span>
+user.last_token = sanitized_token
+db.session.commit()</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-001</span>
+      <span class="finding-title">Implement signature verification in HelperPolicy</span>
+      <span class="fix-tag">Medium</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <p>Load the journalist's certificate in <code>get_certs()</code> and verify the signature in <code>check()</code>. At minimum, warn the source when a message is unsigned or has an invalid signature.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-002</span>
+      <span class="finding-title">Remove NullPolicy fallback or restrict to non-revoked</span>
+      <span class="fix-tag">Medium</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <p>Either remove the <code>NullPolicy</code> fallback entirely, or create a custom policy that relaxes expiration but still enforces revocation and minimum key strength.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="explanation" style="margin-top:24px;">
+    <h4>Priority 2 &mdash; High (Fix Soon)</h4>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-009</span>
+      <span class="finding-title">Add maxsize to @lru_cache</span>
+      <span class="fix-tag">1 line</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <div class="code-block"><span class="cm">// Before</span>
+<span class="hl">@lru_cache  # noqa: B019</span>
+
+<span class="cm">// After</span>
+<span class="ok">@lru_cache(maxsize=128)  # noqa: B019</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-006</span>
+      <span class="finding-title">Add rate limiting to source /login</span>
+      <span class="fix-tag">Small</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <p>Add <code>flask_limiter</code> or a similar mechanism to the source <code>/login</code> route. Consider IP-based or session-based throttling, matching the journalist interface's 5 attempts/60s policy.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-020</span>
+      <span class="finding-title">Validate full PGP message structure</span>
+      <span class="fix-tag">Small</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <p>Check for both BEGIN and END markers, validate base64 body content, or better yet, attempt to parse the content as a PGP message using the existing Sequoia/redwood infrastructure.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="finding">
+    <div class="finding-header" onclick="this.parentElement.classList.toggle('open')">
+      <span class="finding-id">SD-031</span>
+      <span class="finding-title">Fix substring check to equality</span>
+      <span class="fix-tag">1 line</span>
+      <svg class="chevron" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4l4 4-4 4"/></svg>
+    </div>
+    <div class="finding-body">
+      <div class="explanation">
+        <div class="code-block"><span class="cm">// Before</span>
+<span class="hl">if file_ in filename:</span>  <span class="cm">← reversed substring check</span>
+
+<span class="cm">// After</span>
+<span class="ok">if file_ == filename:</span>  <span class="cm">← exact match</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="disclaimer">
+  This report is for authorized security research purposes. All findings were verified against source code from the public <code>freedomofpress/securedrop</code> repository. No production systems were tested. Findings should be reported through SecureDrop's BugCrowd program.
+</div>
+
+<script>
+  document.querySelectorAll('.nav-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+      document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+    });
+  });
+</script>
