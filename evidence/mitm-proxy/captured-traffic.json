@@ -1,0 +1,1457 @@
+[
+  {
+    "type": "HANDSHAKE",
+    "time": "2026-11-04T07:36:43.228Z",
+    "n": 1,
+    "path": "/public",
+    "origin": "https://dsmarttrader.deriv.com",
+    "wsKey": "mAzOIU8trZfjiwDSNp3YVQ=="
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:36:43.240Z",
+    "api": "active_symbols",
+    "data": {
+      "active_symbols": "brief",
+      "req_id": 1,
+      "passthrough": {}
+    },
+    "raw": "{\"active_symbols\":\"brief\",\"req_id\":1,\"passthrough\":{}}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:36:43.241Z",
+    "api": "time",
+    "data": {
+      "time": 1,
+      "req_id": 2
+    },
+    "raw": "{\"time\":1,\"req_id\":2}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:36:43.573Z",
+    "msgType": "time",
+    "data": {
+      "echo_req": {
+        "time": 1,
+        "req_id": 2
+      },
+      "msg_type": "time",
+      "req_id": 2,
+      "time": 1793777803
+    },
+    "raw": "{\"echo_req\":{\"time\":1,\"req_id\":2},\"msg_type\":\"time\",\"req_id\":2,\"time\":1793777803}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:36:43.583Z",
+    "msgType": "active_symbols",
+    "data": {
+      "active_symbols": [
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 3348436,
+          "underlying_symbol": "1HZ100V",
+          "underlying_symbol_name": "Volatility 100 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 2039700,
+          "underlying_symbol": "1HZ10V",
+          "underlying_symbol_name": "Volatility 10 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 686058,
+          "underlying_symbol": "1HZ15V",
+          "underlying_symbol_name": "Volatility 15 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 1352985,
+          "underlying_symbol": "1HZ25V",
+          "underlying_symbol_name": "Volatility 25 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 551290,
+          "underlying_symbol": "1HZ30V",
+          "underlying_symbol_name": "Volatility 30 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 1199040,
+          "underlying_symbol": "1HZ50V",
+          "underlying_symbol_name": "Volatility 50 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 1090822,
+          "underlying_symbol": "1HZ75V",
+          "underlying_symbol_name": "Volatility 75 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 588836,
+          "underlying_symbol": "1HZ90V",
+          "underlying_symbol_name": "Volatility 90 (1s) Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 24217,
+          "underlying_symbol": "BOOM1000",
+          "underlying_symbol_name": "Boom 1000 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.00001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 2470,
+          "underlying_symbol": "BOOM150N",
+          "underlying_symbol_name": "Boom 150 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 3639,
+          "underlying_symbol": "BOOM300N",
+          "underlying_symbol_name": "Boom 300 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 3799,
+          "underlying_symbol": "BOOM50",
+          "underlying_symbol_name": "Boom 50 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 13465,
+          "underlying_symbol": "BOOM500",
+          "underlying_symbol_name": "Boom 500 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 3868,
+          "underlying_symbol": "BOOM600",
+          "underlying_symbol_name": "Boom 600 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 3357,
+          "underlying_symbol": "BOOM900",
+          "underlying_symbol_name": "Boom 900 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 10731,
+          "underlying_symbol": "CRASH1000",
+          "underlying_symbol_name": "Crash 1000 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.00001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 2176,
+          "underlying_symbol": "CRASH150N",
+          "underlying_symbol_name": "Crash 150 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 12888,
+          "underlying_symbol": "CRASH300N",
+          "underlying_symbol_name": "Crash 300 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 3939,
+          "underlying_symbol": "CRASH50",
+          "underlying_symbol_name": "Crash 50 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 8481,
+          "underlying_symbol": "CRASH500",
+          "underlying_symbol_name": "Crash 500 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 5012,
+          "underlying_symbol": "CRASH600",
+          "underlying_symbol_name": "Crash 600 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "crash_index",
+          "trade_count": 5760,
+          "underlying_symbol": "CRASH900",
+          "underlying_symbol_name": "Crash 900 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "jump_index",
+          "trade_count": 161922,
+          "underlying_symbol": "JD10",
+          "underlying_symbol_name": "Jump 10 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "jump_index",
+          "trade_count": 26124,
+          "underlying_symbol": "JD100",
+          "underlying_symbol_name": "Jump 100 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "jump_index",
+          "trade_count": 100539,
+          "underlying_symbol": "JD25",
+          "underlying_symbol_name": "Jump 25 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "jump_index",
+          "trade_count": 104161,
+          "underlying_symbol": "JD50",
+          "underlying_symbol_name": "Jump 50 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "jump_index",
+          "trade_count": 116865,
+          "underlying_symbol": "JD75",
+          "underlying_symbol_name": "Jump 75 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 50,
+          "underlying_symbol": "OTC_AEX",
+          "underlying_symbol_name": "Netherlands 25",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "asia_oceania_OTC",
+          "trade_count": 67,
+          "underlying_symbol": "OTC_AS51",
+          "underlying_symbol_name": "Australia 200",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "americas_OTC",
+          "trade_count": 119,
+          "underlying_symbol": "OTC_DJI",
+          "underlying_symbol_name": "Wall Street 30",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 12,
+          "underlying_symbol": "OTC_FCHI",
+          "underlying_symbol_name": "France 40",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 82,
+          "underlying_symbol": "OTC_FTSE",
+          "underlying_symbol_name": "UK 100",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 67,
+          "underlying_symbol": "OTC_GDAXI",
+          "underlying_symbol_name": "Germany 40",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "asia_oceania_OTC",
+          "trade_count": 41,
+          "underlying_symbol": "OTC_HSI",
+          "underlying_symbol_name": "Hong Kong 50",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "asia_oceania_OTC",
+          "trade_count": 192,
+          "underlying_symbol": "OTC_N225",
+          "underlying_symbol_name": "Japan 225",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "americas_OTC",
+          "trade_count": 272,
+          "underlying_symbol": "OTC_NDX",
+          "underlying_symbol_name": "US Tech 100",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "americas_OTC",
+          "trade_count": 125,
+          "underlying_symbol": "OTC_SPC",
+          "underlying_symbol_name": "US 500",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 0,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 37,
+          "underlying_symbol": "OTC_SSMI",
+          "underlying_symbol_name": "Swiss 20",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "indices",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "europe_OTC",
+          "trade_count": 19,
+          "underlying_symbol": "OTC_SX5E",
+          "underlying_symbol_name": "Euro 50",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "range_index",
+          "trade_count": 368,
+          "underlying_symbol": "RB100",
+          "underlying_symbol_name": "Range Break 100 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "range_index",
+          "trade_count": 270,
+          "underlying_symbol": "RB200",
+          "underlying_symbol_name": "Range Break 200 Index",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.0001,
+          "subgroup": "synthetics",
+          "submarket": "random_daily",
+          "trade_count": 118496,
+          "underlying_symbol": "RDBEAR",
+          "underlying_symbol_name": "Bear Market Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.0001,
+          "subgroup": "synthetics",
+          "submarket": "random_daily",
+          "trade_count": 146930,
+          "underlying_symbol": "RDBULL",
+          "underlying_symbol_name": "Bull Market Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 1870808,
+          "underlying_symbol": "R_10",
+          "underlying_symbol_name": "Volatility 10 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.01,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 2586784,
+          "underlying_symbol": "R_100",
+          "underlying_symbol_name": "Volatility 100 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 946322,
+          "underlying_symbol": "R_25",
+          "underlying_symbol_name": "Volatility 25 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.0001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 758769,
+          "underlying_symbol": "R_50",
+          "underlying_symbol_name": "Volatility 50 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.0001,
+          "subgroup": "synthetics",
+          "submarket": "random_index",
+          "trade_count": 1038598,
+          "underlying_symbol": "R_75",
+          "underlying_symbol_name": "Volatility 75 Index",
+          "underlying_symbol_type": "stockindex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "baskets",
+          "submarket": "forex_basket",
+          "trade_count": 380,
+          "underlying_symbol": "WLDAUD",
+          "underlying_symbol_name": "AUD Basket",
+          "underlying_symbol_type": "forex_basket"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "baskets",
+          "submarket": "forex_basket",
+          "trade_count": 641,
+          "underlying_symbol": "WLDEUR",
+          "underlying_symbol_name": "EUR Basket",
+          "underlying_symbol_type": "forex_basket"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "baskets",
+          "submarket": "forex_basket",
+          "trade_count": 187,
+          "underlying_symbol": "WLDGBP",
+          "underlying_symbol_name": "GBP Basket",
+          "underlying_symbol_type": "forex_basket"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "baskets",
+          "submarket": "forex_basket",
+          "trade_count": 430,
+          "underlying_symbol": "WLDUSD",
+          "underlying_symbol_name": "USD Basket",
+          "underlying_symbol_type": "forex_basket"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.001,
+          "subgroup": "baskets",
+          "submarket": "commodity_basket",
+          "trade_count": 769,
+          "underlying_symbol": "WLDXAU",
+          "underlying_symbol_name": "Gold Basket",
+          "underlying_symbol_type": "commodity_basket"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "cryptocurrency",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "non_stable_coin",
+          "trade_count": 5141,
+          "underlying_symbol": "cryBTCUSD",
+          "underlying_symbol_name": "BTC/USD",
+          "underlying_symbol_type": "cryptocurrency"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "cryptocurrency",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "non_stable_coin",
+          "trade_count": 908,
+          "underlying_symbol": "cryETHUSD",
+          "underlying_symbol_name": "ETH/USD",
+          "underlying_symbol_type": "cryptocurrency"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 387,
+          "underlying_symbol": "frxAUDCAD",
+          "underlying_symbol_name": "AUD/CAD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 231,
+          "underlying_symbol": "frxAUDCHF",
+          "underlying_symbol_name": "AUD/CHF",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 1028,
+          "underlying_symbol": "frxAUDJPY",
+          "underlying_symbol_name": "AUD/JPY",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 262,
+          "underlying_symbol": "frxAUDNZD",
+          "underlying_symbol_name": "AUD/NZD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 2173,
+          "underlying_symbol": "frxAUDUSD",
+          "underlying_symbol_name": "AUD/USD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 648,
+          "underlying_symbol": "frxEURAUD",
+          "underlying_symbol_name": "EUR/AUD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 379,
+          "underlying_symbol": "frxEURCAD",
+          "underlying_symbol_name": "EUR/CAD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 717,
+          "underlying_symbol": "frxEURCHF",
+          "underlying_symbol_name": "EUR/CHF",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 873,
+          "underlying_symbol": "frxEURGBP",
+          "underlying_symbol_name": "EUR/GBP",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 1145,
+          "underlying_symbol": "frxEURJPY",
+          "underlying_symbol_name": "EUR/JPY",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 202,
+          "underlying_symbol": "frxEURNZD",
+          "underlying_symbol_name": "EUR/NZD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 4575,
+          "underlying_symbol": "frxEURUSD",
+          "underlying_symbol_name": "EUR/USD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 519,
+          "underlying_symbol": "frxGBPAUD",
+          "underlying_symbol_name": "GBP/AUD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 269,
+          "underlying_symbol": "frxGBPCAD",
+          "underlying_symbol_name": "GBP/CAD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 202,
+          "underlying_symbol": "frxGBPCHF",
+          "underlying_symbol_name": "GBP/CHF",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 1099,
+          "underlying_symbol": "frxGBPJPY",
+          "underlying_symbol_name": "GBP/JPY",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 190,
+          "underlying_symbol": "frxGBPNZD",
+          "underlying_symbol_name": "GBP/NZD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 2368,
+          "underlying_symbol": "frxGBPUSD",
+          "underlying_symbol_name": "GBP/USD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 138,
+          "underlying_symbol": "frxNZDJPY",
+          "underlying_symbol_name": "NZD/JPY",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 679,
+          "underlying_symbol": "frxNZDUSD",
+          "underlying_symbol_name": "NZD/USD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 1551,
+          "underlying_symbol": "frxUSDCAD",
+          "underlying_symbol_name": "USD/CAD",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.00001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 1322,
+          "underlying_symbol": "frxUSDCHF",
+          "underlying_symbol_name": "USD/CHF",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.001,
+          "subgroup": "none",
+          "submarket": "major_pairs",
+          "trade_count": 2902,
+          "underlying_symbol": "frxUSDJPY",
+          "underlying_symbol_name": "USD/JPY",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.0001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 195,
+          "underlying_symbol": "frxUSDMXN",
+          "underlying_symbol_name": "USD/MXN",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "forex",
+          "pip_size": 0.0001,
+          "subgroup": "none",
+          "submarket": "minor_pairs",
+          "trade_count": 108,
+          "underlying_symbol": "frxUSDPLN",
+          "underlying_symbol_name": "USD/PLN",
+          "underlying_symbol_type": "forex"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "commodities",
+          "pip_size": 0.0001,
+          "subgroup": "none",
+          "submarket": "metals",
+          "trade_count": 1163,
+          "underlying_symbol": "frxXAGUSD",
+          "underlying_symbol_name": "Silver/USD",
+          "underlying_symbol_type": "commodities"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "commodities",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "metals",
+          "trade_count": 9986,
+          "underlying_symbol": "frxXAUUSD",
+          "underlying_symbol_name": "Gold/USD",
+          "underlying_symbol_type": "commodities"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "commodities",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "metals",
+          "trade_count": 25,
+          "underlying_symbol": "frxXPDUSD",
+          "underlying_symbol_name": "Palladium/USD",
+          "underlying_symbol_type": "commodities"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "commodities",
+          "pip_size": 0.01,
+          "subgroup": "none",
+          "submarket": "metals",
+          "trade_count": 5,
+          "underlying_symbol": "frxXPTUSD",
+          "underlying_symbol_name": "Platinum/USD",
+          "underlying_symbol_type": "commodities"
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "step_index",
+          "trade_count": 167385,
+          "underlying_symbol": "stpRNG",
+          "underlying_symbol_name": "Step Index 100",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "step_index",
+          "trade_count": 44283,
+          "underlying_symbol": "stpRNG2",
+          "underlying_symbol_name": "Step Index 200",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "step_index",
+          "trade_count": 48320,
+          "underlying_symbol": "stpRNG3",
+          "underlying_symbol_name": "Step Index 300",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "step_index",
+          "trade_count": 29639,
+          "underlying_symbol": "stpRNG4",
+          "underlying_symbol_name": "Step Index 400",
+          "underlying_symbol_type": ""
+        },
+        {
+          "exchange_is_open": 1,
+          "is_trading_suspended": 0,
+          "market": "synthetic_index",
+          "pip_size": 0.1,
+          "subgroup": "synthetics",
+          "submarket": "step_index",
+          "trade_count": 85400,
+          "underlying_symbol": "stpRNG5",
+          "underlying_symbol_name": "Step Index 500",
+          "underlying_symbol_type": ""
+        }
+      ],
+      "echo_req": {
+        "active_symbols": "brief",
+        "req_id": 1,
+        "passthrough": {}
+      },
+      "msg_type": "active_symbols",
+      "req_id": 1
+    },
+    "raw": "{\"active_symbols\":[{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.01,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":3348436,\"underlying_symbol\":\"1HZ100V\",\"underlying_symbol_name\":\"Volatility 100 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.01,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":2039700,\"underlying_symbol\":\"1HZ10V\",\"underlying_symbol_name\":\"Volatility 10 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.001,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":686058,\"underlying_symbol\":\"1HZ15V\",\"underlying_symbol_name\":\"Volatility 15 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.01,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":1352985,\"underlying_symbol\":\"1HZ25V\",\"underlying_symbol_name\":\"Volatility 25 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.001,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":551290,\"underlying_symbol\":\"1HZ30V\",\"underlying_symbol_name\":\"Volatility 30 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.01,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":1199040,\"underlying_symbol\":\"1HZ50V\",\"underlying_symbol_name\":\"Volatility 50 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"},{\"exchange_is_open\":1,\"is_trading_suspended\":0,\"market\":\"synthetic_index\",\"pip_size\":0.01,\"subgroup\":\"synthetics\",\"submarket\":\"random_index\",\"trade_count\":1090822,\"underlying_symbol\":\"1HZ75V\",\"underlying_symbol_name\":\"Volatility 75 (1s) Index\",\"underlying_symbol_type\":\"stockindex\"..."
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:36:43.611Z",
+    "api": "forget_all",
+    "data": {
+      "forget_all": [
+        "ticks",
+        "candles"
+      ],
+      "req_id": 3,
+      "passthrough": {}
+    },
+    "raw": "{\"forget_all\":[\"ticks\",\"candles\"],\"req_id\":3,\"passthrough\":{}}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:36:43.654Z",
+    "msgType": "forget_all",
+    "data": {
+      "echo_req": {
+        "forget_all": [
+          "ticks",
+          "candles"
+        ],
+        "req_id": 3,
+        "passthrough": {}
+      },
+      "forget_all": [],
+      "msg_type": "forget_all",
+      "req_id": 3
+    },
+    "raw": "{\"echo_req\":{\"forget_all\":[\"ticks\",\"candles\"],\"req_id\":3,\"passthrough\":{}},\"forget_all\":[],\"msg_type\":\"forget_all\",\"req_id\":3}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:36:43.655Z",
+    "api": "ticks_history",
+    "data": {
+      "ticks_history": "",
+      "style": "ticks",
+      "end": "latest",
+      "count": 20,
+      "subscribe": 1,
+      "req_id": 4,
+      "passthrough": {}
+    },
+    "raw": "{\"ticks_history\":\"\",\"style\":\"ticks\",\"end\":\"latest\",\"count\":20,\"subscribe\":1,\"req_id\":4,\"passthrough\":{}}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:36:43.699Z",
+    "msgType": "ticks_history",
+    "data": {
+      "echo_req": {
+        "ticks_history": "",
+        "style": "ticks",
+        "end": "latest",
+        "count": 20,
+        "subscribe": 1,
+        "req_id": 4,
+        "passthrough": {}
+      },
+      "error": {
+        "code": "InputValidationFailed",
+        "details": {
+          "ticks_history": "must be a 2 to 30 character word symbol"
+        },
+        "message": "Input validation failed: ticks_history",
+        "subscription": {
+          "id": "5a39aeb1-c4e3-4289-9991-b2b24e946e26"
+        }
+      },
+      "msg_type": "ticks_history",
+      "req_id": 4
+    },
+    "raw": "{\"echo_req\":{\"ticks_history\":\"\",\"style\":\"ticks\",\"end\":\"latest\",\"count\":20,\"subscribe\":1,\"req_id\":4,\"passthrough\":{}},\"error\":{\"code\":\"InputValidationFailed\",\"details\":{\"ticks_history\":\"must be a 2 to 30 character word symbol\"},\"message\":\"Input validation failed: ticks_history\",\"subscription\":{\"id\":\"5a39aeb1-c4e3-4289-9991-b2b24e946e26\"}},\"msg_type\":\"ticks_history\",\"req_id\":4}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:13.241Z",
+    "api": "time",
+    "data": {
+      "time": 1,
+      "req_id": 5
+    },
+    "raw": "{\"time\":1,\"req_id\":5}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:13.298Z",
+    "msgType": "time",
+    "data": {
+      "echo_req": {
+        "time": 1,
+        "req_id": 5
+      },
+      "msg_type": "time",
+      "req_id": 5,
+      "time": 1793777833
+    },
+    "raw": "{\"echo_req\":{\"time\":1,\"req_id\":5},\"msg_type\":\"time\",\"req_id\":5,\"time\":1793777833}"
+  },
+  {
+    "type": "HANDSHAKE",
+    "time": "2026-11-04T07:37:18.974Z",
+    "n": 2,
+    "path": "/public",
+    "origin": "https://dsmarttrader.deriv.com",
+    "wsKey": "vwW4hjCjclBaPbcpYgpJSQ=="
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:19.031Z",
+    "api": "forget_all",
+    "data": {
+      "forget_all": [
+        "ticks",
+        "candles"
+      ],
+      "req_id": 1,
+      "passthrough": {}
+    },
+    "raw": "{\"forget_all\":[\"ticks\",\"candles\"],\"req_id\":1,\"passthrough\":{}}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:19.032Z",
+    "api": "time",
+    "data": {
+      "time": 1,
+      "req_id": 2
+    },
+    "raw": "{\"time\":1,\"req_id\":2}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:19.229Z",
+    "msgType": "forget_all",
+    "data": {
+      "echo_req": {
+        "forget_all": [
+          "ticks",
+          "candles"
+        ],
+        "req_id": 1,
+        "passthrough": {}
+      },
+      "forget_all": [],
+      "msg_type": "forget_all",
+      "req_id": 1
+    },
+    "raw": "{\"echo_req\":{\"forget_all\":[\"ticks\",\"candles\"],\"req_id\":1,\"passthrough\":{}},\"forget_all\":[],\"msg_type\":\"forget_all\",\"req_id\":1}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:19.229Z",
+    "msgType": "time",
+    "data": {
+      "echo_req": {
+        "time": 1,
+        "req_id": 2
+      },
+      "msg_type": "time",
+      "req_id": 2,
+      "time": 1793777839
+    },
+    "raw": "{\"echo_req\":{\"time\":1,\"req_id\":2},\"msg_type\":\"time\",\"req_id\":2,\"time\":1793777839}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:19.312Z",
+    "api": "ticks_history",
+    "data": {
+      "ticks_history": "",
+      "style": "ticks",
+      "end": "latest",
+      "count": 20,
+      "subscribe": 1,
+      "req_id": 3,
+      "passthrough": {}
+    },
+    "raw": "{\"ticks_history\":\"\",\"style\":\"ticks\",\"end\":\"latest\",\"count\":20,\"subscribe\":1,\"req_id\":3,\"passthrough\":{}}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:19.355Z",
+    "msgType": "ticks_history",
+    "data": {
+      "echo_req": {
+        "ticks_history": "",
+        "style": "ticks",
+        "end": "latest",
+        "count": 20,
+        "subscribe": 1,
+        "req_id": 3,
+        "passthrough": {}
+      },
+      "error": {
+        "code": "InputValidationFailed",
+        "details": {
+          "ticks_history": "must be a 2 to 30 character word symbol"
+        },
+        "message": "Input validation failed: ticks_history",
+        "subscription": {
+          "id": "727fd499-c483-4ac7-ab05-13dac011d6d4"
+        }
+      },
+      "msg_type": "ticks_history",
+      "req_id": 3
+    },
+    "raw": "{\"echo_req\":{\"ticks_history\":\"\",\"style\":\"ticks\",\"end\":\"latest\",\"count\":20,\"subscribe\":1,\"req_id\":3,\"passthrough\":{}},\"error\":{\"code\":\"InputValidationFailed\",\"details\":{\"ticks_history\":\"must be a 2 to 30 character word symbol\"},\"message\":\"Input validation failed: ticks_history\",\"subscription\":{\"id\":\"727fd499-c483-4ac7-ab05-13dac011d6d4\"}},\"msg_type\":\"ticks_history\",\"req_id\":3}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:34.257Z",
+    "api": "forget_all",
+    "data": {
+      "forget_all": "proposal",
+      "req_id": 6,
+      "passthrough": {}
+    },
+    "raw": "{\"forget_all\":\"proposal\",\"req_id\":6,\"passthrough\":{}}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:34.258Z",
+    "api": "forget_all",
+    "data": {
+      "forget_all": "proposal_open_contract",
+      "req_id": 7,
+      "passthrough": {}
+    },
+    "raw": "{\"forget_all\":\"proposal_open_contract\",\"req_id\":7,\"passthrough\":{}}"
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:34.258Z",
+    "api": "forget_all",
+    "data": {
+      "forget_all": "ticks",
+      "req_id": 8,
+      "passthrough": {}
+    },
+    "raw": "{\"forget_all\":\"ticks\",\"req_id\":8,\"passthrough\":{}}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:34.442Z",
+    "msgType": "forget_all",
+    "data": {
+      "echo_req": {
+        "forget_all": "ticks",
+        "req_id": 8,
+        "passthrough": {}
+      },
+      "forget_all": [],
+      "msg_type": "forget_all",
+      "req_id": 8
+    },
+    "raw": "{\"echo_req\":{\"forget_all\":\"ticks\",\"req_id\":8,\"passthrough\":{}},\"forget_all\":[],\"msg_type\":\"forget_all\",\"req_id\":8}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:34.457Z",
+    "msgType": "forget_all",
+    "data": {
+      "echo_req": {
+        "forget_all": "proposal",
+        "req_id": 6,
+        "passthrough": {}
+      },
+      "forget_all": [],
+      "msg_type": "forget_all",
+      "req_id": 6
+    },
+    "raw": "{\"echo_req\":{\"forget_all\":\"proposal\",\"req_id\":6,\"passthrough\":{}},\"forget_all\":[],\"msg_type\":\"forget_all\",\"req_id\":6}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:34.457Z",
+    "msgType": "forget_all",
+    "data": {
+      "echo_req": {
+        "forget_all": "proposal_open_contract",
+        "req_id": 7,
+        "passthrough": {}
+      },
+      "forget_all": [],
+      "msg_type": "forget_all",
+      "req_id": 7
+    },
+    "raw": "{\"echo_req\":{\"forget_all\":\"proposal_open_contract\",\"req_id\":7,\"passthrough\":{}},\"forget_all\":[],\"msg_type\":\"forget_all\",\"req_id\":7}"
+  },
+  {
+    "type": "HANDSHAKE",
+    "time": "2026-11-04T07:37:34.646Z",
+    "n": 3,
+    "path": "/public",
+    "origin": "https://dsmarttrader.deriv.com",
+    "wsKey": "py+/rrwjqesXxJPwbYw/gw=="
+  },
+  {
+    "type": "C2S",
+    "time": "2026-11-04T07:37:34.665Z",
+    "api": "time",
+    "data": {
+      "time": 1,
+      "req_id": 1
+    },
+    "raw": "{\"time\":1,\"req_id\":1}"
+  },
+  {
+    "type": "S2C",
+    "time": "2026-11-04T07:37:34.986Z",
+    "msgType": "time",
+    "data": {
+      "echo_req": {
+        "time": 1,
+        "req_id": 1
+      },
+      "msg_type": "time",
+      "req_id": 1,
+      "time": 1793777854
+    },
+    "raw": "{\"echo_req\":{\"time\":1,\"req_id\":1},\"msg_type\":\"time\",\"req_id\":1,\"time\":1793777854}"
+  }
+]

@@ -112,6 +112,50 @@ Opening a new tab to SmartTrader shows the same hijacked behavior — `localStor
 Victim can fix by visiting `/endpoint` and clicking "Reset to original settings" — but they have no reason to know they need to.
 > Evidence: `11-cleanup-done.png`
 
+## Full MitM Proxy Demonstration (Bidirectional Traffic Capture)
+
+To prove the attack chain end-to-end, we built a WebSocket MitM proxy that:
+1. Accepts the victim's WebSocket handshake
+2. Connects to the real Deriv API upstream
+3. Forwards all messages both ways (victim sees normal behavior)
+4. Logs everything passing through
+
+### Results:
+- **3 WebSocket handshakes completed** — proxy accepted connections from SmartTrader
+- **12 API requests intercepted** (victim → attacker → Deriv API)
+- **12 API responses intercepted** (Deriv API → attacker → victim)
+- **Transparent proxy** — the app functioned normally through the MitM, victim sees no indication of interception
+
+### Captured API requests (victim's browser → attacker's proxy):
+```json
+{"active_symbols":"brief","req_id":1,"passthrough":{}}
+{"time":1,"req_id":2}
+{"forget_all":["ticks","candles"],"req_id":3,"passthrough":{}}
+{"ticks_history":"","style":"ticks","end":"latest","count":20,"subscribe":1,"req_id":4}
+```
+
+### Captured API responses (real Deriv data flowing through attacker):
+```json
+{"echo_req":{"time":1},"msg_type":"time","req_id":2,"time":1793777803}
+{"active_symbols":[{"market":"synthetic_index","underlying_symbol":"1HZ100V",
+  "underlying_symbol_name":"Volatility 100 (1s) Index","trade_count":3348436},...]}
+{"forget_all":[],"msg_type":"forget_all","req_id":3}
+```
+
+> Evidence: `evidence/mitm-proxy/captured-traffic.json` (27 intercepted messages with full JSON)
+> PoC script: `evidence/mitm-proxy/mitm-proxy-poc.cjs`
+
+### What this proves:
+| Claim | Status |
+|-------|--------|
+| WebSocket handshake succeeds | **DEMONSTRATED** — 3 handshakes completed |
+| Real API messages reach attacker | **DEMONSTRATED** — `active_symbols`, `time`, `forget_all`, `ticks_history` |
+| Real Deriv data flows through attacker | **DEMONSTRATED** — trading instruments, server timestamps captured |
+| App works normally through proxy | **DEMONSTRATED** — transparent MitM, victim sees nothing |
+| Persistence across tabs | **DEMONSTRATED** — 2nd tab sent additional traffic through proxy |
+
+**For a logged-in user, the same proxy captures `authorize` calls containing the session token, `balance` responses with real account data, and `buy`/`sell` trade executions — enabling full account takeover.**
+
 ## Impact
 
 ### What the attacker's WebSocket proxy server captures:
@@ -187,4 +231,6 @@ The attack requires the victim to manually visit `/endpoint` and enter the attac
 | `09-persistence-confirmed.png` | New tab still hijacked (persistence) |
 | `10-attacker-more-captures.png` | More requests captured from 2nd tab visit |
 | `11-cleanup-done.png` | After reset to original settings |
-| `full-chain-poc.cjs` | Automated Playwright PoC script |
+| `full-chain-poc.cjs` | Automated Playwright PoC script (webhook.cool capture) |
+| `mitm-proxy/captured-traffic.json` | **27 intercepted API messages with full JSON** |
+| `mitm-proxy/mitm-proxy-poc.cjs` | MitM WebSocket proxy PoC script |
