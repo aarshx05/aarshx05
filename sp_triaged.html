@@ -1,0 +1,712 @@
+<title>SP E-Voting Triage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+/* Layout: single-column report with sticky severity nav and collapsible finding cards */
+:root {
+  --bg: #f6f7f9; --surface: #ffffff; --surface2: #eef0f4; --border: #d8dce3;
+  --fg: #1a1d23; --fg2: #4a4f5c; --fg3: #7c8291;
+  --accent: #b42318; --accent-soft: #fef3f2;
+  --crit: #b42318; --crit-bg: #fef3f2; --crit-border: #f9a8a0;
+  --high: #c4550a; --high-bg: #fef6ee; --high-border: #f9b882;
+  --med: #a15c07; --med-bg: #fefbe8; --med-border: #ebd05c;
+  --low: #1a7a36; --low-bg: #f0fdf4; --low-border: #7ad99e;
+  --info: #1565a8; --info-bg: #f0f7ff; --info-border: #7ab8e8;
+  --fp: #6b7280; --fp-bg: #f3f4f6; --fp-border: #d1d5db;
+  --tag-bg: #eef0f4;
+  --code-bg: #f0f2f5;
+  --kept: #059669; --removed: #dc2626;
+}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg: #0f1114; --surface: #181b20; --surface2: #22262d; --border: #333840;
+  --fg: #e4e6eb; --fg2: #a1a6b2; --fg3: #6b7080;
+  --accent: #f87171; --accent-soft: #2a1515;
+  --crit: #f87171; --crit-bg: #2a1515; --crit-border: #7f1d1d;
+  --high: #fb923c; --high-bg: #2a1a0d; --high-border: #7c2d12;
+  --med: #facc15; --med-bg: #2a2508; --med-border: #78660a;
+  --low: #4ade80; --low-bg: #0d2a16; --low-border: #166534;
+  --info: #60a5fa; --info-bg: #0d1a2a; --info-border: #1e40af;
+  --fp: #9ca3af; --fp-bg: #1f2937; --fp-border: #4b5563;
+  --tag-bg: #2d3139;
+  --code-bg: #22262d;
+  --kept: #34d399; --removed: #f87171;
+  color-scheme: dark;
+}}
+:root[data-theme="dark"]{
+  --bg: #0f1114; --surface: #181b20; --surface2: #22262d; --border: #333840;
+  --fg: #e4e6eb; --fg2: #a1a6b2; --fg3: #6b7080;
+  --accent: #f87171; --accent-soft: #2a1515;
+  --crit: #f87171; --crit-bg: #2a1515; --crit-border: #7f1d1d;
+  --high: #fb923c; --high-bg: #2a1a0d; --high-border: #7c2d12;
+  --med: #facc15; --med-bg: #2a2508; --med-border: #78660a;
+  --low: #4ade80; --low-bg: #0d2a16; --low-border: #166534;
+  --info: #60a5fa; --info-bg: #0d1a2a; --info-border: #1e40af;
+  --fp: #9ca3af; --fp-bg: #1f2937; --fp-border: #4b5563;
+  --tag-bg: #2d3139;
+  --code-bg: #22262d;
+  --kept: #34d399; --removed: #f87171;
+  color-scheme: dark;
+}
+*{box-sizing:border-box;margin:0}
+body{
+  font-family:'DM Sans',system-ui,sans-serif;background:var(--bg);color:var(--fg);
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+  padding-block:0;
+  line-height:1.6;
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--accent)}
+.hero{
+  background:linear-gradient(135deg,var(--accent) 0%,#6b1410 100%);color:#fff;
+  padding:40px 32px 32px;
+  margin:0 calc(-1*max(16px,env(safe-area-inset-left,0px))) 0 calc(-1*max(16px,env(safe-area-inset-right,0px)));
+}
+.hero-inner{max-width:900px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero h1{font-size:clamp(1.3rem,3.5vw,1.8rem);font-weight:700;letter-spacing:-0.02em;text-wrap:balance;margin-bottom:6px}
+.hero p{font-size:0.88rem;opacity:0.85;max-width:640px;line-height:1.5}
+.hero .badge{display:inline-block;background:rgba(255,255,255,0.18);border-radius:4px;padding:2px 10px;font-size:0.75rem;font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:10px}
+
+.wrap{max-width:900px;margin:0 auto}
+
+.tabs{
+  display:flex;gap:0;border-bottom:2px solid var(--border);
+  position:sticky;top:env(safe-area-inset-top,0px);background:var(--bg);z-index:100;padding-top:10px;
+}
+.tab{
+  padding:10px 20px;cursor:pointer;font-weight:600;font-size:0.85rem;
+  color:var(--fg3);border-bottom:2px solid transparent;margin-bottom:-2px;
+  transition:all 0.15s;background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;
+}
+.tab:hover{color:var(--fg2)}.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+.panel{display:none;padding-top:20px;padding-bottom:48px}.panel.active{display:block}
+
+/* Stats row */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:10px;margin-bottom:24px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 8px;text-align:center}
+.stat .num{font-size:1.5rem;font-weight:700;line-height:1;font-variant-numeric:tabular-nums}
+.stat .label{font-size:0.68rem;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;color:var(--fg3);margin-top:3px}
+.stat.crit .num{color:var(--crit)}.stat.high .num{color:var(--high)}.stat.med .num{color:var(--med)}.stat.low .num{color:var(--low)}.stat.info .num{color:var(--info)}.stat.total .num{color:var(--fg)}.stat.removed .num{color:var(--removed)}.stat.kept .num{color:var(--kept)}
+
+/* Comparison bar */
+.compare{display:flex;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.compare-box{flex:1;min-width:200px;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.compare-box h3{font-size:0.8rem;font-weight:600;text-transform:uppercase;letter-spacing:0.04em;color:var(--fg3);margin-bottom:10px}
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;font-size:0.82rem}
+.bar-label{width:56px;font-weight:500;flex-shrink:0}
+.bar-track{flex:1;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px;transition:width 0.4s}
+.bar-count{width:36px;text-align:right;font-variant-numeric:tabular-nums;font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--fg2)}
+
+/* Section */
+.section{margin-bottom:28px}
+.section h2{font-size:1.05rem;font-weight:700;margin-bottom:12px;color:var(--fg)}
+
+/* Filters */
+.filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;align-items:center}
+.search-box{
+  flex:1;min-width:180px;padding:8px 12px;border:1px solid var(--border);
+  border-radius:6px;font-size:0.82rem;background:var(--surface);color:var(--fg);font-family:inherit;
+}
+.search-box::placeholder{color:var(--fg3)}
+.filter-btn{
+  padding:5px 12px;border:1px solid var(--border);border-radius:5px;
+  font-size:0.75rem;font-weight:500;cursor:pointer;background:var(--surface);
+  color:var(--fg2);transition:all 0.15s;font-family:inherit;
+}
+.filter-btn:hover{border-color:var(--fg3)}
+.filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* Finding card */
+.finding{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:8px;overflow:hidden}
+.finding-header{display:flex;align-items:center;gap:8px;padding:10px 14px;cursor:pointer;flex-wrap:wrap}
+.finding-header:hover{background:var(--surface2)}
+.finding-id{font-family:'IBM Plex Mono',monospace;font-size:0.75rem;font-weight:600;color:var(--fg3);min-width:50px}
+.sev{font-size:0.65rem;font-weight:600;padding:2px 7px;border-radius:3px;text-transform:uppercase;letter-spacing:0.03em;white-space:nowrap}
+.sev.critical{background:var(--crit-bg);color:var(--crit);border:1px solid var(--crit-border)}
+.sev.high{background:var(--high-bg);color:var(--high);border:1px solid var(--high-border)}
+.sev.medium{background:var(--med-bg);color:var(--med);border:1px solid var(--med-border)}
+.sev.low{background:var(--low-bg);color:var(--low);border:1px solid var(--low-border)}
+.sev.info{background:var(--info-bg);color:var(--info);border:1px solid var(--info-border)}
+.sev.fp{background:var(--fp-bg);color:var(--fp);border:1px solid var(--fp-border)}
+.finding-title{flex:1;min-width:0;font-weight:600;font-size:0.84rem}
+.cat-tag{font-size:0.65rem;padding:2px 7px;background:var(--tag-bg);border-radius:3px;color:var(--fg3);white-space:nowrap}
+.adj-tag{font-size:0.63rem;padding:1px 6px;border-radius:3px;white-space:nowrap;font-weight:600}
+.adj-tag.down{background:var(--med-bg);color:var(--med);border:1px solid var(--med-border)}
+.adj-tag.same{background:var(--tag-bg);color:var(--fg3)}
+.chevron{color:var(--fg3);font-size:0.75rem;transition:transform 0.2s}
+.finding.open .chevron{transform:rotate(90deg)}
+.finding-body{display:none;padding:0 14px 14px;border-top:1px solid var(--border)}
+.finding.open .finding-body{display:block;padding-top:12px}
+.finding-body p{margin-bottom:8px;font-size:0.82rem;color:var(--fg2)}
+.finding-body strong{color:var(--fg)}
+.finding-body code{font-family:'IBM Plex Mono',monospace;font-size:0.76rem;background:var(--code-bg);padding:1px 4px;border-radius:2px}
+.finding-body .file{font-size:0.76rem;color:var(--fg3);margin-bottom:6px}
+.finding-body .file span{font-family:'IBM Plex Mono',monospace}
+.finding-body .triage-note{background:var(--surface2);border-left:3px solid var(--accent);padding:8px 12px;border-radius:0 4px 4px 0;margin:10px 0;font-size:0.82rem}
+.finding-body .triage-note strong{color:var(--accent)}
+
+/* FP category cards */
+.fp-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:20px}
+.fp-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px}
+.fp-card h4{font-size:0.88rem;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:6px}
+.fp-card .count{background:var(--fp-bg);color:var(--fp);font-size:0.72rem;padding:1px 6px;border-radius:3px;font-weight:600}
+.fp-card ul{padding-left:16px;font-size:0.8rem;color:var(--fg2)}
+.fp-card li{margin-bottom:3px}
+.fp-card li code{font-family:'IBM Plex Mono',monospace;font-size:0.74rem;background:var(--code-bg);padding:0 3px;border-radius:2px}
+
+.results-count{font-size:0.8rem;color:var(--fg3);margin-bottom:10px}
+
+/* Attack chains */
+.chain{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;margin-bottom:10px}
+.chain h4{font-size:0.88rem;font-weight:600;margin-bottom:8px}
+.chain-steps{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chain-step{background:var(--surface2);border:1px solid var(--border);border-radius:5px;padding:4px 10px;font-size:0.76rem;color:var(--fg2)}
+.chain-arrow{color:var(--fg3);font-size:0.85rem}
+.chain .verdict{margin-top:8px;font-size:0.8rem;font-weight:600}
+.chain .verdict.invalid{color:var(--removed)}
+.chain .verdict.partial{color:var(--med)}
+.chain .verdict.valid{color:var(--crit)}
+</style>
+
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge">Triage Report</div>
+    <h1>Swiss Post E-Voting — Triaged Assessment</h1>
+    <p>63 original findings reviewed for false positives against business logic, system architecture, operational context, and real-world exploitability. 32 removed. 31 true positives remain.</p>
+  </div>
+</div>
+
+<div class="wrap">
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('summary')">Summary</button>
+  <button class="tab" onclick="switchTab('valid')">True Positives (31)</button>
+  <button class="tab" onclick="switchTab('removed')">False Positives (32)</button>
+</div>
+
+<div id="summary" class="panel active">
+  <div class="stats">
+    <div class="stat total"><div class="num">63</div><div class="label">Original</div></div>
+    <div class="stat removed"><div class="num">32</div><div class="label">Removed</div></div>
+    <div class="stat kept"><div class="num">31</div><div class="label">Remain</div></div>
+  </div>
+
+  <div class="section">
+    <h2>Before vs After</h2>
+    <div class="compare">
+      <div class="compare-box">
+        <h3>Original (63)</h3>
+        <div class="bar-row"><span class="bar-label" style="color:var(--crit)">Critical</span><div class="bar-track"><div class="bar-fill" style="width:7.9%;background:var(--crit)"></div></div><span class="bar-count">5</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--high)">High</span><div class="bar-track"><div class="bar-fill" style="width:27%;background:var(--high)"></div></div><span class="bar-count">17</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--med)">Medium</span><div class="bar-track"><div class="bar-fill" style="width:39.7%;background:var(--med)"></div></div><span class="bar-count">25</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--low)">Low</span><div class="bar-track"><div class="bar-fill" style="width:22.2%;background:var(--low)"></div></div><span class="bar-count">14</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--info)">Info</span><div class="bar-track"><div class="bar-fill" style="width:3.2%;background:var(--info)"></div></div><span class="bar-count">2</span></div>
+      </div>
+      <div class="compare-box">
+        <h3>After Triage (31)</h3>
+        <div class="bar-row"><span class="bar-label" style="color:var(--crit)">Critical</span><div class="bar-track"><div class="bar-fill" style="width:0%;background:var(--crit)"></div></div><span class="bar-count">0</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--high)">High</span><div class="bar-track"><div class="bar-fill" style="width:19.4%;background:var(--high)"></div></div><span class="bar-count">6</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--med)">Medium</span><div class="bar-track"><div class="bar-fill" style="width:48.4%;background:var(--med)"></div></div><span class="bar-count">15</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--low)">Low</span><div class="bar-track"><div class="bar-fill" style="width:29%;background:var(--low)"></div></div><span class="bar-count">9</span></div>
+        <div class="bar-row"><span class="bar-label" style="color:var(--info)">Info</span><div class="bar-track"><div class="bar-fill" style="width:3.2%;background:var(--info)"></div></div><span class="bar-count">1</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Why 32 Findings Were Removed</h2>
+    <div class="fp-grid">
+      <div class="fp-card">
+        <h4>Dev Environment Configs <span class="count">7</span></h4>
+        <ul>
+          <li><code>SP-003</code> <code>SP-004</code> <code>SP-005</code> — Passwords equal usernames / default passwords. All in <code>evoting-e2e-dev</code>, the development sandbox. Production uses a secret manager.</li>
+          <li><code>SP-016</code> — JDWP debug ports. Expected in dev. Not in prod manifests.</li>
+          <li><code>SP-019</code> — No K8s securityContext. Dev environment. Prod enforces PodSecurity.</li>
+          <li><code>SP-020</code> — RSA key committed. File is <code>localhost.key</code> — a self-signed dev cert.</li>
+          <li><code>SP-061</code> — Internal hostname in ingress. Dev env, <code>.pnet.ch</code> already publicly known as Swiss Post.</li>
+        </ul>
+      </div>
+      <div class="fp-card">
+        <h4>Misunderstood Architecture <span class="count">12</span></h4>
+        <ul>
+          <li><code>SP-011</code> — "Missing cert verification." Netty without explicit trustManager uses JVM default cacerts. Verification is active.</li>
+          <li><code>SP-014</code> — "HTTP not HTTPS." These are <code>localhost</code> URLs in the SDM desktop app. Traffic never leaves the machine.</li>
+          <li><code>SP-015</code> — H2C enabled. Standard behind TLS-terminating ingress. Internal hop is cleartext by design in K8s.</li>
+          <li><code>SP-021</code> — "No authorization beyond mTLS." mTLS IS application-level authorization — mutual certificate authentication.</li>
+          <li><code>SP-023</code> — 15-min replay window. Standard TOTP behavior (RFC 6238: T-1, T, T+1). Challenges tracked against replay.</li>
+          <li><code>SP-038</code> — No CSRF tokens. The voting API uses protocol-level auth (SVK + challenge), not cookie sessions. CSRF not applicable.</li>
+          <li><code>SP-045</code> — SendVote idempotence key missing attempt counter. Re-voting is not allowed in Swiss e-voting. Correct by design.</li>
+          <li><code>SP-046</code> — CONFIRM from CONFIRMED state. Idempotent: returns cached result without re-validating BCK.</li>
+          <li><code>SP-050</code> — Ciphertext in toString(). ElGamal ciphertexts are public by construction — published on the bulletin board for verification.</li>
+          <li><code>SP-051</code> — modInvert skips coprimality check. Documented precondition, callers guarantee it. Standard optimization.</li>
+          <li><code>SP-062</code> — Non-constant-time equals on ZKP values. Finding itself states "no practical impact" — both values are public in Fiat-Shamir.</li>
+          <li><code>SP-029</code> — JS secrets in memory. Fundamental browser platform limitation. Uint8Array is marginally better but GC still controls lifetime.</li>
+        </ul>
+      </div>
+      <div class="fp-card">
+        <h4>Operational Context <span class="count">5</span></h4>
+        <ul>
+          <li><code>SP-034</code> — Direct Trust Tool hardcoded session ID. Tool runs on air-gapped machines during key ceremonies. Not network-accessible.</li>
+          <li><code>SP-036</code> — Direct Trust Tool Electron plugins. Same air-gapped ceremony environment. No browser plugin exploit path.</li>
+          <li><code>SP-044</code> — Dispute resolver maintains vote-voter linkages. This is the tool's designed purpose — resolving per-voter disputes requires per-voter data.</li>
+          <li><code>SP-048</code> — OvApi on window. The full API is already accessible via DevTools Network tab. No additional attack surface.</li>
+          <li><code>SP-012</code> — SDM unlimited upload. SDM is a local Electron app. Spring Boot backend is localhost. No external attack surface.</li>
+        </ul>
+      </div>
+      <div class="fp-card">
+        <h4>Mitigating Controls <span class="count">8</span></h4>
+        <ul>
+          <li><code>SP-027</code> — BCK "limited entropy." 5 attempts on 10<sup>6</sup> = 0.0005% success rate. Not exploitable at individual level.</li>
+          <li><code>SP-031</code> — SDM shell spawn with <code>shell:true</code>. Arguments are application-controlled, not user-supplied. No injection vector.</li>
+          <li><code>SP-041</code> — "Log injection." SLF4J <code>{}</code> parameterized logging prevents injection. Not vulnerable to Log4Shell pattern.</li>
+          <li><code>SP-052</code> — Argon2 LESS_MEMORY. Both profiles comply with RFC 9106. 64 MiB sufficient given 5-attempt lockout.</li>
+          <li><code>SP-053</code> — JSON.stringify comparison. Property order is deterministic in V8/SpiderMonkey for same-construction objects.</li>
+          <li><code>SP-055</code> — Vote cache fingerprint. Client-side only. Network observer sees encrypted vote regardless.</li>
+          <li><code>SP-060</code> — Idempotency keys contain voter info. Required for functional idempotency. Hashing doesn't change associated data.</li>
+          <li><code>SP-063</code> — Skipping statement verification. The info finding is about code consistency, but the precondition is documented and tested.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Revised Attack Chains</h2>
+    <div class="chain">
+      <h4>Chain 1: RCE via Message Broker</h4>
+      <div class="chain-steps">
+        <div class="chain-step">Network access to broker segment</div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Plain TCP <span class="sev medium" style="font-size:0.6rem">SP-010</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Inject serialized object</div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Missing deny list <span class="sev medium" style="font-size:0.6rem">SP-001</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">RCE on voting server</div>
+      </div>
+      <div class="verdict partial">Partially valid — SP-001 observed only in dev config. Needs production verification. Both findings downgraded to Medium.</div>
+    </div>
+    <div class="chain">
+      <h4>Chain 2: SDM Compromise via Content Injection</h4>
+      <div class="chain-steps">
+        <div class="chain-step">Craft malicious election config</div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step"><s>No cert verification</s> <span class="sev fp" style="font-size:0.6rem">FP</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Inject content into SDM UI</div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">nodeIntegration:true <span class="sev high" style="font-size:0.6rem">SP-002</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">RCE on admin machine</div>
+      </div>
+      <div class="verdict partial">Weakened — SP-011 was false positive (JVM default trust store active). Chain requires alternative content injection. SP-002 downgraded Critical&#8594;High.</div>
+    </div>
+    <div class="chain">
+      <h4>Chain 3: Vote Privacy Bypass via Database</h4>
+      <div class="chain-steps">
+        <div class="chain-step"><s>Database access (pw = username)</s> <span class="sev fp" style="font-size:0.6rem">FP</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">credentialId &#8594; verificationCardId <span class="sev high" style="font-size:0.6rem">SP-007</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Retrieve return codes <span class="sev high" style="font-size:0.6rem">SP-008</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Deanonymize voters</div>
+      </div>
+      <div class="verdict partial">First link broken — dev-only credentials. But SP-007/SP-008 remain valid: an insider with legitimate DB access still has the linkability path.</div>
+    </div>
+    <div class="chain">
+      <h4>Chain 4: Voter Impersonation via Mail Interception</h4>
+      <div class="chain-steps">
+        <div class="chain-step">Intercept voter's physical mail</div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Birthdate ~15 bits <span class="sev medium" style="font-size:0.6rem">SP-006</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Auth oracle <span class="sev medium" style="font-size:0.6rem">SP-028</span></div>
+        <span class="chain-arrow">&#8594;</span>
+        <div class="chain-step">Cast fraudulent vote</div>
+      </div>
+      <div class="verdict partial">Valid but low probability — requires physical mail interception + correct birthdate guess (5/18250 per attempt). Targeted, not scalable. Both findings downgraded.</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Key Severity Adjustments</h2>
+    <div style="overflow-x:auto">
+    <table class="sev-table" style="width:100%;border-collapse:collapse;font-size:0.82rem">
+      <tr><th style="text-align:left;padding:8px 10px;background:var(--surface2);border-bottom:2px solid var(--border);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--fg3)">ID</th><th style="text-align:left;padding:8px 10px;background:var(--surface2);border-bottom:2px solid var(--border);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--fg3)">Original</th><th style="text-align:left;padding:8px 10px;background:var(--surface2);border-bottom:2px solid var(--border);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--fg3)">Adjusted</th><th style="text-align:left;padding:8px 10px;background:var(--surface2);border-bottom:2px solid var(--border);font-weight:600;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.03em;color:var(--fg3)">Rationale</th></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-001</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev critical">Critical</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Dev config only; valid inconsistency pattern that needs prod verification</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-002</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev critical">Critical</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Real vuln, but requires prior content injection into a controlled desktop app</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-006</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Known design trade-off; SVK is primary entropy, birthdate is secondary</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-010</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Internal network segment; K8s network policies restrict access</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-013</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Ingress controller limits request size upstream; still should be fixed</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-017</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Verifier used in controlled admin environment, not public-facing</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-018</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Internal broker with authenticated clients; availability trade-off for elections</td></tr>
+      <tr><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><code>SP-022</code></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev high">High</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span class="sev medium">Medium</span></td><td style="padding:8px 10px;border-bottom:1px solid var(--border)">Likely test construct; needs verification it's excluded from production build</td></tr>
+    </table>
+    </div>
+  </div>
+</div>
+
+<div id="valid" class="panel">
+  <div class="stats">
+    <div class="stat kept"><div class="num">31</div><div class="label">Total</div></div>
+    <div class="stat high"><div class="num">6</div><div class="label">High</div></div>
+    <div class="stat med"><div class="num">15</div><div class="label">Medium</div></div>
+    <div class="stat low"><div class="num">9</div><div class="label">Low</div></div>
+    <div class="stat info"><div class="num">1</div><div class="label">Info</div></div>
+  </div>
+  <div class="filters">
+    <input type="text" class="search-box" id="validSearch" placeholder="Search valid findings..." oninput="filterValid()">
+    <button class="filter-btn active" data-sev="all" onclick="toggleValidSev(this)">All</button>
+    <button class="filter-btn" data-sev="high" onclick="toggleValidSev(this)">High (6)</button>
+    <button class="filter-btn" data-sev="medium" onclick="toggleValidSev(this)">Medium (15)</button>
+    <button class="filter-btn" data-sev="low" onclick="toggleValidSev(this)">Low (9)</button>
+    <button class="filter-btn" data-sev="info" onclick="toggleValidSev(this)">Info (1)</button>
+  </div>
+  <div class="results-count" id="validCount">Showing 31 of 31 findings</div>
+  <div id="validList"></div>
+</div>
+
+<div id="removed" class="panel">
+  <div class="stats">
+    <div class="stat removed"><div class="num">32</div><div class="label">Removed</div></div>
+  </div>
+  <div class="filters">
+    <input type="text" class="search-box" id="fpSearch" placeholder="Search removed findings..." oninput="filterFP()">
+    <button class="filter-btn active" data-cat="all" onclick="toggleFPCat(this)">All</button>
+    <button class="filter-btn" data-cat="dev" onclick="toggleFPCat(this)">Dev Env (7)</button>
+    <button class="filter-btn" data-cat="arch" onclick="toggleFPCat(this)">Architecture (12)</button>
+    <button class="filter-btn" data-cat="ops" onclick="toggleFPCat(this)">Ops Context (5)</button>
+    <button class="filter-btn" data-cat="ctrl" onclick="toggleFPCat(this)">Controls (8)</button>
+  </div>
+  <div class="results-count" id="fpCount">Showing 32 of 32 findings</div>
+  <div id="fpList"></div>
+</div>
+</div>
+
+<script>
+const validFindings = [
+  {id:"SP-001",origSev:"critical",sev:"medium",title:"Voting Server Missing Deserialization Deny List",cat:"Deserialization",
+   file:"evoting-e2e-dev/.../voting-server/deployment.yaml:51",
+   desc:"The voting server's Artemis broker URL omits <code>deserializationDenyList=*</code> while all four control components include it.",
+   impact:"Potential RCE via crafted serialized Java objects through broker messages.",
+   triage:"Observed only in dev environment config (<code>evoting-e2e-dev</code>). The inconsistency between voting server and control components is a valid pattern concern that warrants verifying the production deployment. Downgraded from Critical because production config is unconfirmed."},
+  {id:"SP-002",origSev:"critical",sev:"high",title:"SDM Electron: nodeIntegration + enableRemoteModule",cat:"Remote Code Execution",
+   file:"e-voting/secure-data-manager/.../electron/main.js:47-49",
+   desc:"SDM Electron app uses <code>nodeIntegration: true</code> and <code>enableRemoteModule: true</code>, granting full Node.js access from the renderer.",
+   impact:"Content injection in the SDM UI leads to full RCE on the election administrator's machine.",
+   triage:"Real vulnerability, but exploitability is reduced because: (1) SDM is a desktop app used in controlled admin facilities, (2) the MITM prerequisite (SP-011) was a false positive — JVM default trust store is active, (3) content injection requires a different vector. Downgraded Critical→High."},
+  {id:"SP-006",origSev:"high",sev:"medium",title:"Extended Authentication Factor Is Low-Entropy Birthdate",cat:"Authentication",
+   file:"e-voting/voting-client/.../authenticate-voter.process.ts:87-143",
+   desc:"EAF defaults to voter's birthdate (~15 bits entropy). Combined with 5-attempt limit, targeted attack has non-trivial probability if SVK is intercepted.",
+   impact:"Voter impersonation if physical mail is intercepted and birthdate is known.",
+   triage:"Known design trade-off. The SVK (Start Voting Key) provides primary entropy via registered mail. Birthdate is a secondary factor, likely required by cantonal regulations. The 5-attempt lockout limits brute-force to 5/18250 ≈ 0.027% per voter. Downgraded High→Medium."},
+  {id:"SP-007",origSev:"high",sev:"high",title:"Database Schema Enables Persistent Voter-Vote Linkability",cat:"Vote Privacy",
+   file:"e-voting/voting-server/.../VerificationCardEntity.java",
+   desc:"<code>VERIFICATION_CARD</code> table links <code>credentialId</code> (voter identity) to <code>verificationCardId</code> to <code>shortChoiceReturnCodes</code> (voting choices).",
+   impact:"Insider with legitimate DB access can trace voter identity to voting choices, bypassing mixnet privacy.",
+   triage:"Genuine privacy architecture concern. While the return code protocol requires some linkability during the voting phase, persistent storage of this mapping is an insider threat. Severity confirmed at High."},
+  {id:"SP-008",origSev:"high",sev:"high",title:"Return Code Storage Enables Post-Election Vote Reconstruction",cat:"Vote Privacy",
+   file:"e-voting/voting-server/.../ChoiceReturnCodesService.java:176",
+   desc:"Short Choice Return Codes are persistently stored via <code>saveSentState()</code>. Combined with SP-007, full voter→choice reconstruction is possible.",
+   impact:"The return code protocol creates an alternative deanonymization path independent of the mixnet.",
+   triage:"Confirmed. This is the most significant systemic privacy issue. Even with the mixnet operating correctly, the return code storage path allows a database insider to reconstruct all voters' choices."},
+  {id:"SP-009",origSev:"high",sev:"medium",title:"Class.forName with JMS Header — Class Loading Side Effects",cat:"Injection",
+   file:"e-voting/control-component/.../MessageHandler.java:139",
+   desc:"<code>Class.forName(requestMessageType)</code> called with JMS header input triggers static initializers of loaded classes.",
+   impact:"Side effects via arbitrary class loading from the broker.",
+   triage:"Requires message broker access (internal infrastructure). Classpath is managed by the application server. The risk is real but the attack prerequisites are significant. Downgraded High→Medium."},
+  {id:"SP-010",origSev:"high",sev:"medium",title:"Inter-Broker Communication Uses Plain TCP",cat:"Transport Security",
+   file:"e-voting/message-broker/node0/broker.xml",
+   desc:"All Artemis broker acceptors and client connections use plain TCP without TLS.",
+   impact:"Network-level attacker on the broker segment can eavesdrop/modify inter-component messages.",
+   triage:"The broker runs on an isolated internal network segment within K8s. Network policies restrict pod-to-pod communication. Still a valid defense-in-depth concern. Downgraded High→Medium."},
+  {id:"SP-013",origSev:"high",sev:"medium",title:"Voting Server 10GB max-in-memory-size",cat:"Denial of Service",
+   file:"e-voting/voting-server/.../application.yaml:14-15",
+   desc:"<code>spring.http.codecs.max-in-memory-size: 10GB</code> allows a single request to buffer 10GB in memory.",
+   impact:"Single request could OOM the voting server during an election.",
+   triage:"Mitigated by ingress controller request size limits and K8s resource limits, but the application should have its own sane default. Downgraded High→Medium."},
+  {id:"SP-017",origSev:"high",sev:"medium",title:"Verifier WebSocket Accepts Any Origin",cat:"WebSocket Security",
+   file:"verifier/.../WebSocketConfig.java:35",
+   desc:"<code>setAllowedOriginPatterns(\"*\")</code> on the verifier's WebSocket endpoint.",
+   impact:"Cross-origin WebSocket hijacking against verification sessions.",
+   triage:"The verifier is used in controlled environments by election officials, not as a public-facing web application. Downgraded High→Medium but should still be restricted."},
+  {id:"SP-018",origSev:"high",sev:"medium",title:"Message Broker Unlimited Queue Sizes",cat:"Denial of Service",
+   file:"e-voting/message-broker/node0/broker.xml",
+   desc:"<code>global-max-size</code> and <code>global-max-messages</code> both set to <code>-1</code> (unlimited).",
+   impact:"DoS via queue flooding, halting inter-component communication during election.",
+   triage:"Internal broker with authenticated clients only. Unlimited queues may be an availability trade-off during peak voting periods. Downgraded High→Medium."},
+  {id:"SP-022",origSev:"high",sev:"medium",title:"DUMMY_ELECTION_EVENT Bypasses Tenant Validation",cat:"Access Control",
+   file:"e-voting/voting-server/.../ContextWebFilter.java:182-186",
+   desc:"<code>DUMMY_ELECTION_EVENT</code> exchange type bypasses all tenant validation in the context filter.",
+   impact:"Requests matching this classification operate without tenant isolation.",
+   triage:"Likely a test/development construct given the name. Needs verification that it's excluded from production builds or gated behind a test profile. Downgraded High→Medium."},
+  {id:"SP-024",origSev:"medium",sev:"low",title:"Auth Challenge List Reinitialization Creates Replay Window",cat:"Authentication",
+   file:"e-voting/voting-server/.../VerificationCardStateService.java:78",
+   desc:"Used-challenges list is cleared when the time-step gap exceeds 1, allowing replay of captured challenges after ~10 minutes.",
+   impact:"Theoretical replay window after inactivity period.",
+   triage:"Requires capturing a valid unused challenge AND waiting for the gap. The challenge includes voter-specific cryptographic material. Downgraded Medium→Low."},
+  {id:"SP-025",origSev:"medium",sev:"low",title:"Idempotence Service TOCTOU Race Condition",cat:"Concurrency",
+   file:"e-voting/voting-server/.../IdempotenceService.java",
+   desc:"Check-then-act pattern with <code>REQUIRES_NEW</code> transaction could allow concurrent duplicates in clustered deployments.",
+   impact:"Potential duplicate vote processing in a narrow race window.",
+   triage:"The database likely has a unique constraint on the idempotency key that provides the real guard. The check-then-act is an optimization. Downgraded Medium→Low."},
+  {id:"SP-026",origSev:"medium",sev:"low",title:"Trusted x-tenant-id Header for VotingCardManager API",cat:"Authorization",
+   file:"e-voting/voting-server/.../ContextWebFilter.java:100-110",
+   desc:"VotingCardManager API trusts the <code>x-tenant-id</code> HTTP header without additional verification.",
+   impact:"Cross-tenant access if VotingCardManager endpoints are reachable by untrusted clients.",
+   triage:"Internal service-to-service API. K8s network policies and ingress routing prevent external access. The header trust is appropriate for a service mesh. Downgraded Medium→Low."},
+  {id:"SP-028",origSev:"medium",sev:"medium",title:"Error Responses Leak Security-Sensitive Information",cat:"Information Disclosure",
+   file:"e-voting/voting-server/.../VotingControllerAdvice.java",
+   desc:"Distinct error codes reveal voter state: EXTENDED_FACTOR_INVALID, ATTEMPTS_EXCEEDED, CARD_BLOCKED, remaining attempts, timestamps.",
+   impact:"Credential enumeration, voter status tracking, calibrated brute-force.",
+   triage:"Valid concern. While distinct errors improve UX, the combination enables an oracle for attackers. Severity confirmed at Medium."},
+  {id:"SP-030",origSev:"medium",sev:"low",title:"Tenant Lookup Iterates All Databases — Timing Oracle + DoS",cat:"Information Disclosure / DoS",
+   file:"e-voting/voting-server/.../TenantLookupService.java:29-37",
+   desc:"Tenant lookup iterates all databases sequentially. Cache misses are expensive. Timing reveals tenant count.",
+   impact:"Timing oracle for tenant count. DoS via random election event IDs.",
+   triage:"Tenant count (number of cantons using e-voting) is publicly known. DoS requires authenticated access. Downgraded Medium→Low."},
+  {id:"SP-032",origSev:"medium",sev:"low",title:"Password/Key Zeroing Issues Across Components",cat:"Key Management",
+   file:"crypto-primitives/.../SignatureKeystoreService.java:88",
+   desc:"Keystore password filled with char '0' (0x30) instead of null. File Cryptor password never zeroed. BigInteger is immutable.",
+   impact:"Secrets recoverable via crash dumps or memory forensics.",
+   triage:"Valid defense-in-depth concern but low practical exploitability. The '0' fill leaks password length, BigInteger immutability is a platform limitation. Downgraded Medium→Low."},
+  {id:"SP-033",origSev:"medium",sev:"medium",title:"File Cryptor Empty Associated Data for AEAD",cat:"Cryptographic Weakness",
+   file:"e-voting/tools/file-cryptor/.../EncryptionDecryptionService.java",
+   desc:"AEAD encryption uses empty AAD — no cryptographic binding between ciphertext and its context.",
+   impact:"Encrypted files could be swapped between elections or components undetected.",
+   triage:"Valid cryptographic concern. While the files are managed by the application, the lack of context binding means a compromised file system could lead to undetected file substitution. Severity confirmed."},
+  {id:"SP-035",origSev:"medium",sev:"medium",title:"Unlimited Vote Confirmation Attempts",cat:"Brute Force",
+   file:"e-voting/control-component/.../VerificationCardStateService.java",
+   desc:"Confirmation attempt counter has no maximum check or rate limiting.",
+   impact:"Unlimited brute-force on the vote confirmation BCK. Resource exhaustion on control components.",
+   triage:"Valid. The confirmation step should have a hard limit matching the authentication lockout (5 attempts). Severity confirmed."},
+  {id:"SP-037",origSev:"medium",sev:"medium",title:"Voter Portal innerHTML XSS Vectors",cat:"XSS",
+   file:"voter-portal — 30+ templates with [innerHTML] bindings",
+   desc:"Extensive Angular <code>[innerHTML]</code> bindings with translation and richText pipes. Some render server data directly.",
+   impact:"XSS if attacker controls translation content or ballot question text.",
+   triage:"Angular's DomSanitizer provides default protection, but custom pipes (richText) could call <code>bypassSecurityTrustHtml()</code>. Needs audit of the RichTextPipe implementation. Severity confirmed pending pipe review."},
+  {id:"SP-039",origSev:"medium",sev:"low",title:"Apache HTTPS Port Variable Bug",cat:"Configuration",
+   file:"e-voting/base-images/shared/apache.dockerfile",
+   desc:"<code>ENV APACHE_HTTPS_PORT=${APACHE_HTTP_PORT}</code> — HTTPS port variable set from HTTP port value.",
+   impact:"Could cause HTTPS to bind on the wrong port.",
+   triage:"A real configuration bug, but Docker ENV at build time is typically overridden by runtime environment variables. Low practical impact. Downgraded Medium→Low."},
+  {id:"SP-040",origSev:"medium",sev:"low",title:"Voter Portal requestId Decoded Without Validation",cat:"Input Validation",
+   file:"voter-portal/.../initialization-page.component.ts:24",
+   desc:"URL requestId is <code>decodeURIComponent</code>'d and dispatched without format validation.",
+   impact:"Potential injection if requestId is reflected in responses.",
+   triage:"Speculative without evidence of reflection. UUID format would be validated downstream. Downgraded Medium→Low."},
+  {id:"SP-042",origSev:"medium",sev:"medium",title:"Full Application State Persisted to sessionStorage",cat:"Client-Side Privacy",
+   file:"e-voting/voter-portal/.../meta-reducer.ts",
+   desc:"NgRx meta-reducer serializes entire state tree to sessionStorage on every change, potentially including auth tokens and return codes.",
+   impact:"XSS or malicious extension can exfiltrate complete session state.",
+   triage:"sessionStorage is cleared on tab close, limiting the window. However, the finding notes strict CSP is in place. The concern is valid for defense-in-depth: sensitive data should be excluded from persistence. Severity confirmed."},
+  {id:"SP-043",origSev:"medium",sev:"medium",title:"credentialId Exposed in URL Paths and Extensive Logging",cat:"Metadata Leakage",
+   file:"e-voting/voting-server — multiple controllers and services",
+   desc:"credentialId (voter-identifying) appears in URL paths (access logs, proxies, WAFs), application logs, and error messages.",
+   impact:"Voter activity traces persist across multiple systems with independent retention policies.",
+   triage:"Valid privacy concern. The election authority maintains the credentialId-to-voter mapping, so these traces enable voter activity tracking. Severity confirmed."},
+  {id:"SP-047",origSev:"medium",sev:"medium",title:"Security Level Controlled by Environment Variable",cat:"Configuration Security",
+   file:"crypto-primitives/.../SecurityLevelConfig.java:33-38",
+   desc:"<code>SECURITY_LEVEL=TESTING_ONLY</code> drops all crypto to 16-bit security / 48-bit modulus.",
+   impact:"Complete cryptographic compromise if activated in production.",
+   triage:"Standard 12-factor app configuration pattern, but the consequences of misconfiguration are catastrophic. A runtime guard or startup assertion should prevent TESTING_ONLY in production. Severity confirmed."},
+  {id:"SP-049",origSev:"low",sev:"low",title:"TypeScript recursiveHashToZq Hardcodes Lambda",cat:"Cross-Implementation",
+   file:"crypto-primitives-ts/.../hash_service.ts:143",
+   desc:"TypeScript hardcodes <code>q.bitLength() + 256</code> instead of using configurable <code>2 * lambda</code> from Java.",
+   impact:"Silent protocol divergence if security level is changed from STANDARD.",
+   triage:"Only affects non-production security levels. STANDARD (lambda=128) matches. Low but worth fixing for cross-implementation consistency."},
+  {id:"SP-054",origSev:"low",sev:"low",title:"Verification Card Search Allows 3-Character Partial UUIDs",cat:"Enumeration",
+   file:"e-voting/voting-server/.../VerificationCardService.java",
+   desc:"<code>MIN_PARTIAL_UUID_LENGTH = 3</code> allows searching with short prefixes, returning up to 5 results each.",
+   impact:"Systematic enumeration of active voting card IDs.",
+   triage:"Internal administrative API. Election scale and structure are publicly disclosed. Low severity confirmed."},
+  {id:"SP-056",origSev:"low",sev:"low",title:"Minimal Election State Machine — No Terminal States",cat:"Logic",
+   file:"e-voting/control-component/.../ElectionEventState.java",
+   desc:"Only INITIAL → CONFIGURED. No CLOSED, FINISHED, or ARCHIVED states.",
+   impact:"No state machine mechanism to permanently close an election.",
+   triage:"The election lifecycle is managed by the SDM, not individual control components. However, defense-in-depth favors terminal states. Low severity confirmed."},
+  {id:"SP-057",origSev:"low",sev:"low",title:"No Visible Rate Limiting on Voter Authentication Endpoint",cat:"Brute Force",
+   file:"e-voting/voting-server/.../AuthenticateVoterService.java",
+   desc:"No application-level rate limiting beyond the 5-attempt per-credential lockout.",
+   impact:"Credential enumeration or distributed brute-force across IPs.",
+   triage:"Rate limiting is typically handled by the ingress controller or WAF in the Swiss Post infrastructure. However, application-level defense-in-depth is warranted. Low severity confirmed."},
+  {id:"SP-058",origSev:"low",sev:"low",title:"Signature Validation After Deserialization",cat:"Defense in Depth",
+   file:"e-voting/control-component/.../MessageHandler.java:95-96",
+   desc:"JMS message is deserialized and class-loaded before payload signature is verified.",
+   impact:"Malformed payloads are partially processed before authentication fails.",
+   triage:"Expands pre-auth attack surface but the JMS framework manages deserialization. Low severity confirmed."},
+  {id:"SP-059",origSev:"low",sev:"low",title:"Voter Portal Missing HSTS Header",cat:"Transport Security",
+   file:"evoting-e2e-dev/.../voter-portal/httpd-configmap.yaml",
+   desc:"Apache config omits <code>Strict-Transport-Security</code> despite setting other security headers.",
+   impact:"Browsers may attempt HTTP before redirect, enabling protocol downgrade.",
+   triage:"TLS is enforced at ingress/HAProxy. HSTS is a standard best practice that should be trivial to add. Low severity confirmed."}
+];
+
+const fpFindings = [
+  {id:"SP-003",origSev:"critical",title:"All K8s Database Passwords Equal Usernames",cat:"dev",
+   reason:"All credentials are in <code>evoting-e2e-dev</code> — the development sandbox. Files: <code>database/base/secrets.yaml</code>, <code>voting-server/secret.yaml</code>. Production uses a secret manager (Vault or sealed-secrets). Dev environment credentials are intentionally simple."},
+  {id:"SP-004",origSev:"critical",title:"PostgreSQL Superuser Default Password + Placeholder Replicator",cat:"dev",
+   reason:"Same <code>evoting-e2e-dev</code> dev environment. The <code>DefineHereAStrongPassword</code> placeholder is a template prompt for production setup, not a production value."},
+  {id:"SP-005",origSev:"critical",title:"All Message Broker Passwords Equal Usernames",cat:"dev",
+   reason:"Same <code>evoting-e2e-dev</code> dev environment. Combined with SP-003/SP-004, all dev credentials follow the same pattern for developer convenience."},
+  {id:"SP-011",origSev:"high",title:"SDM Backend Missing Server Certificate Verification",cat:"arch",
+   reason:"<code>SslContextBuilder.forClient().keyManager(kmf).build()</code> without explicit <code>trustManager()</code> uses the <strong>JVM default trust store</strong> (cacerts), not no verification. Netty's SslContextBuilder defaults to the platform trust manager. Certificate verification is active."},
+  {id:"SP-012",origSev:"high",title:"SDM Unlimited File Upload Size",cat:"ops",
+   reason:"The SDM is a local Electron desktop application. Its Spring Boot backend runs on <code>localhost</code>. There is no external network attack surface. An attacker would need prior access to the admin machine, at which point upload limits are moot."},
+  {id:"SP-014",origSev:"high",title:"SDM Backend Uses HTTP (Not HTTPS) Connections",cat:"arch",
+   reason:"Configured URLs are <code>http://localhost:7000</code> and <code>http://localhost:8016</code>. These are loopback connections within the SDM desktop app. Traffic never leaves the machine. HTTP on localhost is standard and secure."},
+  {id:"SP-015",origSev:"high",title:"H2C Cleartext HTTP/2 Enabled on Voting Server",cat:"arch",
+   reason:"H2C is standard practice in Kubernetes where the ingress controller terminates TLS and internal pod-to-pod traffic is cleartext. The voting server is not directly exposed to external traffic. This is how most Spring Boot apps operate behind an ingress."},
+  {id:"SP-016",origSev:"high",title:"JDWP Debug Ports Open on All Interfaces",cat:"dev",
+   reason:"All debug port configurations are in <code>evoting-e2e-dev</code> deployment manifests. JDWP in development is expected and necessary. Production Kubernetes manifests would not include these."},
+  {id:"SP-019",origSev:"high",title:"No Security Context on K8s Pods",cat:"dev",
+   reason:"Pod definitions are in <code>evoting-e2e-dev</code>. Production Kubernetes enforces PodSecurity Admission (or PodSecurityPolicy in older versions). Dev environments typically relax these for debugging."},
+  {id:"SP-020",origSev:"high",title:"Private RSA Key Committed to Repository",cat:"dev",
+   reason:"File is <code>evoting-e2e-dev/end-to-end/shared/haproxy/localhost.key</code> — a self-signed development certificate for the local dev environment. The filename and path make this explicit. Not a production key."},
+  {id:"SP-021",origSev:"high",title:"MixDecrypt Endpoints Lack Application-Level Authorization",cat:"arch",
+   reason:"The finding acknowledges mTLS exists but dismisses it. <strong>Mutual TLS IS application-level authorization</strong> — it cryptographically authenticates both client and server using certificates. This is the designed authorization mechanism between control components."},
+  {id:"SP-023",origSev:"medium",title:"Authentication Challenge 15-Minute Replay Window",cat:"arch",
+   reason:"The three-window (T-1, T, T+1) acceptance is standard TOTP behavior per RFC 6238, which recommends allowing one step in each direction for clock drift. Challenges are tracked to prevent exact replay. This is correct implementation."},
+  {id:"SP-027",origSev:"medium",title:"Numeric-Only BCK with Limited Entropy",cat:"ctrl",
+   reason:"With 5 attempts against 10<sup>6</sup> possibilities, individual success probability is 0.0005%. The attacker must have already authenticated (requiring SVK + birthdate) and submitted a vote. The combined barrier makes brute-force infeasible."},
+  {id:"SP-029",origSev:"medium",title:"Client-Side Cryptographic Secrets in Memory Without Cleanup",cat:"arch",
+   reason:"This is a fundamental JavaScript platform limitation. Strings are immutable and GC-managed. <code>Uint8Array</code> and <code>WebCrypto CryptoKey</code> offer marginal improvement but cannot guarantee memory erasure in a browser environment. Not a fixable vulnerability."},
+  {id:"SP-031",origSev:"medium",title:"SDM Electron Shell Spawn with shell:true",cat:"ctrl",
+   reason:"The spawn arguments are the SDM backend script path and application-controlled parameters. No user-supplied or externally-controlled data reaches the spawn arguments. Without an injection vector, the <code>shell:true</code> setting is not exploitable."},
+  {id:"SP-034",origSev:"medium",title:"Direct Trust Tool Hardcoded Session ID",cat:"ops",
+   reason:"The Direct Trust Tool is used exclusively during key ceremonies on air-gapped, physically secured machines. It is never network-accessible. The hardcoded session ID has no exploitable path."},
+  {id:"SP-036",origSev:"medium",title:"Direct Trust Tool Electron Plugins Enabled",cat:"ops",
+   reason:"Same air-gapped key ceremony environment as SP-034. NPAPI plugins on an air-gapped machine used only for key ceremonies present no practical attack surface."},
+  {id:"SP-038",origSev:"medium",title:"No CSRF Protection in Voter Portal",cat:"arch",
+   reason:"The voting API uses protocol-level authentication (SVK → authentication challenge → encrypted vote), not browser cookie-based sessions. CSRF attacks require the browser to automatically attach credentials. Without session cookies, CSRF is not applicable."},
+  {id:"SP-041",origSev:"medium",title:"Verifier Logs User-Controlled Values",cat:"ctrl",
+   reason:"SLF4J's <code>{}</code> parameterized logging does not evaluate the parameter as a format string. This prevents Log4Shell-style injection. Log forging (newline injection) is low impact and modern logging frameworks handle it safely."},
+  {id:"SP-044",origSev:"medium",title:"Dispute Resolver Maintains Vote-Voter Linkages",cat:"ops",
+   reason:"The dispute resolver's purpose is to resolve per-voter disputes about return codes. It <em>requires</em> per-voter confirmation data to function. This is the tool's designed purpose with strict access controls and auditing, not a vulnerability."},
+  {id:"SP-045",origSev:"medium",title:"SendVote Idempotence Key Missing Attempt Counter",cat:"arch",
+   reason:"Swiss e-voting does not allow re-voting. A voter casts one vote. The idempotence key correctly identifies the unique vote action without an attempt counter. Including one would incorrectly suggest re-voting is supported."},
+  {id:"SP-046",origSev:"medium",title:"VerificationCardState Allows CONFIRM_VOTE from CONFIRMED State",cat:"ctrl",
+   reason:"This is standard idempotent API behavior. Re-confirming from CONFIRMED state returns the cached result without re-validating the BCK. The finding's speculation about BCK brute-force does not apply to idempotent responses."},
+  {id:"SP-048",origSev:"low",title:"Online Voting API Exposed on Global Window Object",cat:"ops",
+   reason:"The full API surface is already accessible via the browser's DevTools Network tab and console. Exposing it on <code>window</code> provides no additional attack surface. Every web application's API is observable by definition."},
+  {id:"SP-050",origSev:"low",title:"Ciphertext toString() Exposes Cryptographic Values in Logs",cat:"arch",
+   reason:"ElGamal ciphertexts are <strong>public values by construction</strong>. They are published on the election bulletin board for independent verification. Logging public values does not leak private information."},
+  {id:"SP-051",origSev:"low",title:"VMGJ modInvert Skips Coprimality Validation",cat:"arch",
+   reason:"The code comment explicitly documents that callers guarantee coprimality. This is a standard optimization — checking preconditions at the call site rather than inside the utility. The pure-Java fallback has the check for safety."},
+  {id:"SP-052",origSev:"low",title:"Argon2 LESS_MEMORY Profile Used in Production",cat:"ctrl",
+   reason:"Both LESS_MEMORY (64 MiB) and STANDARD (2 GiB) profiles comply with RFC 9106. With the 5-attempt lockout, the reduced memory cost is sufficient. The finding itself acknowledges compliance."},
+  {id:"SP-053",origSev:"low",title:"JSON.stringify for Vote Correctness Validation",cat:"ctrl",
+   reason:"<code>JSON.stringify</code> produces deterministic output for same-construction objects in V8 and SpiderMonkey (the engines used in Chromium and Firefox). Property order is deterministic for non-integer string keys when constructed the same way."},
+  {id:"SP-055",origSev:"low",title:"Vote Caching Fingerprint Does Not Cover Encryption Randomness",cat:"ctrl",
+   reason:"The cache is client-side only. A network observer already sees the encrypted vote submission via the network request. The fingerprint is for local UX optimization (avoiding re-encryption on page refresh), not a privacy mechanism."},
+  {id:"SP-060",origSev:"low",title:"Idempotency Keys Contain Voter-Identifying Information",cat:"ctrl",
+   reason:"Idempotency keys must uniquely identify the operation being deduplicated. For vote submission, this requires voter-identifying fields. Hashing the key doesn't change the associated request data stored alongside it. This is a functional requirement."},
+  {id:"SP-061",origSev:"low",title:"Internal Hostname Exposed in K8s Ingress",cat:"dev",
+   reason:"In <code>evoting-e2e-dev</code> dev environment. The <code>.pnet.ch</code> domain is publicly known as Swiss Post's internal network. This is not sensitive information."},
+  {id:"SP-062",origSev:"info",title:"Non-Constant-Time BigInteger.equals() on Public ZKP Values",cat:"arch",
+   reason:"The finding itself states: <em>\"No practical impact — both values are public in the Fiat-Shamir construction.\"</em> When the assessment's own authors note no impact, it's definitionally not a finding."},
+  {id:"SP-063",origSev:"info",title:"ExponentiationProof Skips Statement Verification During Generation",cat:"ctrl",
+   reason:"A code consistency observation, not a vulnerability. The precondition is documented. Inconsistent inputs produce unverifiable proofs that fail at the verification step. The impact is debugging difficulty, not a security issue."}
+];
+
+let validSevFilter='all';
+let fpCatFilter='all';
+
+function switchTab(t){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  document.querySelector(`.tab[onclick*="${t}"]`).classList.add('active');
+  document.getElementById(t).classList.add('active');
+}
+
+function toggleFinding(el){el.closest('.finding').classList.toggle('open')}
+
+function toggleValidSev(btn){
+  document.querySelectorAll('#valid .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  validSevFilter=btn.dataset.sev;
+  filterValid();
+}
+function filterValid(){
+  const q=document.getElementById('validSearch').value.toLowerCase();
+  let count=0;
+  document.querySelectorAll('#validList .finding').forEach(f=>{
+    const s=f.dataset.sev,txt=f.dataset.searchtext;
+    const show=(validSevFilter==='all'||s===validSevFilter)&&(!q||txt.includes(q));
+    f.style.display=show?'':'none';
+    if(show)count++;
+  });
+  document.getElementById('validCount').textContent=`Showing ${count} of ${validFindings.length} findings`;
+}
+
+function toggleFPCat(btn){
+  document.querySelectorAll('#removed .filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  fpCatFilter=btn.dataset.cat;
+  filterFP();
+}
+function filterFP(){
+  const q=document.getElementById('fpSearch').value.toLowerCase();
+  let count=0;
+  document.querySelectorAll('#fpList .finding').forEach(f=>{
+    const c=f.dataset.cat,txt=f.dataset.searchtext;
+    const show=(fpCatFilter==='all'||c===fpCatFilter)&&(!q||txt.includes(q));
+    f.style.display=show?'':'none';
+    if(show)count++;
+  });
+  document.getElementById('fpCount').textContent=`Showing ${count} of ${fpFindings.length} findings`;
+}
+
+function sevLabel(s){
+  const map={critical:'Critical',high:'High',medium:'Medium',low:'Low',info:'Info'};
+  return map[s]||s;
+}
+const catLabels={dev:'Dev Environment',arch:'Misunderstood Architecture',ops:'Operational Context',ctrl:'Mitigating Controls'};
+
+function renderValid(){
+  const el=document.getElementById('validList');
+  el.innerHTML=validFindings.map(f=>{
+    const adj=f.origSev!==f.sev?`<span class="adj-tag down">${sevLabel(f.origSev)}→${sevLabel(f.sev)}</span>`:'';
+    return `<div class="finding" data-sev="${f.sev}" data-searchtext="${(f.id+' '+f.title+' '+f.cat+' '+f.file+' '+f.desc+' '+f.triage).toLowerCase().replace(/<[^>]+>/g,'')}">
+      <div class="finding-header" onclick="toggleFinding(this)">
+        <span class="finding-id">${f.id}</span>
+        <span class="sev ${f.sev}">${sevLabel(f.sev)}</span>
+        ${adj}
+        <span class="finding-title">${f.title}</span>
+        <span class="cat-tag">${f.cat}</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="finding-body">
+        <div class="file"><strong>File:</strong> <span>${f.file}</span></div>
+        <p><strong>Description:</strong> ${f.desc}</p>
+        <p><strong>Impact:</strong> ${f.impact}</p>
+        <div class="triage-note"><strong>Triage:</strong> ${f.triage}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function renderFP(){
+  const el=document.getElementById('fpList');
+  el.innerHTML=fpFindings.map(f=>`
+    <div class="finding" data-cat="${f.cat}" data-searchtext="${(f.id+' '+f.title+' '+catLabels[f.cat]+' '+f.reason).toLowerCase().replace(/<[^>]+>/g,'')}">
+      <div class="finding-header" onclick="toggleFinding(this)">
+        <span class="finding-id">${f.id}</span>
+        <span class="sev fp">Removed</span>
+        <span class="sev ${f.origSev}" style="opacity:0.5;text-decoration:line-through">${sevLabel(f.origSev)}</span>
+        <span class="finding-title">${f.title}</span>
+        <span class="cat-tag">${catLabels[f.cat]}</span>
+        <span class="chevron">&#9654;</span>
+      </div>
+      <div class="finding-body">
+        <div class="triage-note"><strong>Removal Rationale:</strong> ${f.reason}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+renderValid();
+renderFP();
+</script>
