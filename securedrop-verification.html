@@ -1,0 +1,705 @@
+<title>SecureDrop Verification Report</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+:root {
+  --bg: #0c0e12;
+  --surface: #151820;
+  --surface-raised: #1c2028;
+  --border: #2a2f3a;
+  --fg: #e2e4e8;
+  --fg-dim: #8b919e;
+  --accent: #4d9fff;
+  --critical: #ff4d6a;
+  --high: #ff8c42;
+  --medium: #e8c94a;
+  --low: #6bcf7f;
+  --info: #7b8794;
+  --known: #9d7bea;
+  --false-pos: #4ecdc4;
+  --partial: #c89b3c;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'Menlo', monospace;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f5f6f8;
+    --surface: #ffffff;
+    --surface-raised: #eef0f3;
+    --border: #d4d7de;
+    --fg: #1a1d24;
+    --fg-dim: #5c6370;
+    --accent: #2b7de9;
+    --critical: #d42f4c;
+    --high: #c96a1f;
+    --medium: #a8890e;
+    --low: #2e8b45;
+    --info: #6b7785;
+    --known: #7048c6;
+    --false-pos: #1fa296;
+    --partial: #9a7520;
+    color-scheme: light;
+  }
+}
+:root[data-theme="light"] {
+  --bg: #f5f6f8;
+  --surface: #ffffff;
+  --surface-raised: #eef0f3;
+  --border: #d4d7de;
+  --fg: #1a1d24;
+  --fg-dim: #5c6370;
+  --accent: #2b7de9;
+  --critical: #d42f4c;
+  --high: #c96a1f;
+  --medium: #a8890e;
+  --low: #2e8b45;
+  --info: #6b7785;
+  --known: #7048c6;
+  --false-pos: #1fa296;
+  --partial: #9a7520;
+  color-scheme: light;
+}
+
+* { box-sizing: border-box; margin: 0; }
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-body);
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+}
+.wrap { max-width: 1100px; margin: 0 auto; padding: 2rem 0 3rem; }
+
+h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: .25rem; }
+.subtitle { color: var(--fg-dim); font-size: .9rem; margin-bottom: 2rem; }
+h2 { font-size: 1.15rem; font-weight: 600; margin: 2.5rem 0 1rem; letter-spacing: -0.01em; }
+h3 { font-size: .95rem; font-weight: 600; margin: 1.5rem 0 .75rem; }
+
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: .75rem; margin-bottom: 2rem; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1rem; text-align: center; }
+.stat-num { font-size: 1.75rem; font-weight: 700; font-family: var(--font-mono); }
+.stat-label { font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--fg-dim); margin-top: .25rem; }
+
+.legend { display: flex; flex-wrap: wrap; gap: .5rem .75rem; margin-bottom: 1.5rem; font-size: .75rem; }
+.legend-item { display: flex; align-items: center; gap: .35rem; }
+.dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+
+.filters { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 1.5rem; }
+.filter-btn { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: .4rem .75rem; font-size: .78rem; font-family: var(--font-body); color: var(--fg-dim); cursor: pointer; transition: all .15s; }
+.filter-btn:hover, .filter-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+th { text-align: left; font-size: .7rem; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: var(--fg-dim); padding: .6rem .5rem; border-bottom: 2px solid var(--border); position: sticky; top: 0; background: var(--bg); }
+td { padding: .65rem .5rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+tr:hover td { background: var(--surface); }
+
+.id-col { font-family: var(--font-mono); font-weight: 500; font-size: .78rem; white-space: nowrap; width: 60px; }
+.sev-col { width: 80px; }
+.status-col { width: 120px; }
+
+.badge { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .7rem; font-weight: 600; letter-spacing: .03em; text-transform: uppercase; }
+.badge-critical { background: color-mix(in srgb, var(--critical) 18%, transparent); color: var(--critical); }
+.badge-high { background: color-mix(in srgb, var(--high) 18%, transparent); color: var(--high); }
+.badge-medium { background: color-mix(in srgb, var(--medium) 18%, transparent); color: var(--medium); }
+.badge-low { background: color-mix(in srgb, var(--low) 18%, transparent); color: var(--low); }
+.badge-info { background: color-mix(in srgb, var(--info) 18%, transparent); color: var(--info); }
+
+.status { display: inline-block; padding: .15rem .5rem; border-radius: 4px; font-size: .68rem; font-weight: 600; letter-spacing: .04em; }
+.status-verified { background: color-mix(in srgb, var(--critical) 15%, transparent); color: var(--critical); }
+.status-partial { background: color-mix(in srgb, var(--partial) 15%, transparent); color: var(--partial); }
+.status-known { background: color-mix(in srgb, var(--known) 15%, transparent); color: var(--known); }
+.status-false { background: color-mix(in srgb, var(--false-pos) 15%, transparent); color: var(--false-pos); }
+
+.evidence { font-family: var(--font-mono); font-size: .72rem; color: var(--fg-dim); margin-top: .3rem; line-height: 1.5; }
+.repo-tag { font-size: .6rem; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; padding: .1rem .35rem; border-radius: 3px; background: color-mix(in srgb, var(--accent) 15%, transparent); color: var(--accent); }
+
+.table-wrap { overflow-x: auto; }
+
+.section-header { display: flex; align-items: baseline; gap: .75rem; flex-wrap: wrap; }
+.count-badge { font-size: .75rem; font-weight: 600; color: var(--fg-dim); background: var(--surface-raised); padding: .15rem .5rem; border-radius: 4px; }
+
+.summary-box { background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 1.25rem; margin-bottom: 1.5rem; }
+.summary-box p { font-size: .85rem; color: var(--fg-dim); margin-bottom: .5rem; }
+.summary-box p:last-child { margin-bottom: 0; }
+.summary-box strong { color: var(--fg); }
+
+@media (max-width: 700px) {
+  h1 { font-size: 1.35rem; }
+  .stats { grid-template-columns: repeat(3, 1fr); }
+  .stat-num { font-size: 1.3rem; }
+  td, th { padding: .5rem .35rem; }
+  .evidence { font-size: .68rem; }
+}
+</style>
+
+<div class="wrap">
+  <h1>SecureDrop Live Verification Report</h1>
+  <p class="subtitle">59 audit findings verified against source code &middot; Cross-referenced with BugCrowd scope &middot; Nov 2024</p>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" style="color:var(--critical)">42</div><div class="stat-label">Verified</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--partial)">2</div><div class="stat-label">Partial</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--known)">7</div><div class="stat-label">Known / Accepted</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--false-pos)">1</div><div class="stat-label">False Positive</div></div>
+    <div class="stat"><div class="stat-num" style="color:var(--low)">7</div><div class="stat-label">Exploitable &amp; Not Excluded</div></div>
+    <div class="stat"><div class="stat-num">59</div><div class="stat-label">Total</div></div>
+  </div>
+
+  <div class="summary-box">
+    <p><strong>Methodology:</strong> All three repositories (securedrop, securedrop-client, securedrop-workstation) were cloned and each finding was verified against the actual source code at the specific file and line cited. Findings were then cross-referenced against the <strong>BugCrowd scope document</strong> to identify which are explicitly excluded from the bug bounty program.</p>
+    <p><strong>Key insight:</strong> Of the 42 verified findings, only <strong>7 are both truly exploitable AND not covered by BugCrowd exclusions</strong>. The remainder are either low-severity hardening issues, informational items, or BugCrowd-excluded known/accepted behaviors. The 7 actionable findings are in the cryptographic layer (SD-001, SD-002), authentication logic (SD-006, SD-007), memory management (SD-009), input validation (SD-020, SD-031).</p>
+  </div>
+
+  <div class="legend">
+    <div class="legend-item"><div class="dot" style="background:var(--critical)"></div> Verified</div>
+    <div class="legend-item"><div class="dot" style="background:var(--partial)"></div> Partial</div>
+    <div class="legend-item"><div class="dot" style="background:var(--known)"></div> Known / Accepted</div>
+    <div class="legend-item"><div class="dot" style="background:var(--false-pos)"></div> False Positive</div>
+  </div>
+
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All (59)</button>
+    <button class="filter-btn" data-filter="exploitable">Exploitable (7)</button>
+    <button class="filter-btn" data-filter="verified">Verified (42)</button>
+    <button class="filter-btn" data-filter="known">Known/Accepted (7)</button>
+    <button class="filter-btn" data-filter="critical">Critical/High (8)</button>
+    <button class="filter-btn" data-filter="core">Core Server (48)</button>
+    <button class="filter-btn" data-filter="client">Client (9)</button>
+    <button class="filter-btn" data-filter="workstation">Workstation (2)</button>
+  </div>
+
+  <!-- EXPLOITABLE FINDINGS: Verified + Not BugCrowd Excluded + High Severity -->
+  <div class="section-header">
+    <h2>Exploitable Findings (Action Required)</h2>
+    <span class="count-badge">7 findings</span>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Status</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr data-sev="critical" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-001</td>
+        <td class="sev-col"><span class="badge badge-critical">Critical</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>Signature Verification Bypass in Redwood Decryption</strong> <span class="repo-tag">core</span>
+          <div class="evidence">redwood/src/decryption.rs &mdash; HelperPolicy::check() returns Ok(()) unconditionally, get_certs() returns empty Vec. All PGP signature verification is completely skipped during decryption.</div>
+        </td>
+      </tr>
+      <tr data-sev="high" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-002</td>
+        <td class="sev-col"><span class="badge badge-high">High</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>NullPolicy Accepts Revoked/Expired/Weak Keys</strong> <span class="repo-tag">core</span>
+          <div class="evidence">redwood/src/keys.rs &mdash; Comment: "We don't care about whether it is revoked or expired, or even if its not a weak key since we're just decrypting." Fallback uses NullPolicy::new() which accepts any key.</div>
+        </td>
+      </tr>
+      <tr data-sev="high" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-006</td>
+        <td class="sev-col"><span class="badge badge-high">High</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>No Rate Limiting on Source Login</strong> <span class="repo-tag">core</span>
+          <div class="evidence">source_app/main.py:365-417 &mdash; /login endpoint has no rate limiting, throttling, or CAPTCHA. Each attempt runs a full scrypt derivation (~250ms), enabling passphrase brute-force.</div>
+        </td>
+      </tr>
+      <tr data-sev="high" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-007</td>
+        <td class="sev-col"><span class="badge badge-high">High</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>2FA Oracle &mdash; Token Verified Before Password</strong> <span class="repo-tag">core</span>
+          <div class="evidence">models.py:842-848 &mdash; verify_2fa_token() called at line 842, valid_password() at line 848. Attacker can brute-force 2FA tokens without knowing the password, then brute-force the password once the token is known.</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-009</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>Unbounded lru_cache on scrypt Derivation (Memory DoS)</strong> <span class="repo-tag">core</span>
+          <div class="evidence">source_user.py:156,169 &mdash; @lru_cache with no maxsize on derive_source_gpg_secret() and derive_source_filesystem_id(). Each unique passphrase permanently allocates ~128 bytes of scrypt output. Flood of unique passphrases causes OOM.</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-020</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>Weak PGP Validation &mdash; Prefix Check Only</strong> <span class="repo-tag">core</span>
+          <div class="evidence">store.py:345 &mdash; if "-----BEGIN PGP MESSAGE-----" not in content.split("\n")[0]. Only checks first line for PGP header prefix. Attacker can prepend a valid header to non-PGP content.</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="yes">
+        <td class="id-col">SD-031</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td>
+          <strong>Reversed Substring Match in Store Lookup</strong> <span class="repo-tag">core</span>
+          <div class="evidence">store.py:174 &mdash; if file_ in filename (should be filename in file_). Checks if the filesystem filename is a substring OF the search filename, not the reverse. Can match unintended files.</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- KNOWN / ACCEPTED FINDINGS -->
+  <div class="section-header">
+    <h2>Known / Accepted (BugCrowd Excluded)</h2>
+    <span class="count-badge">7 findings</span>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Status</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr data-sev="high" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-003</td>
+        <td class="sev-col"><span class="badge badge-high">High</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>Source Codename Stored in Session Cookie</strong> <span class="repo-tag">core</span>
+          <div class="evidence">source_app/session_manager.py:46 &mdash; BugCrowd: "Pointing out that the Flask session cookie discloses the source codename/passphrase" (GitHub issue #204)</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-004</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>2FA Token Logged in Plaintext</strong> <span class="repo-tag">core</span>
+          <div class="evidence">journalist_app/main.py:42-46 &mdash; BugCrowd: "Pointing out that HOTP or TOTP shared secrets or tokens can show up in server logs"</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-005</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>HOTP Secret Logged on Failure</strong> <span class="repo-tag">core</span>
+          <div class="evidence">journalist_app/utils.py:158 &mdash; BugCrowd: "Pointing out that HOTP or TOTP shared secrets or tokens can show up in server logs"</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-021</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>Account Lockout via Login Throttle</strong> <span class="repo-tag">core</span>
+          <div class="evidence">models.py &mdash; BugCrowd: "Attacks that can lockout a journalist that rely on knowing the journalist's username and 2FA credentials, as well as the authenticated onion service token"</div>
+        </td>
+      </tr>
+      <tr data-sev="medium" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-034</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>No Re-authentication for 2FA Reset</strong> <span class="repo-tag">core</span>
+          <div class="evidence">journalist_app/admin.py:286-298 &mdash; BugCrowd: "Pointing out that a 2FA reset does not prompt for re-authentication"</div>
+        </td>
+      </tr>
+      <tr data-sev="low" data-status="known" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-043</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>Admin IDOR &mdash; Full Access to All Sources</strong> <span class="repo-tag">core</span>
+          <div class="evidence">BugCrowd: "IDOR vulnerabilities based on every journalist and admin user having full access to all sources and submissions"</div>
+        </td>
+      </tr>
+      <tr data-sev="low" data-status="known" data-repo="workstation" data-exploit="no">
+        <td class="id-col">SD-053</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-known">KNOWN</span></td>
+        <td>
+          <strong>Updater Uses /tmp for Migration State</strong> <span class="repo-tag">workstation</span>
+          <div class="evidence">sdw_updater/Updater.py:40 &mdash; MIGRATION_DIR = "/tmp/sdw-migrations". Comment acknowledges: "dom0 is not a multi-user environment." BugCrowd: "Attacks on the SecureDrop Workstation that rely on the attacker having access to dom0"</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- ALL OTHER VERIFIED FINDINGS -->
+  <div class="section-header">
+    <h2>Other Verified Findings (Lower Priority)</h2>
+    <span class="count-badge">35 findings</span>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Status</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-008</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>No Key Zeroization in SecureTemporaryFile</strong> <span class="repo-tag">core</span>
+        <div class="evidence">secure_tempfile.py:64 &mdash; self.key = os.urandom(...) stored as Python bytes, no zeroization in close() method</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-010</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Cache Timing Oracle on scrypt</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_user.py:156,169 &mdash; Cached passphrase returns in microseconds vs ~250ms for scrypt. Reveals whether a passphrase was previously used.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-011</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Login Timing Oracle &mdash; Three Distinct Code Paths</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_app/main.py:380-416 &mdash; Modern login (fast), legacy no keypair (PGP gen ~seconds), legacy no secret key (medium) create timing differences.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-012</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Single-Submission Sources Skip Timestamp Normalization</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_app/utils.py:80 &mdash; if len(sub_paths) > 1 guard skips sources with only one submission</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-013</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>OTP Secret Transmitted in Form Body</strong> <span class="repo-tag">core</span>
+        <div class="evidence">journalist_app/admin.py:256 &mdash; otp_secret = request.form["otp_secret"]. Secret sent as POST form field.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-014</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Single last_token Allows TOTP Replay in Adjacent Window</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:845 &mdash; user.last_token tracks only the most recent token</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-016</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Redis KEYS Command for Session Listing</strong> <span class="repo-tag">core</span>
+        <div class="evidence">journalist_app/sessions.py:233 &mdash; self.redis.keys(self.web_key_prefix + "*") blocks Redis on large datasets</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-017</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Unauthenticated /metadata Endpoint Exposes Server Info</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_app/api.py:15-28 &mdash; Returns sd_version, server_os, gpg_fpr, supported_languages without auth</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-018</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Designation Race Condition</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_user.py:79 &mdash; TODO: "Add unique=True to models.Source.journalist_designation to enforce uniqueness"</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-019</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Filesystem ID in Error Messages</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_user.py:122-123 &mdash; SourcePassphraseCollisionError includes filesystem_id in exception text</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-022</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Tor AppArmor Profile in Complain Mode</strong> <span class="repo-tag">core</span>
+        <div class="evidence">debian/app-code/etc/apparmor.d/usr.sbin.tor:3 &mdash; flags=(complain). Profile logs violations but does not enforce.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-023</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Apache AppArmor Grants sys_ptrace</strong> <span class="repo-tag">core</span>
+        <div class="evidence">debian/app-code/etc/apparmor.d/usr.sbin.apache2:10 &mdash; capability sys_ptrace. Allows process inspection/debugging.</div></td>
+      </tr>
+      <tr data-sev="high" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-024</td>
+        <td class="sev-col"><span class="badge badge-high">High</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Unencrypted Backup Archive</strong> <span class="repo-tag">core</span>
+        <div class="evidence">debian/app-code/usr/bin/securedrop-app-backup.py:48 &mdash; tarfile.open(..., "w:gz") creates plain gzipped tar. Contains config.py (with secrets), entire /var/lib/securedrop (with db.sqlite, keys), and Tor hidden service keys.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-027</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Username Enumeration via Timing</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:837 &mdash; InvalidUsernameException raised before password check. Different timing for valid vs invalid usernames.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-025</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Proxy URL Join Path Confusion</strong> <span class="repo-tag">client</span>
+        <div class="evidence">proxy/src/main.rs:279 &mdash; origin.join(&incoming_request.path_query). TODO comment: "Consider just allowlisting a number of API paths." Origin check (line 285) prevents host escape but not path replacement.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-026</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Hidden Service Hostname in QubesDB</strong> <span class="repo-tag">workstation</span>
+        <div class="evidence">securedrop_salt/sd-proxy.sls:80-81 &mdash; .onion hostname and key stored as Qubes VM features, readable by any process in the VM.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-028</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Double-Encryption Fallback Returns Outer Plaintext</strong> <span class="repo-tag">client</span>
+        <div class="evidence">app/src/main/crypto.ts:506-514 &mdash; On inner decryption failure, resolves with outer plaintext and null fingerprint (indistinguishable from non-double-encrypted).</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-030</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Source Designation in Encrypted Filenames</strong> <span class="repo-tag">core</span>
+        <div class="evidence">store.py:323 &mdash; f"{count}-{journalist_filename}-doc.gz.gpg". Designation visible in filename even though content is encrypted.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-032</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Substring Match for GPG Key Lookup</strong> <span class="repo-tag">core</span>
+        <div class="evidence">encryption.py:195 &mdash; if source_filesystem_id in uid. Substring match could collide with another key's UID.</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-033</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Archive Extraction TOCTOU</strong> <span class="repo-tag">client</span>
+        <div class="evidence">export/securedrop_export/directory.py:64-79 &mdash; Check-then-extract pattern with # noqa: S202. Path traversal checks are non-atomic with extractall().</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-035</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Source Metadata Exposure via API v1</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:219-253 &mdash; API exposes interaction_count, number_of_documents, number_of_messages</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-036</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Path Resolution Inconsistency</strong> <span class="repo-tag">core</span>
+        <div class="evidence">rm.py:66 uses os.path.abspath vs store.py uses os.path.realpath. Symlinks could cause different path resolution.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-037</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Long Session Lifetime (2h, 5 Renewals = 10h Max)</strong> <span class="repo-tag">core</span>
+        <div class="evidence">journalist_app/sessions.py:258-259 &mdash; SESSION_LIFETIME=7200, SESSION_RENEW_COUNT=5</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-038</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Weak TOTP Keys Allowed (80-bit Minimum)</strong> <span class="repo-tag">core</span>
+        <div class="evidence">two_factor.py:101,123 &mdash; _SECRET_MIN_BASE32_LENGTH = 16 (80 bits), enforce_key_length=False for legacy users</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-039</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Password Flashed in HTTP Response</strong> <span class="repo-tag">core</span>
+        <div class="evidence">journalist_app/utils.py:495-522 &mdash; New password rendered in &lt;code&gt; tag via Markup. Appears in flash message HTML and stays in browser history/cache.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-040</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>ZIP Archive Includes Source Designation in Directory Structure</strong> <span class="repo-tag">core</span>
+        <div class="evidence">store.py:200-220 &mdash; Bulk download ZIP uses journalist_designation as directory name</div></td>
+      </tr>
+      <tr data-sev="medium" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-041</td>
+        <td class="sev-col"><span class="badge badge-medium">Medium</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Export Sets World-Readable Permissions on USB</strong> <span class="repo-tag">client</span>
+        <div class="evidence">export/securedrop_export/disk/cli.py:422 &mdash; subprocess.check_call(["chmod", "-R", "ugo+r", target_path])</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-042</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Codename .strip() Alters Passphrase Space</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_app/main.py:373 &mdash; DicewarePassphrase(request.form["codename"].strip()). Leading/trailing whitespace silently removed.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-044</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Journalist PII in API v1</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:448-468 &amp; journalist_app/api.py:96-98 &mdash; journalist_username, journalist_first_name, journalist_last_name in token response</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-045</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Username Silently Truncated to 255 Chars</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:803 &mdash; username = username[:255] with no error raised</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-046</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Transcript Template Exposes Source Designation &amp; Journalist Names</strong> <span class="repo-tag">client</span>
+        <div class="evidence">app/resources/templates/transcript.txt.liquid:1-2 &mdash; Source: {{d.data.journalist_designation}}, journalist names in messages</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-047</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Full Store Traversal via os.walk</strong> <span class="repo-tag">core</span>
+        <div class="evidence">store.py:172 &mdash; os.walk(os.path.realpath(self.__storage_path)) scans entire storage tree for every lookup</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-048</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>UUID Reflected in Error Response</strong> <span class="repo-tag">core</span>
+        <div class="evidence">journalist_app/api.py:304 &mdash; abort(404, f"file not found: {file_uuid}"). User-supplied UUID reflected in API error.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-049</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>globals() Used for Dynamic Model Lookup</strong> <span class="repo-tag">core</span>
+        <div class="evidence">models.py:58 &mdash; globals()[model] allows arbitrary module attribute access via user-controlled string</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-051</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>PID File in World-Writable /tmp</strong> <span class="repo-tag">core</span>
+        <div class="evidence">config.py.example:32 &mdash; WORKER_PIDFILE = "/tmp/securedrop_worker.pid"</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-052</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Hardcoded /tmp Despite TEMP_DIR Config</strong> <span class="repo-tag">core</span>
+        <div class="evidence">store.py:325 &mdash; SecureTemporaryFile("/tmp") ignores config.TEMP_DIR</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-054</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Export Subprocess Without Full Paths</strong> <span class="repo-tag">client</span>
+        <div class="evidence">export/securedrop_export/disk/cli.py &mdash; Bare "mkdir", "cp", "chmod", "sync", "rm" commands without /usr/bin/ prefix</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-055</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>PathBuilder TOCTOU (existsSync then realpathSync)</strong> <span class="repo-tag">client</span>
+        <div class="evidence">app/src/main/storage.ts:53-59 &mdash; doesntEscape() calls existsSync() then realpathSync() non-atomically</div></td>
+      </tr>
+      <tr data-sev="info" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-056</td>
+        <td class="sev-col"><span class="badge badge-info">Info</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Python 3.8 Paths Hardcoded</strong> <span class="repo-tag">core</span>
+        <div class="evidence">Systemd services &amp; AppArmor profiles reference python3.8 site-packages (also have python3.12 entries)</div></td>
+      </tr>
+      <tr data-sev="info" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-057</td>
+        <td class="sev-col"><span class="badge badge-info">Info</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Excessive shred Passes (30)</strong> <span class="repo-tag">core</span>
+        <div class="evidence">rm.py:45 &mdash; cmd = ["shred", "-z", "-n", "30"]. NIST recommends 1-3 passes for modern drives.</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-058</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Original Filename Preserved in Gzip Header</strong> <span class="repo-tag">core</span>
+        <div class="evidence">store.py:326 &mdash; gzip.GzipFile(filename=sanitized_filename, ...) preserves the original filename in the encrypted gzip</div></td>
+      </tr>
+      <tr data-sev="low" data-status="verified" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-059</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-verified">VERIFIED</span></td>
+        <td><strong>Codename Detection Uses Exact Match Only</strong> <span class="repo-tag">core</span>
+        <div class="evidence">source_app/utils.py:26 &mdash; compare_digest() only catches exact codename, not substrings or partial matches</div></td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- PARTIAL + FALSE POSITIVE -->
+  <div class="section-header">
+    <h2>Partial &amp; False Positive Findings</h2>
+    <span class="count-badge">3 findings</span>
+  </div>
+
+  <div class="table-wrap">
+  <table>
+    <thead><tr><th>ID</th><th>Severity</th><th>Status</th><th>Finding</th></tr></thead>
+    <tbody>
+      <tr data-sev="low" data-status="partial" data-repo="client" data-exploit="no">
+        <td class="id-col">SD-029</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-partial">PARTIAL</span></td>
+        <td>
+          <strong>unsafe FFI in QubesDB Reader</strong> <span class="repo-tag">client</span>
+          <div class="evidence">proxy/src/config_qubesdb.rs:19-30 &mdash; Audit claims missing bounds check, but code DOES check len > 0 at line 25 with safety comment. Unsafe block exists but the specific claim about missing bounds is inaccurate.</div>
+        </td>
+      </tr>
+      <tr data-sev="low" data-status="partial" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-050</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-partial">PARTIAL</span></td>
+        <td>
+          <strong>Jinja2 |safe on Translation String</strong> <span class="repo-tag">core</span>
+          <div class="evidence">journalist_templates/base.html:63 &mdash; {{ gettext(...).format(version=version)|safe }}. The version variable is server-controlled (not user input). Risk is only via malicious translator (supply-chain), not direct XSS. nosemgrep comment confirms review.</div>
+        </td>
+      </tr>
+      <tr data-sev="low" data-status="false" data-repo="core" data-exploit="no">
+        <td class="id-col">SD-015</td>
+        <td class="sev-col"><span class="badge badge-low">Low</span></td>
+        <td class="status-col"><span class="status status-false">FALSE POS</span></td>
+        <td>
+          <strong>API CSRF Exemption</strong> <span class="repo-tag">core</span>
+          <div class="evidence">journalist_app/api.py &mdash; API uses token-based auth (via /api/v1/token endpoint), not cookie-based session auth. CSRF protection is irrelevant for bearer token APIs. CSRFProtect is enabled app-wide (line 66) for the web UI. Standard practice.</div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <h2>Recommendations</h2>
+  <div class="summary-box">
+    <p><strong>Priority 1 (Fix Now):</strong> SD-001 and SD-002 are in the cryptographic layer and affect the fundamental security guarantee of the system. The signature verification bypass means a MITM could substitute ciphertext without detection.</p>
+    <p><strong>Priority 2 (Next Sprint):</strong> SD-006 (source rate limiting), SD-007 (2FA oracle), SD-009 (cache DoS). These affect authentication and availability.</p>
+    <p><strong>Priority 3 (Planned):</strong> SD-020 (PGP validation) and SD-031 (reversed substring). These are logic bugs that could lead to unexpected behavior under specific conditions.</p>
+    <p><strong>Accept/Defer:</strong> The remaining 35 verified findings are real but low-severity hardening issues. Many are defense-in-depth improvements (AppArmor, path handling, timing oracles) that reduce attack surface without addressing immediate exploitation vectors. Prioritize based on available engineering resources.</p>
+  </div>
+</div>
+
+<script>
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const filter = btn.dataset.filter;
+    document.querySelectorAll('tbody tr').forEach(row => {
+      let show = true;
+      if (filter === 'exploitable') show = row.dataset.exploit === 'yes';
+      else if (filter === 'verified') show = row.dataset.status === 'verified';
+      else if (filter === 'known') show = row.dataset.status === 'known';
+      else if (filter === 'critical') show = row.dataset.sev === 'critical' || row.dataset.sev === 'high';
+      else if (filter === 'core') show = row.dataset.repo === 'core';
+      else if (filter === 'client') show = row.dataset.repo === 'client';
+      else if (filter === 'workstation') show = row.dataset.repo === 'workstation';
+      row.style.display = show ? '' : 'none';
+    });
+  });
+});
+</script>
