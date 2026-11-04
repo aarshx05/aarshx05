@@ -1,0 +1,926 @@
+<title>SecureDrop Triage</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap">
+<style>
+/* Layout: security-triage dashboard — dark-first, monospace accents, severity color scale */
+:root {
+  --bg: #0a0c10;
+  --bg-card: #111419;
+  --bg-code: #161a22;
+  --bg-hover: #1a1f28;
+  --fg: #c4c9d4;
+  --fg-dim: #6b7180;
+  --fg-muted: #454b5a;
+  --fg-bright: #e4e8f0;
+  --border: #1c2030;
+  --border-hl: #282e3e;
+  --accent: #c084fc;
+  --accent-dim: rgba(192,132,252,0.10);
+  --critical: #ef4444;
+  --critical-bg: rgba(239,68,68,0.08);
+  --high: #f97316;
+  --high-bg: rgba(249,115,22,0.08);
+  --medium: #eab308;
+  --medium-bg: rgba(234,179,8,0.06);
+  --low: #3b82f6;
+  --low-bg: rgba(59,130,246,0.06);
+  --info: #6b7280;
+  --info-bg: rgba(107,114,128,0.06);
+  --fix-now: #ef4444;
+  --fix-soon: #f97316;
+  --plan: #eab308;
+  --accept: #3b82f6;
+  --monitor: #6b7280;
+  --agree: rgba(52,211,153,0.12);
+  --agree-text: #34d399;
+  --upgrade: rgba(249,115,22,0.12);
+  --upgrade-text: #fb923c;
+  --downgrade: rgba(59,130,246,0.12);
+  --downgrade-text: #60a5fa;
+  color-scheme: dark;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f6f7fa; --bg-card: #ffffff; --bg-code: #eef0f5; --bg-hover: #e8ebf2;
+    --fg: #1e2533; --fg-dim: #636b7e; --fg-muted: #9aa1b0; --fg-bright: #0f1420;
+    --border: #dde0e8; --border-hl: #cdd1dc;
+    --accent: #7c3aed; --accent-dim: rgba(124,58,237,0.08);
+    --critical: #dc2626; --critical-bg: rgba(220,38,38,0.06);
+    --high: #ea580c; --high-bg: rgba(234,88,12,0.06);
+    --medium: #ca8a04; --medium-bg: rgba(202,138,4,0.05);
+    --low: #2563eb; --low-bg: rgba(37,99,235,0.05);
+    --info: #6b7280; --info-bg: rgba(107,114,128,0.05);
+    --fix-now: #dc2626; --fix-soon: #ea580c; --plan: #ca8a04; --accept: #2563eb; --monitor: #6b7280;
+    --agree: rgba(5,150,105,0.08); --agree-text: #059669;
+    --upgrade: rgba(234,88,12,0.08); --upgrade-text: #c2410c;
+    --downgrade: rgba(37,99,235,0.08); --downgrade-text: #1d4ed8;
+    color-scheme: light;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0a0c10; --bg-card: #111419; --bg-code: #161a22; --bg-hover: #1a1f28;
+  --fg: #c4c9d4; --fg-dim: #6b7180; --fg-muted: #454b5a; --fg-bright: #e4e8f0;
+  --border: #1c2030; --border-hl: #282e3e;
+  --accent: #c084fc; --accent-dim: rgba(192,132,252,0.10);
+  --critical: #ef4444; --critical-bg: rgba(239,68,68,0.08);
+  --high: #f97316; --high-bg: rgba(249,115,22,0.08);
+  --medium: #eab308; --medium-bg: rgba(234,179,8,0.06);
+  --low: #3b82f6; --low-bg: rgba(59,130,246,0.06);
+  --info: #6b7280; --info-bg: rgba(107,114,128,0.06);
+  --fix-now: #ef4444; --fix-soon: #f97316; --plan: #eab308; --accept: #3b82f6; --monitor: #6b7280;
+  --agree: rgba(52,211,153,0.12); --agree-text: #34d399;
+  --upgrade: rgba(249,115,22,0.12); --upgrade-text: #fb923c;
+  --downgrade: rgba(59,130,246,0.12); --downgrade-text: #60a5fa;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; margin: 0; }
+body {
+  background: var(--bg); color: var(--fg);
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 0;
+  line-height: 1.6;
+}
+code { font-family: 'IBM Plex Mono', 'Menlo', monospace; font-size: 0.78em; background: var(--bg-code); border-radius: 3px; padding: 1px 5px; }
+
+.header { padding: 2.5rem 0 1.2rem; border-bottom: 1px solid var(--border); }
+.header h1 { font-size: 1.5rem; font-weight: 700; letter-spacing: -0.02em; color: var(--fg-bright); text-wrap: balance; }
+.header .sub { color: var(--fg-dim); margin-top: 0.2rem; font-size: 0.84rem; }
+.header .meta { color: var(--fg-muted); font-size: 0.72rem; margin-top: 0.45rem; font-family: 'IBM Plex Mono', monospace; }
+
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+
+.tabs {
+  display: flex; gap: 0; border-bottom: 1px solid var(--border);
+  position: sticky; top: env(safe-area-inset-top, 0px); background: var(--bg); z-index: 5; margin: 0 0 1.5rem;
+  overflow-x: auto;
+}
+.tab {
+  background: none; border: none; border-bottom: 2px solid transparent;
+  padding: 0.8rem 1.1rem; color: var(--fg-dim); font-family: inherit;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.tab:hover { color: var(--fg); background: var(--bg-hover); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab .ct { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; background: var(--accent-dim); color: var(--accent); border-radius: 4px; padding: 1px 6px; margin-left: 5px; }
+.panel { display: none; padding-bottom: 3rem; }
+.panel.active { display: block; }
+
+.buckets { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 0.6rem; margin-bottom: 1.5rem; }
+.bucket { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 0.75rem 0.6rem; text-align: center; cursor: pointer; transition: border-color 0.15s; }
+.bucket:hover { border-color: var(--border-hl); }
+.bucket.sel { border-color: var(--accent); }
+.bucket .num { font-size: 1.45rem; font-weight: 700; font-family: 'IBM Plex Mono', monospace; font-variant-numeric: tabular-nums; }
+.bucket .lbl { font-size: 0.62rem; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 0.1rem; font-weight: 600; }
+
+.sec-h { font-size: 1.05rem; font-weight: 700; margin: 24px 0 10px; display: flex; align-items: center; gap: 8px; color: var(--fg-bright); }
+.sec-h .n { font-family: 'IBM Plex Mono', monospace; font-size: 0.66rem; font-weight: 600; border-radius: 4px; padding: 2px 7px; letter-spacing: 0.03em; }
+
+.triage-list { display: flex; flex-direction: column; gap: 0.55rem; }
+.tr-item {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  overflow: hidden; transition: border-color 0.15s;
+}
+.tr-item:hover { border-color: var(--border-hl); }
+.tr-head {
+  display: flex; align-items: flex-start; gap: 0.55rem;
+  padding: 0.75rem 0.95rem; cursor: pointer; user-select: none;
+}
+.tr-head:hover { background: var(--bg-hover); }
+.tr-id { font-family: 'IBM Plex Mono', monospace; font-size: 0.72rem; font-weight: 600; color: var(--fg-muted); min-width: 2.6rem; padding-top: 0.12rem; }
+.tr-mid { flex: 1; min-width: 0; }
+.tr-title { font-weight: 600; font-size: 0.86rem; line-height: 1.4; color: var(--fg-bright); }
+.tr-file { font-family: 'IBM Plex Mono', monospace; font-size: 0.68rem; color: var(--fg-muted); margin-top: 0.1rem; word-break: break-all; }
+.badges { display: flex; gap: 0.25rem; flex-shrink: 0; flex-wrap: wrap; justify-content: flex-end; align-items: flex-start; }
+.badge { display: inline-flex; align-items: center; padding: 0.16rem 0.45rem; border-radius: 5px; font-size: 0.62rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; white-space: nowrap; }
+.b-critical { background: var(--critical-bg); color: var(--critical); }
+.b-high { background: var(--high-bg); color: var(--high); }
+.b-medium { background: var(--medium-bg); color: var(--medium); }
+.b-low { background: var(--low-bg); color: var(--low); }
+.b-info { background: var(--info-bg); color: var(--info); }
+.b-agree { background: var(--agree); color: var(--agree-text); }
+.b-upgrade { background: var(--upgrade); color: var(--upgrade-text); }
+.b-downgrade { background: var(--downgrade); color: var(--downgrade-text); }
+.action-tag { font-family: 'IBM Plex Mono', monospace; font-size: 0.6rem; font-weight: 600; padding: 0.15rem 0.4rem; border-radius: 4px; white-space: nowrap; }
+.a-fix-now { background: rgba(239,68,68,0.12); color: var(--fix-now); }
+.a-fix-soon { background: rgba(249,115,22,0.12); color: var(--fix-soon); }
+.a-plan { background: rgba(234,179,8,0.10); color: var(--plan); }
+.a-accept { background: rgba(59,130,246,0.10); color: var(--accept); }
+.a-monitor { background: rgba(107,114,128,0.10); color: var(--monitor); }
+.expand-icon { color: var(--fg-muted); font-size: 0.7rem; transition: transform 0.2s; flex-shrink: 0; padding-top: 0.15rem; }
+.tr-item.open .expand-icon { transform: rotate(90deg); }
+
+.tr-body { display: none; padding: 0 0.95rem 0.95rem; border-top: 1px solid var(--border); }
+.tr-item.open .tr-body { display: block; padding-top: 0.8rem; }
+.tr-body h4 { font-size: 0.72rem; font-weight: 600; color: var(--fg-dim); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 0.35rem; margin-top: 0.75rem; }
+.tr-body h4:first-child { margin-top: 0; }
+.tr-body p { font-size: 0.82rem; line-height: 1.6; margin-bottom: 0.4rem; }
+.tr-body ul { font-size: 0.82rem; line-height: 1.6; padding-left: 1.2em; margin-bottom: 0.4rem; }
+.tr-body li { margin: 2px 0; }
+
+.verdict-box {
+  background: var(--bg-code); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.7rem 0.85rem; margin: 0.5rem 0; font-size: 0.8rem; line-height: 1.6;
+}
+.verdict-box strong { color: var(--fg-bright); }
+
+.search-bar { display: flex; gap: 0.4rem; margin-bottom: 1rem; flex-wrap: wrap; align-items: center; }
+.search-input {
+  flex: 1 1 220px; min-width: 0;
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 8px;
+  padding: 0.45rem 0.7rem; color: var(--fg); font-family: inherit; font-size: 0.82rem;
+}
+.search-input:focus { outline: 2px solid var(--accent); border-color: transparent; }
+.search-input::placeholder { color: var(--fg-muted); }
+.filter-btn {
+  background: var(--bg-card); border: 1px solid var(--border); border-radius: 6px;
+  padding: 0.28rem 0.55rem; color: var(--fg-dim); font-family: inherit;
+  font-size: 0.7rem; font-weight: 500; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+}
+.filter-btn:hover { background: var(--bg-hover); color: var(--fg); }
+.filter-btn.active { background: var(--accent-dim); color: var(--accent); border-color: var(--accent); }
+
+.summary-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 0.7rem; margin: 1rem 0; }
+.summary-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.1rem; }
+.summary-card h3 { font-size: 0.82rem; font-weight: 700; margin-bottom: 0.5rem; color: var(--fg-bright); }
+.summary-card p { font-size: 0.8rem; color: var(--fg-dim); line-height: 1.55; }
+.summary-card ul { font-size: 0.8rem; color: var(--fg); padding-left: 1.1em; line-height: 1.6; }
+.summary-card li { margin: 3px 0; }
+.summary-card .kv { display: flex; justify-content: space-between; font-size: 0.78rem; padding: 0.2rem 0; border-bottom: 1px solid var(--border); }
+.summary-card .kv:last-child { border-bottom: none; }
+.summary-card .kv .k { color: var(--fg-dim); }
+.summary-card .kv .v { font-family: 'IBM Plex Mono', monospace; font-weight: 600; }
+
+.empty { text-align: center; padding: 2.5rem 1rem; color: var(--fg-muted); font-size: 0.85rem; }
+
+@media (max-width: 600px) {
+  .header h1 { font-size: 1.25rem; }
+  .buckets { grid-template-columns: repeat(3, 1fr); }
+  .tr-head { flex-wrap: wrap; padding: 0.65rem 0.75rem; }
+  .badges { width: 100%; justify-content: flex-start; margin-top: 0.25rem; }
+  .tab { padding: 0.65rem 0.85rem; font-size: 0.78rem; }
+  .summary-grid { grid-template-columns: 1fr; }
+}
+</style>
+
+<div class="header">
+  <h1>SecureDrop Security Triage</h1>
+  <div class="sub">59 findings triaged across 3 repositories &mdash; prioritized by exploitability, impact, and operational context</div>
+  <div class="meta">freedomofpress/securedrop &middot; securedrop-client &middot; securedrop-workstation &mdash; Nov 2026</div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-t="executive">Executive Summary</button>
+  <button class="tab" data-t="triage">Full Triage<span class="ct">59</span></button>
+  <button class="tab" data-t="actions">Action Plan</button>
+</div>
+
+<!-- EXECUTIVE SUMMARY -->
+<div class="panel active" id="p-executive">
+
+<div class="buckets" id="exec-buckets">
+  <div class="bucket"><div class="num" style="color:var(--fix-now)">5</div><div class="lbl">Fix Now</div></div>
+  <div class="bucket"><div class="num" style="color:var(--fix-soon)">8</div><div class="lbl">Fix Soon</div></div>
+  <div class="bucket"><div class="num" style="color:var(--plan)">22</div><div class="lbl">Plan Fix</div></div>
+  <div class="bucket"><div class="num" style="color:var(--accept)">16</div><div class="lbl">Accept Risk</div></div>
+  <div class="bucket"><div class="num" style="color:var(--monitor)">8</div><div class="lbl">Monitor</div></div>
+</div>
+
+<div class="summary-grid">
+  <div class="summary-card">
+    <h3>Severity Assessment Changes</h3>
+    <div class="kv"><span class="k">Agree with audit severity</span><span class="v" style="color:var(--agree-text)">46 / 59</span></div>
+    <div class="kv"><span class="k">Recommend upgrade</span><span class="v" style="color:var(--upgrade-text)">4</span></div>
+    <div class="kv"><span class="k">Recommend downgrade</span><span class="v" style="color:var(--downgrade-text)">9</span></div>
+    <p style="margin-top:0.6rem">Most severity ratings are accurate. Upgrades target findings where Tor-context mitigations are weaker than assumed. Downgrades reflect operational context (Qubes isolation, Tor-only access).</p>
+  </div>
+  <div class="summary-card">
+    <h3>Top 5 Immediate Actions</h3>
+    <ul>
+      <li><strong>SD-001/002:</strong> Fix Sequoia PGP verification &mdash; cryptographic integrity is foundational</li>
+      <li><strong>SD-003:</strong> Remove raw passphrase from session cookie &mdash; source identity at stake</li>
+      <li><strong>SD-004/005:</strong> Stop logging 2FA material &mdash; trivial fix, high payoff</li>
+      <li><strong>SD-007:</strong> Reorder 2FA/password check &mdash; oracle eliminates 2FA security</li>
+      <li><strong>SD-009:</strong> Bound the scrypt lru_cache &mdash; mass deanonymization from single memory dump</li>
+    </ul>
+  </div>
+  <div class="summary-card">
+    <h3>Risk by Repository</h3>
+    <div class="kv"><span class="k">securedrop (core)</span><span class="v" style="color:var(--critical)">40 findings</span></div>
+    <div class="kv"><span class="k">securedrop-client</span><span class="v" style="color:var(--low)">9 findings</span></div>
+    <div class="kv"><span class="k">securedrop-workstation</span><span class="v" style="color:var(--info)">10 findings</span></div>
+    <p style="margin-top:0.6rem">Core server carries 68% of all findings and 100% of critical/high findings. Client and workstation findings are substantially mitigated by Qubes VM isolation.</p>
+  </div>
+  <div class="summary-card">
+    <h3>Key Mitigating Factors</h3>
+    <ul>
+      <li><strong>Tor-only access:</strong> Eliminates most network-level attacks; XSS requires Tor Browser exploit</li>
+      <li><strong>Qubes isolation:</strong> VM boundaries contain client/workstation findings</li>
+      <li><strong>Air-gapped SVS:</strong> Legacy architecture physically isolates decryption</li>
+      <li><strong>Diceware entropy:</strong> ~77-bit passphrases resist brute-force even without rate limiting</li>
+    </ul>
+  </div>
+</div>
+
+<div class="sec-h">Critical Attack Chains &mdash; Triage Verdict</div>
+<div class="summary-grid">
+  <div class="summary-card" style="border-left: 3px solid var(--critical)">
+    <h3>Chain 1: Source Passphrase Exfiltration</h3>
+    <p><strong>Verdict: Partially Valid.</strong> The cookie storage (SD-003) is real and dangerous. However, the chain assumes a Tor Browser exploit to read cookies, which is a state-level capability. The unbounded cache (SD-009) is the more practical concern &mdash; a single process memory dump yields all active source mappings. <strong>Priority: Fix SD-003 and SD-009 independently.</strong></p>
+  </div>
+  <div class="summary-card" style="border-left: 3px solid var(--high)">
+    <h3>Chain 2: Journalist 2FA Oracle</h3>
+    <p><strong>Verdict: Valid.</strong> Each link is confirmed. The 2FA-before-password order (SD-007) is a real oracle. Combined with HOTP secret logging (SD-005), a permanent 2FA bypass is achievable. The throttle (5/60s per username) slows but does not prevent exploitation. <strong>Priority: Fix SD-007, SD-004, SD-005 as a unit.</strong></p>
+  </div>
+  <div class="summary-card" style="border-left: 3px solid var(--medium)">
+    <h3>Chain 3: Cryptographic Integrity Bypass</h3>
+    <p><strong>Verdict: Valid but context-dependent.</strong> SD-001/SD-002 are real &mdash; no signature verification occurs. However, the threat model assumes server compromise, at which point the attacker already controls message delivery. The NullPolicy (SD-002) accepting revoked keys is the more concerning standalone issue. <strong>Priority: Fix SD-001/SD-002 as defense-in-depth.</strong></p>
+  </div>
+</div>
+
+</div>
+
+<!-- FULL TRIAGE -->
+<div class="panel" id="p-triage">
+  <div class="search-bar">
+    <input type="text" class="search-input" id="tri-search" placeholder="Search by ID, title, category, or file...">
+    <div id="action-filters" style="display:flex;flex-wrap:wrap;gap:0.25rem"></div>
+    <div id="sev-filters" style="display:flex;flex-wrap:wrap;gap:0.25rem"></div>
+  </div>
+  <div class="triage-list" id="tri-list"></div>
+</div>
+
+<!-- ACTION PLAN -->
+<div class="panel" id="p-actions">
+  <div class="sec-h"><span class="n" style="background:rgba(239,68,68,0.12);color:var(--fix-now)">P0</span> Fix Now &mdash; Sprint 1 (1-2 weeks)</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Cryptographic Integrity</h3>
+      <ul>
+        <li><code>SD-001</code> Implement signature verification in HelperPolicy</li>
+        <li><code>SD-002</code> Remove NullPolicy fallback; reject revoked keys</li>
+      </ul>
+      <p>These undermine the core PGP guarantee. Fix in <code>redwood/src/</code>. Estimated: 2-3 days.</p>
+    </div>
+    <div class="summary-card">
+      <h3>Source Identity Protection</h3>
+      <ul>
+        <li><code>SD-003</code> Replace raw passphrase in cookie with derived token</li>
+        <li><code>SD-009</code> Bound lru_cache to maxsize=128, clear on logout</li>
+      </ul>
+      <p>Both expose raw source secrets. SD-003 is a 1-line change + session migration. SD-009 is a parameter addition. Estimated: 1-2 days.</p>
+    </div>
+    <div class="summary-card">
+      <h3>2FA Material Logging</h3>
+      <ul>
+        <li><code>SD-004</code> Remove token from login log message</li>
+        <li><code>SD-005</code> Remove otp_secret from error log</li>
+      </ul>
+      <p>Trivial fixes with immediate security payoff. Estimated: &lt;1 day.</p>
+    </div>
+  </div>
+
+  <div class="sec-h"><span class="n" style="background:rgba(249,115,22,0.12);color:var(--fix-soon)">P1</span> Fix Soon &mdash; Sprint 2-3 (2-6 weeks)</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Authentication Hardening</h3>
+      <ul>
+        <li><code>SD-007</code> Reorder: verify password before 2FA</li>
+        <li><code>SD-006</code> Add rate limiting to source /login</li>
+        <li><code>SD-013</code> Verify TOTP against DB secret, not form body</li>
+        <li><code>SD-034</code> Require password re-entry for 2FA resets</li>
+      </ul>
+    </div>
+    <div class="summary-card">
+      <h3>Secret Management</h3>
+      <ul>
+        <li><code>SD-008</code> Add key zeroization to SecureTemporaryFile</li>
+        <li><code>SD-019</code> Remove filesystem_id from exception messages</li>
+        <li><code>SD-024</code> Encrypt backups before transfer</li>
+        <li><code>SD-039</code> Replace password display with copy mechanism</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="sec-h"><span class="n" style="background:rgba(234,179,8,0.10);color:var(--plan)">P2</span> Plan &mdash; Backlog (1-3 months)</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Metadata Leakage (8 items)</h3>
+      <p>SD-010, SD-011, SD-012, SD-027, SD-030, SD-035, SD-040, SD-047. Timing side channels and metadata exposure. Plan as a coordinated metadata-hardening milestone. Some require architectural changes (constant-time response normalization).</p>
+    </div>
+    <div class="summary-card">
+      <h3>Infrastructure Hardening (7 items)</h3>
+      <p>SD-015, SD-016, SD-018, SD-020, SD-021, SD-022, SD-023. CSRF, Redis DoS, race conditions, AppArmor. Schedule alongside infrastructure updates. SD-022 (AppArmor complain mode) is a configuration change that could ship sooner.</p>
+    </div>
+    <div class="summary-card">
+      <h3>Client/Workstation (7 items)</h3>
+      <p>SD-025, SD-026, SD-028, SD-029, SD-033, SD-041, SD-055. All substantially mitigated by Qubes VM isolation. Plan fixes alongside normal client release cycles.</p>
+    </div>
+  </div>
+
+  <div class="sec-h"><span class="n" style="background:rgba(59,130,246,0.10);color:var(--accept)">P3</span> Accept Risk / Monitor</div>
+  <div class="summary-grid">
+    <div class="summary-card">
+      <h3>Accepted Risks (16 items)</h3>
+      <p>Low-severity findings where the operational context (Tor, Qubes, air-gap) provides adequate mitigation, or the fix cost exceeds the risk: SD-014, SD-031, SD-032, SD-036, SD-037, SD-038, SD-042, SD-043, SD-044, SD-045, SD-048, SD-049, SD-050, SD-051, SD-052, SD-054. Document in a risk register and revisit quarterly.</p>
+    </div>
+    <div class="summary-card">
+      <h3>Monitor (8 items)</h3>
+      <p>Info-level and configuration findings that require monitoring rather than immediate action: SD-017, SD-046, SD-053, SD-056, SD-057, SD-058, SD-059. Track SD-056 (Python 3.8 path) as a blocker for OS upgrades. SD-057 (30-pass shred) is a performance concern, not security.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+const T=[
+{id:"SD-001",sev:"critical",title:"No Signature Verification on Decrypted Messages",cat:"Cryptography",repo:"securedrop",file:"redwood/src/decryption.rs:19-32",action:"fix-now",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Critical).</strong> The HelperPolicy unconditionally returns Ok(()) for signature checks. This is the core cryptographic guarantee of the system. Even though source submissions are unsigned (by design), journalist replies SHOULD be verified. The complete absence of verification infrastructure means a server-compromise attacker can silently tamper with replies.</div>
+<h4>Exploitability</h4><p>Requires server compromise or network-level interception before Tor termination. State-level adversary capability, but exactly the threat model SecureDrop exists to defend against.</p>
+<h4>Recommended Action</h4>
+<ul><li>Implement StandardPolicy verification for journalist reply signatures</li>
+<li>Log verification failures rather than silently accepting</li>
+<li>Add signature verification tests to the Sequoia integration test suite</li></ul>
+<h4>Effort</h4><p>Medium. Requires Rust changes in the redwood crate. ~2-3 days including tests.</p>`},
+
+{id:"SD-002",sev:"critical",title:"NullPolicy Fallback Accepts Weak/Revoked Keys",cat:"Cryptography",repo:"securedrop",file:"redwood/src/keys.rs:52-64",action:"fix-now",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Critical).</strong> The NullPolicy fallback is explicitly documented in code comments as intentional: "We don't care about whether it is revoked or expired." This is a design choice that directly contradicts the security model. A revoked key signals compromise, and accepting it means a compromised source key can still decrypt replies sent after revocation.</div>
+<h4>Exploitability</h4><p>If a source's private key is compromised and revoked, the attacker can still decrypt future replies to that source. The revocation provides no protection.</p>
+<h4>Recommended Action</h4>
+<ul><li>At minimum: reject revoked keys. Expiry is debatable (legitimate sources may not rotate keys), but revocation signals compromise</li>
+<li>Log every NullPolicy fallback invocation with the cert fingerprint</li>
+<li>Add metrics for tracking how often the fallback is triggered in production</li></ul>
+<h4>Effort</h4><p>Low-Medium. Policy change in Rust, plus migration plan for any currently-revoked keys in production.</p>`},
+
+{id:"SD-003",sev:"high",title:"Source Passphrase Stored in Client-Side Session Cookie",cat:"Session Security",repo:"securedrop",file:"source_app/session_manager.py:46",action:"fix-now",sevChange:"upgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Upgrade to Critical.</strong> The raw diceware passphrase IS the source's entire identity. It derives both filesystem_id and GPG secret key via scrypt. The cookie is signed but not encrypted &mdash; base64 decoding reveals the passphrase. While exploitation requires cookie access (Tor Browser exploit, physical access, forensic tools), the impact is complete and irreversible source deanonymization. The journalist interface correctly uses Redis sessions; the asymmetry is concerning.</div>
+<h4>Exploitability</h4><p>Cookie extraction requires either: (a) Tor Browser 0-day, (b) physical access to the machine, (c) forensic recovery of browser data. All are within the threat model for a state-level adversary targeting whistleblowers.</p>
+<h4>Recommended Action</h4>
+<ul><li>Store filesystem_id (already a one-way derivation) in the session instead of the raw passphrase</li>
+<li>The passphrase should exist in memory only during initial authentication and scrypt derivation</li>
+<li>Consider migrating the source interface to server-side sessions (Redis) like the journalist interface</li></ul>
+<h4>Effort</h4><p>Low. The session manager change is small, but requires careful testing of all source-app flows that currently read the passphrase from the session.</p>`},
+
+{id:"SD-004",sev:"high",title:"2FA Token Logged in Plaintext on Every Login",cat:"Information Disclosure",repo:"securedrop",file:"journalist_app/main.py:43-44",action:"fix-now",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (High).</strong> This is a textbook CWE-532 violation. TOTP codes are valid for ~90 seconds (30s window + clock skew). HOTP codes are valid until the counter advances. Anyone with log access (OSSEC forwarding, syslog aggregation, backup tapes) gains authentication material.</div>
+<h4>Exploitability</h4><p>Requires log access. SecureDrop uses OSSEC which forwards logs. If the OSSEC server or any log aggregation pipeline is compromised, all journalist 2FA codes since the last log rotation are exposed.</p>
+<h4>Recommended Action</h4>
+<ul><li>Replace <code>request.form["token"]</code> with a boolean: <code>"2FA: valid"</code></li>
+<li>Audit all other log statements for authentication material</li>
+<li>Rotate logs more aggressively or encrypt log archives</li></ul>
+<h4>Effort</h4><p>Trivial. One line change. Should ship in the next security release.</p>`},
+
+{id:"SD-005",sev:"high",title:"HOTP Secret Logged in Plaintext on Error",cat:"Information Disclosure",repo:"securedrop",file:"journalist_app/utils.py:158",action:"fix-now",sevChange:"upgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Upgrade to Critical.</strong> Unlike SD-004 (one-time codes), this logs the <em>permanent HOTP seed</em>. An attacker with log access can generate ALL future HOTP codes for that journalist indefinitely. The secret cannot be rotated without the journalist physically resetting their hardware token. This is strictly worse than SD-004.</div>
+<h4>Exploitability</h4><p>Same as SD-004 (log access), but impact is permanent rather than time-limited. One successful log exfiltration permanently compromises that journalist's 2FA.</p>
+<h4>Recommended Action</h4>
+<ul><li>Log only user ID and error class, never the secret: <code>f"set_hotp_secret for user {user.id} failed: {type(e).__name__}"</code></li>
+<li>Audit ALL error handlers for secret material in log messages</li>
+<li>Consider forcing HOTP secret rotation for any journalist whose logs may have been exposed</li></ul>
+<h4>Effort</h4><p>Trivial. One line change.</p>`},
+
+{id:"SD-006",sev:"high",title:"No Rate Limiting on Source Login Endpoint",cat:"Authentication",repo:"securedrop",file:"source_app/main.py:365",action:"fix-soon",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Medium.</strong> While rate limiting is missing, the practical risk is substantially mitigated by: (a) diceware passphrases have ~77 bits of entropy (7 words from a 7776-word list), making brute-force computationally infeasible; (b) scrypt key derivation adds significant per-attempt cost; (c) Tor latency adds ~2-5 seconds per request. An attacker would need ~10^23 attempts at best, which is impractical even without rate limiting.</div>
+<h4>Exploitability</h4><p>Impractical against standard diceware passphrases. Only a concern if sources choose weak passphrases (which the UI discourages but doesn't prevent).</p>
+<h4>Recommended Action</h4>
+<ul><li>Add per-session rate limiting (e.g., 10 attempts/minute) as defense-in-depth</li>
+<li>Log failed login attempts for monitoring</li>
+<li>Consider progressive delays after 5+ failures</li></ul>
+<h4>Effort</h4><p>Low. Flask-Limiter or custom middleware. ~1 day.</p>`},
+
+{id:"SD-007",sev:"high",title:"2FA Verified Before Password Enables Oracle Attack",cat:"Authentication",repo:"securedrop",file:"models.py:832-849",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (High).</strong> The verification order creates a distinguishable oracle. An attacker who knows a username can enumerate valid TOTP codes by observing which exception type is raised. For HOTP with a 20-code look-ahead window, this is especially dangerous &mdash; valid counter positions can be discovered without knowing the password.</div>
+<h4>Exploitability</h4><p>Requires knowledge of a journalist's username (obtainable via SD-027 timing oracle). The 5-attempt/60s throttle slows exploitation but doesn't prevent it &mdash; an attacker can test ~120 TOTP codes per day per username.</p>
+<h4>Recommended Action</h4>
+<ul><li>Verify password first, then 2FA. Or: verify both and return a single generic "invalid credentials" error regardless of which failed</li>
+<li>Ensure both code paths take the same wall-clock time (constant-time response)</li></ul>
+<h4>Effort</h4><p>Low. Reorder the method calls in <code>Journalist.login()</code>. ~2 hours including tests.</p>`},
+
+{id:"SD-008",sev:"high",title:"No Explicit Key Zeroization in SecureTemporaryFile",cat:"Secret Management",repo:"securedrop",file:"secure_tempfile.py:56-66",action:"fix-soon",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Medium.</strong> Python's memory model makes true zeroization extremely difficult &mdash; immutable bytes objects are copied by the runtime, and the GC doesn't guarantee zeroing. The code explicitly documents reliance on grsecurity PAX_MEMORY_SANITIZE + nightly reboots. While not ideal, memory forensics requires physical access to the server, which is already a catastrophic compromise scenario.</div>
+<h4>Exploitability</h4><p>Requires physical server access or a separate memory-reading vulnerability. The server should be in a secure facility. Cold-boot attacks are the primary concern.</p>
+<h4>Recommended Action</h4>
+<ul><li>Use ctypes to write directly to a mutable buffer and zero it in close()</li>
+<li>Use mlock() to prevent keys from being swapped to disk</li>
+<li>Document the limitation of Python's memory model</li></ul>
+<h4>Effort</h4><p>Medium. ctypes-based key management requires careful implementation and testing.</p>`},
+
+{id:"SD-009",sev:"medium",title:"Unbounded lru_cache Caches All Source Passphrases in Memory",cat:"Secret Management",repo:"securedrop",file:"source_user.py:156-169",action:"fix-now",sevChange:"upgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Upgrade to High.</strong> The unbounded cache on a singleton means ALL source passphrase-to-secret mappings since the last process restart accumulate in memory. A single memory dump yields mass source deanonymization. The <code># noqa: B019</code> suppression shows this was flagged by a linter and intentionally kept for performance (avoiding repeated scrypt). The performance gain does not justify the risk.</div>
+<h4>Exploitability</h4><p>Requires process memory access (gdb, /proc/pid/mem, core dump, memory forensics). Lower bar than physical access &mdash; a root-level exploit on the server suffices.</p>
+<h4>Recommended Action</h4>
+<ul><li>Add <code>maxsize=128</code> to both <code>@lru_cache</code> decorators (LRU eviction protects older entries)</li>
+<li>Clear cache entries explicitly on source logout</li>
+<li>Consider using a time-based cache (TTL) instead of LRU</li></ul>
+<h4>Effort</h4><p>Trivial. Adding <code>maxsize=128</code> is a 1-character change per decorator.</p>`},
+
+{id:"SD-010",sev:"medium",title:"Timing Side Channel via scrypt Cache Hit/Miss",cat:"Metadata Leakage",repo:"securedrop",file:"source_user.py:156-180",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The timing difference between cache hit (microseconds) and miss (seconds for scrypt) is measurable even over Tor. However, the practical value of distinguishing "new" vs "returning" sources is limited unless combined with other correlation attacks.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add constant-time padding to authentication responses</li>
+<li>Or: pre-warm the cache with a dummy computation to normalize timing</li>
+<li>Bundle with SD-009 cache improvements</li></ul>
+<h4>Effort</h4><p>Medium. Constant-time response padding requires careful implementation.</p>`},
+
+{id:"SD-011",sev:"medium",title:"Login Path Timing Reveals Source Migration Status",cat:"Metadata Leakage",repo:"securedrop",file:"source_app/main.py:365-417",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> Three distinct timing profiles allow source age classification. Practical impact is limited to narrowing the anonymity set, but for high-value sources this matters.</div>
+<h4>Recommended Action</h4>
+<ul><li>Perform key migration asynchronously (background task)</li>
+<li>Or: normalize response times across all code paths</li>
+<li>Bundle with the metadata-hardening milestone</li></ul>
+<h4>Effort</h4><p>Medium-High. Async key migration is an architectural change.</p>`},
+
+{id:"SD-012",sev:"medium",title:"Single-Submission Sources Skip Timestamp Normalization",cat:"Metadata Leakage",repo:"securedrop",file:"source_app/utils.py:80",action:"fix-soon",sevChange:"upgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Upgrade to Medium-High.</strong> Most new whistleblowers submit exactly once. This means the most vulnerable sources (first-time, likely nervous) are the ones whose submission timestamps are exposed. The fix is trivial.</div>
+<h4>Recommended Action</h4>
+<ul><li>Remove the <code>if len(sub_paths) > 1</code> guard &mdash; normalize timestamps for all submissions</li></ul>
+<h4>Effort</h4><p>Trivial. Remove one conditional.</p>`},
+
+{id:"SD-013",sev:"medium",title:"OTP Secret in Form Body During 2FA Verification",cat:"Authentication",repo:"securedrop",file:"journalist_app/admin.py:251-262",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> Verifying against a user-supplied secret rather than the database-stored one defeats the purpose of TOTP verification. An admin could "verify" any code by supplying a matching secret. Requires admin session, so the blast radius is limited to admin operations.</div>
+<h4>Recommended Action</h4>
+<ul><li>Verify against the database-stored OTP secret, not the form body</li>
+<li>The form should only contain the TOTP code, not the secret</li></ul>
+<h4>Effort</h4><p>Low. Database query change in one endpoint.</p>`},
+
+{id:"SD-014",sev:"medium",title:"TOTP Replay Window Due to Single last_token Tracking",cat:"Authentication",repo:"securedrop",file:"models.py:849",action:"accept",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The 90-second replay window is within TOTP RFC 6238 norms. The single-token tracking is a minor weakness, but practical exploitation requires intercepting a valid code and replaying it within 90 seconds from a different session. Over Tor, this is extremely difficult.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept risk. Track as a future improvement</li>
+<li>If addressed: maintain a set of used tokens per time step rather than just the last one</li></ul>
+<h4>Effort</h4><p>Low, but marginal security improvement.</p>`},
+
+{id:"SD-015",sev:"medium",title:"API v1/v2 CSRF-Exempt with Cookie-Based Sessions",cat:"Web Security",repo:"securedrop",file:"journalist_app/api.py",action:"plan",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> Tor significantly mitigates CSRF &mdash; the attacker would need to know the .onion address AND get the journalist to visit a malicious page while authenticated. Cross-origin requests to an .onion address from clearnet are blocked by same-origin policy. The primary API authentication is Bearer tokens.</div>
+<h4>Recommended Action</h4>
+<ul><li>Require Bearer token auth for all API endpoints (reject cookie-only auth on API routes)</li>
+<li>Add SameSite=Strict to session cookies as defense-in-depth</li></ul>
+<h4>Effort</h4><p>Low. Middleware change to reject cookie-only API auth.</p>`},
+
+{id:"SD-016",sev:"medium",title:"Redis KEYS Scan Creates DoS Vector in Logout",cat:"Availability",repo:"securedrop",file:"journalist_app/sessions.py:233",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> <code>KEYS *</code> is O(N) and blocks the single-threaded Redis. In a small deployment (few journalists), impact is minimal. In larger deployments, admin operations could stall all sessions. The DoS is admin-only, limiting the attack surface.</div>
+<h4>Recommended Action</h4>
+<ul><li>Replace KEYS with SCAN (non-blocking iteration)</li>
+<li>Or: maintain a per-user session index (Redis SET per user ID)</li></ul>
+<h4>Effort</h4><p>Low. SCAN is a drop-in replacement for KEYS in iteration patterns.</p>`},
+
+{id:"SD-017",sev:"medium",title:"Unauthenticated Metadata Endpoint Leaks Server Info",cat:"Information Disclosure",repo:"securedrop",file:"source_app/api.py:15-27",action:"monitor",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The .onion address is already known to anyone accessing the source interface. The GPG fingerprint is public by design (sources need it). server_os and sd_version are the only concerning fields, but they're of limited value for targeted attacks on a Tor hidden service.</div>
+<h4>Recommended Action</h4>
+<ul><li>Remove server_os from the unauthenticated response</li>
+<li>Consider removing sd_version or making it generic ("2.x")</li>
+<li>Keep supported_languages and gpg_fpr (needed by legitimate clients)</li></ul>
+<h4>Effort</h4><p>Trivial. Remove two fields from the API response.</p>`},
+
+{id:"SD-018",sev:"medium",title:"Source Designation TOCTOU Race Condition",cat:"Concurrency",repo:"securedrop",file:"source_user.py:79-102",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The TODO in the code confirms this is a known issue. Race conditions in concurrent source registration could produce duplicate designations. Impact is operational confusion rather than direct security compromise, but in a system where misidentifying a source has safety implications, this matters.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add UNIQUE constraint on journalist_designation column</li>
+<li>Handle IntegrityError with designation regeneration</li>
+<li>Requires an Alembic migration</li></ul>
+<h4>Effort</h4><p>Low. Database migration + try/except retry logic.</p>`},
+
+{id:"SD-019",sev:"medium",title:"Filesystem ID Leaked in Exception Message",cat:"Information Disclosure",repo:"securedrop",file:"source_user.py:122-124",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The filesystem_id maps directly to the source's submission directory. Logging it creates a persistent record linking a passphrase collision event to a specific source's storage path.</div>
+<h4>Recommended Action</h4>
+<ul><li>Remove filesystem_id from the exception message</li>
+<li>Log the collision event without identifying the existing source</li></ul>
+<h4>Effort</h4><p>Trivial. One line change.</p>`},
+
+{id:"SD-020",sev:"medium",title:"Pre-Encrypted Reply Validation Only Checks First Line",cat:"Input Validation",repo:"securedrop",file:"store.py:345",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> A malicious API client could store "PGP-headed" plaintext in a source's directory. This requires journalist API access (authenticated), so the attacker is already a compromised journalist account. Defense-in-depth, not a primary attack vector.</div>
+<h4>Recommended Action</h4>
+<ul><li>Validate both BEGIN and END PGP markers</li>
+<li>Consider using a PGP library to validate the message structure rather than string matching</li></ul>
+<h4>Effort</h4><p>Low. Add END marker check and basic structure validation.</p>`},
+
+{id:"SD-021",sev:"medium",title:"Login Throttle Only By Username (Account Lockout DoS)",cat:"Availability",repo:"securedrop",file:"models.py:798-822",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> Username-only throttling enables targeted lockout of specific journalists. In a time-sensitive whistleblowing scenario, even brief lockout could have serious consequences. However, the attacker needs to know the journalist's username.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add IP-based tracking alongside username throttling (note: Tor makes this less useful)</li>
+<li>Consider an account-unlock mechanism for admins</li>
+<li>Add monitoring/alerting for repeated lockout events</li></ul>
+<h4>Effort</h4><p>Medium. Dual-key throttling logic.</p>`},
+
+{id:"SD-022",sev:"medium",title:"Tor AppArmor Profile Ships in COMPLAIN Mode",cat:"Infrastructure",repo:"securedrop",file:"debian/app-code/etc/apparmor.d/usr.sbin.tor",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The profile ships in complain mode but the postinst script runs aa-enforce. If postinst fails silently or the package is reinstalled, the profile reverts to complain. Tor handles the hidden service private keys, so this is a meaningful containment gap.</div>
+<h4>Recommended Action</h4>
+<ul><li>Ship the profile in enforce mode (no flags=complain)</li>
+<li>The postinst aa-enforce call becomes a no-op safety net instead of required</li></ul>
+<h4>Effort</h4><p>Trivial. Remove <code>flags=(complain)</code> from the profile file.</p>`},
+
+{id:"SD-023",sev:"medium",title:"Apache AppArmor Profile Grants sys_ptrace Capability",cat:"Infrastructure",repo:"securedrop",file:"debian/app-code/etc/apparmor.d/usr.sbin.apache2",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> sys_ptrace on the web server process that handles untrusted input is a significant privilege escalation vector. Combined with /proc/*/fd/* read access and /tmp/** rwm, a web application compromise gains substantial system inspection capability.</div>
+<h4>Recommended Action</h4>
+<ul><li>Remove sys_ptrace unless there's a documented reason Apache needs it</li>
+<li>Restrict /proc access to /proc/self only</li>
+<li>Restrict /tmp to a dedicated SecureDrop subdirectory</li></ul>
+<h4>Effort</h4><p>Low-Medium. Requires testing that Apache still functions correctly with the restricted profile.</p>`},
+
+{id:"SD-024",sev:"medium",title:"Unencrypted Backups Contain Tor Hidden Service Private Keys",cat:"Infrastructure",repo:"securedrop",file:"debian/app-code/usr/bin/securedrop-app-backup.py",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The backup contains the entire crown jewels: SECRET_KEY, SCRYPT peppers, REDIS_PASSWORD, all submissions, all GPG keys, and Tor hidden service private keys. Transit is via Ansible to the Admin Workstation. If the backup is intercepted or the Admin Workstation is compromised, everything is exposed.</div>
+<h4>Recommended Action</h4>
+<ul><li>GPG-encrypt the backup archive before transfer</li>
+<li>Use the admin's GPG key for encryption</li>
+<li>Verify backup integrity with a separate HMAC</li></ul>
+<h4>Effort</h4><p>Medium. Backup encryption + key management for the encryption key.</p>`},
+
+{id:"SD-025",sev:"medium",title:"Proxy URL Join Could Allow Path Confusion",cat:"Input Validation",repo:"securedrop-client",file:"proxy/src/main.rs:277-287",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The TODO in the code confirms this is a known concern. Url::join() following RFC 3986 means absolute path_query values replace the entire path. The origin check prevents host confusion but not path manipulation. Requires a compromised sd-app VM (within the Qubes threat model).</div>
+<h4>Recommended Action</h4>
+<ul><li>Implement the API path allowlist as the TODO suggests</li>
+<li>Only allow known SecureDrop API paths (e.g., /api/v1/*, /api/v2/*)</li></ul>
+<h4>Effort</h4><p>Low. Allowlist implementation in Rust.</p>`},
+
+{id:"SD-026",sev:"medium",title:"Hidden Service Hostname Exposed in QubesDB VM Features",cat:"Infrastructure",repo:"securedrop-workstation",file:"securedrop_salt/sd-proxy.sls:80-81",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> Qubes VM features are readable by any process in the VM. The .onion address and key stored this way are accessible to any code running in sd-proxy. Requires sd-proxy VM compromise, which is within the Qubes threat model.</div>
+<h4>Recommended Action</h4>
+<ul><li>Read the origin and key from files with 0600 permissions owned by the proxy user</li>
+<li>Alternatively, use Qubes split-secrets mechanism</li></ul>
+<h4>Effort</h4><p>Low-Medium. SaltStack state changes + proxy config changes.</p>`},
+
+{id:"SD-027",sev:"medium",title:"Journalist Username Existence Oracle via Login Timing",cat:"Authentication",repo:"securedrop",file:"models.py:824-851",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The Argon2 timing difference between valid and invalid usernames is measurable. The throttle_login() call runs for both cases, but the Argon2 hash only runs for valid usernames, creating a ~100ms+ difference. Feeds into Chain 2 (2FA Oracle).</div>
+<h4>Recommended Action</h4>
+<ul><li>Run a dummy Argon2 hash for invalid usernames</li>
+<li>This normalizes timing regardless of username validity</li></ul>
+<h4>Effort</h4><p>Low. Add a dummy hash call in the InvalidUsernameException path.</p>`},
+
+{id:"SD-028",sev:"medium",title:"Double-Encryption Fallback Reveals Outer Plaintext",cat:"Cryptography",repo:"securedrop-client",file:"app/src/main/crypto.ts:486-517",action:"plan",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The "outer plaintext" is still an encrypted PGP message. The issue is that inner decryption failure is not distinguishable from "not double-encrypted" in the return value. This is a UX/confusion issue rather than a data exposure issue.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add a distinct error code for "inner decryption failed"</li>
+<li>Surface the error to the journalist UI rather than silently falling back</li></ul>
+<h4>Effort</h4><p>Low. TypeScript enum/type change + UI update.</p>`},
+
+{id:"SD-029",sev:"medium",title:"unsafe FFI in QubesDB Configuration Reader",cat:"Memory Safety",repo:"securedrop-client",file:"proxy/src/config_qubesdb.rs:19-26",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> The unsafe FFI call trusts the C library to return a valid, null-terminated string. If QubesDB returns an invalid pointer, this is UB. However, QubesDB runs in dom0 (the most privileged Qubes domain), so compromising it means the entire workstation is already compromised.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add bounds checking on the returned length</li>
+<li>Validate the pointer is non-null before CStr::from_ptr</li>
+<li>Consider wrapping in a safe abstraction</li></ul>
+<h4>Effort</h4><p>Low. A few lines of safety checks around the unsafe block.</p>`},
+
+{id:"SD-030",sev:"medium",title:"Submission Filenames Encode Source Designation in Plaintext",cat:"Metadata Leakage",repo:"securedrop",file:"store.py:323 + models.py:296",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> Every encrypted file on disk leaks the source's journalist designation in its filename. This is a design-level issue &mdash; changing it requires a migration of all existing files and API response formats.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use filesystem_id or a hash in filenames instead of the designation</li>
+<li>This is a breaking change for the API v1 (which exposes filename directly)</li>
+<li>Plan as part of an API v2 migration milestone</li></ul>
+<h4>Effort</h4><p>High. Requires file migration, API changes, and client updates.</p>`},
+
+{id:"SD-031",sev:"medium",title:"Substring Match in File Lookup (path_without_filesystem_id)",cat:"Logic Error",repo:"securedrop",file:"store.py:173-175",action:"accept",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The reversed substring check (<code>file_ in filename</code> vs <code>filename in file_</code>) is a real logic error, but the filename structure makes collisions extremely unlikely. The filenames follow a strict pattern ({count}-{designation}-{type}.gpg) where the count and type fields are short integers/strings.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use equality comparison (==) instead of substring matching</li>
+<li>Trivial fix, but low priority given the practical risk</li></ul>
+<h4>Effort</h4><p>Trivial. Change <code>in</code> to <code>==</code>.</p>`},
+
+{id:"SD-032",sev:"medium",title:"Substring Match in GPG Key Lookup",cat:"Cryptography",repo:"securedrop",file:"encryption.py:195",action:"accept",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The 96-character base32 filesystem_id makes substring collisions mathematically near-impossible. Additionally, this is the legacy GPG path that's being replaced by Sequoia. The code will be deprecated.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept risk. Will be resolved by the Sequoia migration</li>
+<li>If touched for another reason: use exact UID matching</li></ul>
+<h4>Effort</h4><p>Trivial if addressed, but unnecessary given deprecation timeline.</p>`},
+
+{id:"SD-033",sev:"medium",title:"Archive Extraction TOCTOU (check-then-extract)",cat:"File Handling",repo:"securedrop-client",file:"export/securedrop_export/directory.py:64-79",action:"plan",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The archive is a local file within an isolated Qubes DispVM. The TOCTOU window is between getmembers() and extractall(), but modifying the archive during this window requires same-VM access. The noqa: S202 suppression shows this was reviewed. Python 3.12+ has tarfile.data_filter which would eliminate this class of bug.</div>
+<h4>Recommended Action</h4>
+<ul><li>Migrate to Python 3.12+ tarfile.data_filter when available</li>
+<li>Or: extract files individually with per-file path checks</li></ul>
+<h4>Effort</h4><p>Low-Medium. Depends on Python version availability in the target environment.</p>`},
+
+{id:"SD-034",sev:"medium",title:"Admin 2FA Reset Without Secondary Verification",cat:"Access Control",repo:"securedrop",file:"journalist_app/admin.py:288",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> A compromised admin account can silently reset any journalist's TOTP secret and capture the new one. No audit trail, no password re-entry, no confirmation. This is a straightforward privilege escalation path.</div>
+<h4>Recommended Action</h4>
+<ul><li>Require admin password re-entry for 2FA reset operations</li>
+<li>Add audit logging (which admin reset which user's 2FA, with timestamp)</li>
+<li>Consider requiring a second admin's approval</li></ul>
+<h4>Effort</h4><p>Low. Add password verification + audit log entry.</p>`},
+
+{id:"SD-035",sev:"medium",title:"API v1 Exposes Excessive Source Metadata",cat:"Metadata Leakage",repo:"securedrop",file:"models.py:219-253",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Medium).</strong> interaction_count + document/message ratios create a behavioral fingerprint. v2 API correctly omits these. The v1 API should be deprecated.</div>
+<h4>Recommended Action</h4>
+<ul><li>Set a deprecation timeline for API v1</li>
+<li>As an interim measure: strip interaction_count and number_of_documents/messages from v1 responses</li></ul>
+<h4>Effort</h4><p>Low for field stripping. High for full v1 deprecation (client compatibility).</p>`},
+
+{id:"SD-036",sev:"medium",title:"Inconsistent Path Normalization (abspath vs realpath)",cat:"Path Traversal",repo:"securedrop",file:"store.py:267 + rm.py:66",action:"accept",sevChange:"downgrade",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Downgrade to Low.</strong> The inconsistency is real but exploiting it requires planting a symlink in the shredder directory, which requires prior filesystem access. If an attacker has write access to the shredder directory, they already have significant server compromise.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use os.path.realpath consistently throughout</li>
+<li>Low priority but good code hygiene</li></ul>
+<h4>Effort</h4><p>Trivial. Replace abspath with realpath.</p>`},
+
+{id:"SD-037",sev:"low",title:"Session Lifetime Extendable to 12 Hours via Renewals",cat:"Session Security",repo:"securedrop",file:"journalist_app/sessions.py:258-259",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> 12-hour maximum session lifetime is within normal bounds for an application requiring sustained access. Journalists may need extended sessions during active source communication. Accept risk.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept. Consider adding an absolute maximum session lifetime (e.g., 8 hours) regardless of renewals</li></ul>`},
+
+{id:"SD-038",sev:"low",title:"Legacy 80-bit TOTP Secrets Still Supported",cat:"Cryptography",repo:"securedrop",file:"two_factor.py:101-124",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> 80-bit secrets are below NIST SP 800-63B minimum (128 bits) but still provide adequate security for TOTP. Brute-forcing an 80-bit TOTP secret is impractical. This is a standards compliance issue rather than a practical vulnerability.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept. Plan a migration to 128-bit secrets for new accounts</li>
+<li>Offer existing users a "regenerate TOTP" option during normal login</li></ul>`},
+
+{id:"SD-039",sev:"low",title:"Password Displayed in Flash Message After Reset",cat:"Secret Management",repo:"securedrop",file:"journalist_app/utils.py:491-522",action:"fix-soon",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> The password is HTML-escaped and displayed once, but persists in the DOM until page navigation. Browser extensions or XSS could capture it. Tor mitigates proxy caching. Low practical risk but poor practice.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use a copy-to-clipboard mechanism that clears after 30 seconds</li>
+<li>Or: show password in a modal that is removed from DOM on close</li></ul>
+<h4>Effort</h4><p>Low. JS-based clipboard copy + DOM cleanup.</p>`},
+
+{id:"SD-040",sev:"low",title:"Download ZIP Filenames Leak Source Designations",cat:"Metadata Leakage",repo:"securedrop",file:"store.py:219",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Source designations and activity dates in exported archives persist beyond database deletion. This is a metadata hygiene issue that should be addressed alongside SD-030 (filename designation encoding).</div>
+<h4>Recommended Action</h4>
+<ul><li>Bundle with SD-030 filename migration</li>
+<li>Use opaque identifiers in archive directory paths</li></ul>`},
+
+{id:"SD-041",sev:"low",title:"Export chmod Makes Submissions World-Readable",cat:"Access Control",repo:"securedrop-client",file:"export/securedrop_export/disk/cli.py:422",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> The world-readable permissions on USB exports only matter on multi-user systems. In the intended workflow, the USB is transferred to an air-gapped SVS machine that is single-user. Low practical risk in the standard deployment.</div>
+<h4>Recommended Action</h4>
+<ul><li>Change <code>ugo+r</code> to <code>u+r</code> as a precaution</li>
+<li>Trivial fix, low priority</li></ul>`},
+
+{id:"SD-042",sev:"low",title:"Source Login Form Strips Whitespace from Passphrase",cat:"Authentication",repo:"securedrop",file:"source_app/main.py",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Whitespace stripping is a reasonable UX choice to prevent copy-paste issues with trailing newlines. Diceware passphrases don't include significant whitespace. Accept.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept. Document the behavior if not already documented</li></ul>`},
+
+{id:"SD-043",sev:"low",title:"Admin User Operations Accept user_id from URL",cat:"Access Control",repo:"securedrop",file:"journalist_app/admin.py",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> IDOR via URL parameter, but requires admin authentication. The admin can already modify any user through the UI. This is a defense-in-depth concern, not a privilege escalation.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept. Add a confirmation dialog showing the target user's name before destructive actions</li></ul>`},
+
+{id:"SD-044",sev:"low",title:"API v1 Reply Endpoint Exposes Journalist Identity",cat:"Metadata Leakage",repo:"securedrop",file:"models.py:448-468",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> v1 API exposes journalist real names while v2 correctly uses UUIDs. This will be resolved by v1 API deprecation (SD-035). Low standalone risk since API access requires journalist authentication.</div>
+<h4>Recommended Action</h4>
+<ul><li>Bundle with SD-035 v1 API deprecation</li></ul>`},
+
+{id:"SD-045",sev:"low",title:"Login Throttle Uses Truncated Username (255 chars)",cat:"Authentication",repo:"securedrop",file:"models.py:803",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Journalist usernames are admin-assigned and realistically never approach 255 characters. The truncation is a theoretical concern with no practical attack scenario.</div>
+<h4>Recommended Action</h4>
+<ul><li>Accept. If touched for another reason: hash the username for throttle tracking</li></ul>`},
+
+{id:"SD-046",sev:"low",title:"Transcript Export Includes Source Designation and Journalist Names",cat:"Metadata Leakage",repo:"securedrop-client",file:"app/resources/templates/transcript.txt.liquid:1-2",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Metadata in exported transcripts is by design for usability. Journalists need to identify sources and conversations. The risk is that these transcripts persist on USB devices after database deletion.</div>
+<h4>Recommended Action</h4>
+<ul><li>Add a warning to the export UI about metadata in transcripts</li>
+<li>Consider an option to export with opaque identifiers</li></ul>`},
+
+{id:"SD-047",sev:"low",title:"path_without_filesystem_id Walks Entire Store (Timing Oracle)",cat:"Metadata Leakage",repo:"securedrop",file:"store.py:165-186",action:"plan",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Walk time proportional to file count reveals approximate submission volume. Over Tor, this timing difference may be detectable for large deployments. Low priority but should be addressed in the metadata-hardening milestone.</div>
+<h4>Recommended Action</h4>
+<ul><li>Replace directory walk with indexed lookup (database query for file path)</li>
+<li>Bundle with metadata-hardening milestone</li></ul>`},
+
+{id:"SD-048",sev:"low",title:"Reflected UUID in API Error Response",cat:"Input Validation",repo:"securedrop",file:"journalist_app/api.py:304",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> The UUID is reflected in a JSON API response, not HTML. XSS requires a downstream consumer that renders JSON as HTML without escaping. The primary consumer (securedrop-client) parses it as JSON. Minimal practical risk.</div>
+<h4>Recommended Action</h4>
+<ul><li>Return a generic "file not found" without reflecting input</li>
+<li>Good practice but low priority</li></ul>`},
+
+{id:"SD-049",sev:"low",title:"globals() Class Resolution in eager_query",cat:"Code Quality",repo:"securedrop",file:"models.py:58",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Currently only called with string literals, so unexploitable. The pattern is fragile for future maintenance but not a current vulnerability.</div>
+<h4>Recommended Action</h4>
+<ul><li>Replace with explicit mapping dict when the code is next modified</li>
+<li>No urgency</li></ul>`},
+
+{id:"SD-050",sev:"low",title:"Jinja2 |safe Filter on Formatted Gettext String",cat:"XSS",repo:"securedrop",file:"journalist_templates/base.html:63",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Currently unexploitable since the version is hardcoded. The |safe filter on format strings is a dangerous pattern but the interpolated values are not user-controlled. Risk would change if translation files become externally sourced.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use Markup.escape() on interpolated values in the template</li>
+<li>Good practice, low urgency</li></ul>`},
+
+{id:"SD-051",sev:"low",title:"Worker PID File in World-Writable /tmp",cat:"Infrastructure",repo:"securedrop",file:"config.py.example",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> Mitigated by systemd PrivateTmp=yes. The config.py.example is a template, not the deployed configuration. Practical risk is near-zero in the standard deployment.</div>
+<h4>Recommended Action</h4>
+<ul><li>Update the example to use /var/run/securedrop/</li>
+<li>No urgency</li></ul>`},
+
+{id:"SD-052",sev:"low",title:"SecureTemporaryFile Uses Hardcoded /tmp Path",cat:"Infrastructure",repo:"securedrop",file:"store.py:325",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> The TEMP_DIR config property exists but isn't used here. PrivateTmp provides isolation. The inconsistency is a code quality issue.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use the TEMP_DIR config property</li>
+<li>Bundle with general code cleanup</li></ul>`},
+
+{id:"SD-053",sev:"low",title:"Updater Uses /tmp for Migration State in dom0",cat:"Infrastructure",repo:"securedrop-workstation",file:"sdw_updater/Updater.py:40",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> dom0's /tmp is not multi-user and is the most privileged Qubes domain. An attacker who can write to dom0's /tmp has already compromised the entire workstation. The forced re-provisioning risk is a DoS concern only.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use a root-owned directory outside /tmp</li>
+<li>Monitor as part of workstation hardening</li></ul>`},
+
+{id:"SD-054",sev:"low",title:"Export Subprocess Calls Without Full Path Qualification",cat:"Infrastructure",repo:"securedrop-client",file:"export/securedrop_export/disk/cli.py",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> PATH manipulation requires prior compromise of the isolated DispVM. In the Qubes model, the DispVM is destroyed after each export session. Practical risk is near-zero.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use full paths as a defense-in-depth measure</li>
+<li>No urgency</li></ul>`},
+
+{id:"SD-055",sev:"low",title:"Client PathBuilder TOCTOU in Symlink Check",cat:"Path Traversal",repo:"securedrop-client",file:"app/src/main/storage.ts:53-59",action:"accept",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Low).</strong> The TOCTOU window between existsSync and realpathSync is real but requires same-VM attacker access. Mitigated by UnsafePathComponent validation and Qubes VM isolation.</div>
+<h4>Recommended Action</h4>
+<ul><li>Use realpathSync directly and catch ENOENT</li>
+<li>Low priority given VM isolation</li></ul>`},
+
+{id:"SD-056",sev:"info",title:"Systemd Services Hardcode Python 3.8 Path",cat:"Configuration",repo:"securedrop",file:"debian/app-code/lib/systemd/system/securedrop_rqworker.service:8",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Info).</strong> Not a security vulnerability but a blocker for OS upgrades. When Ubuntu Noble (Python 3.12) is targeted, these paths MUST be updated or the shredder stops running, allowing undeleted files to accumulate.</div>
+<h4>Recommended Action</h4>
+<ul><li>Track as a dependency for the Ubuntu Noble upgrade milestone</li>
+<li>Use version-independent Python paths or virtualenv activation</li></ul>`},
+
+{id:"SD-057",sev:"info",title:"Excessive 30-Pass Shred (Ineffective on SSDs)",cat:"Secure Deletion",repo:"securedrop",file:"rm.py:45",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Info).</strong> NIST SP 800-88 says 1 pass is sufficient for magnetic media and shred is unreliable on SSDs regardless. The 30-pass setting is cargo-cult security that wastes I/O. Not a vulnerability, but creates performance bottlenecks for large deletions.</div>
+<h4>Recommended Action</h4>
+<ul><li>Reduce to 1-3 passes per NIST guidance</li>
+<li>Investigate the server's storage medium &mdash; if SSD, switch to ATA Secure Erase or LUKS key destruction</li></ul>`},
+
+{id:"SD-058",sev:"info",title:"Gzip Container Preserves Original Filename",cat:"Metadata Leakage",repo:"securedrop",file:"store.py:326",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Info).</strong> The mtime=0 correctly prevents timestamp leakage. The preserved filename is a design choice for usability &mdash; journalists need to see the original filename after decryption. Document rather than change.</div>
+<h4>Recommended Action</h4>
+<ul><li>Document this behavior in the security model</li>
+<li>Consider stripping the filename only for messages (not file submissions)</li></ul>`},
+
+{id:"SD-059",sev:"info",title:"Codename Detection Only Catches Exact Full-Message Matches",cat:"Source Protection",repo:"securedrop",file:"source_app/utils.py:19-26",action:"monitor",sevChange:"agree",
+triage:`<h4>Triage Verdict</h4>
+<div class="verdict-box"><strong>Severity: Agree (Info).</strong> The constant-time comparison for exact matches is well-implemented, but substring detection is missing. A source who includes their codename in a longer message bypasses the safety net. This is inherently difficult to solve perfectly (constant-time substring matching has performance implications).</div>
+<h4>Recommended Action</h4>
+<ul><li>Add substring detection with sliding-window constant-time comparison</li>
+<li>Accept the performance tradeoff for messages shorter than a reasonable limit</li>
+<li>Alternatively: warn the source before submission if the message appears to contain codename-like patterns</li></ul>`}
+];
+
+const SEV_LABELS={critical:"Critical",high:"High",medium:"Medium",low:"Low",info:"Info"};
+const SEV_ORDER={critical:0,high:1,medium:2,low:3,info:4};
+const ACTION_LABELS={"fix-now":"Fix Now","fix-soon":"Fix Soon",plan:"Plan",accept:"Accept",monitor:"Monitor"};
+const CHANGE_LABELS={agree:"Agree",upgrade:"Upgrade",downgrade:"Downgrade"};
+
+let activeActions=new Set(), activeSevs=new Set();
+
+function initFilters(){
+  const af=document.getElementById("action-filters");
+  const sf=document.getElementById("sev-filters");
+  Object.entries(ACTION_LABELS).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.className="filter-btn";b.textContent=v;b.dataset.a=k;
+    b.onclick=()=>{b.classList.toggle("active");activeActions.has(k)?activeActions.delete(k):activeActions.add(k);renderList()};
+    af.appendChild(b);
+  });
+  Object.entries(SEV_LABELS).forEach(([k,v])=>{
+    const b=document.createElement("button");
+    b.className="filter-btn";b.textContent=v;b.dataset.s=k;
+    b.onclick=()=>{b.classList.toggle("active");activeSevs.has(k)?activeSevs.delete(k):activeSevs.add(k);renderList()};
+    sf.appendChild(b);
+  });
+  document.getElementById("tri-search").addEventListener("input",renderList);
+}
+
+function renderList(){
+  const q=document.getElementById("tri-search").value.toLowerCase();
+  const list=document.getElementById("tri-list");
+  const filtered=T.filter(f=>{
+    if(activeActions.size&&!activeActions.has(f.action))return false;
+    if(activeSevs.size&&!activeSevs.has(f.sev))return false;
+    if(q&&!(f.title.toLowerCase().includes(q)||f.id.toLowerCase().includes(q)||f.cat.toLowerCase().includes(q)||f.file.toLowerCase().includes(q)))return false;
+    return true;
+  }).sort((a,b)=>{
+    const ao={"fix-now":0,"fix-soon":1,plan:2,accept:3,monitor:4};
+    if(ao[a.action]!==ao[b.action])return ao[a.action]-ao[b.action];
+    return SEV_ORDER[a.sev]-SEV_ORDER[b.sev];
+  });
+  if(!filtered.length){list.innerHTML='<div class="empty">No findings match the current filters.</div>';return;}
+  list.innerHTML=filtered.map(f=>`<div class="tr-item" data-id="${f.id}">
+    <div class="tr-head" onclick="this.closest('.tr-item').classList.toggle('open')">
+      <span class="tr-id">${f.id}</span>
+      <div class="tr-mid">
+        <div class="tr-title">${f.title}</div>
+        <div class="tr-file"><code>${f.file}</code></div>
+      </div>
+      <div class="badges">
+        <span class="action-tag a-${f.action}">${ACTION_LABELS[f.action]}</span>
+        <span class="badge b-${f.sev}">${SEV_LABELS[f.sev]}</span>
+        <span class="badge b-${f.sevChange}">${CHANGE_LABELS[f.sevChange]}</span>
+      </div>
+      <span class="expand-icon">&#9656;</span>
+    </div>
+    <div class="tr-body">
+      <div style="display:flex;gap:0.8rem;flex-wrap:wrap;margin-bottom:0.6rem;font-size:0.73rem;color:var(--fg-dim)">
+        <span><strong>Category:</strong> ${f.cat}</span>
+        <span><strong>Repository:</strong> ${f.repo}</span>
+        <span><strong>Action:</strong> ${ACTION_LABELS[f.action]}</span>
+      </div>
+      ${f.triage}
+    </div>
+  </div>`).join("");
+}
+
+document.querySelectorAll(".tab").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll(".tab").forEach(b=>b.classList.remove("active"));
+    document.querySelectorAll(".panel").forEach(p=>p.classList.remove("active"));
+    btn.classList.add("active");
+    document.getElementById("p-"+btn.dataset.t).classList.add("active");
+  });
+});
+
+initFilters();
+renderList();
+</script>
